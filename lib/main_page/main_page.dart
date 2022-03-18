@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
 
 PreferredSizeWidget mainPageAppBar = AppBar(
-  // leading: Image.asset(),
+  backgroundColor: Colors.white,
+  foregroundColor: Colors.black,
+  title:
+    Image.asset(
+      'assets/images/logo_horizontal.png',
+      fit: BoxFit.contain,
+      width: 150,
+    ),
   actions: const [
     Icon(Icons.search,),
     Icon(Icons.list,),
     Icon(Icons.window,),
   ],
+
 );
 
 
