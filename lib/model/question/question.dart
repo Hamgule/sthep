@@ -1,5 +1,4 @@
-import 'dart:ui';
-
+import 'package:flutter/cupertino.dart';
 import 'package:sthep/model/question/category.dart';
 import 'package:sthep/model/painter/painter.dart';
 import 'package:sthep/model/question/answer.dart';
@@ -12,9 +11,8 @@ class Question {
   late String title;
   late User questioner;
   late Category category;
-  Image? image;
+  Widget? image;
   Painter? painter;
-
   List answers = <Answer>[];
   int indexOfAdoptedAnswer = -1;
 
@@ -23,7 +21,8 @@ class Question {
     required this.id,
     required this.title,
     required this.questioner,
-    required this.category,
+    this.image,
+    // required this.category,
   });
 
   /// methods

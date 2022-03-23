@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:sthep/model/user/exp.dart';
 
@@ -9,7 +7,7 @@ class User {
   String name;
   String nickname;
   String password;
-  Image image = Image.network("https://i.imgur.com/BoN9kdC.png");
+  Image image = Image.network("https://t1.daumcdn.net/cfile/tistory/245D1A3357256A6F2A");
 
   Exp exp = Exp();
 

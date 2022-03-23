@@ -57,3 +57,35 @@ Widget myPageProfile = Container(
     ],
   ),
 );
+
+Widget simpleProfile(User user) => Row(
+  children: [
+    Container(
+        width: 30.0,
+        height: 30.0,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          image: DecorationImage(
+            fit: BoxFit.fill,
+            image: user.image.image,
+          ),
+        )),
+    const SizedBox(width: 15.0),
+    Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.only(bottom: 3),
+            child: Text(
+              user.id,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  ],
+);

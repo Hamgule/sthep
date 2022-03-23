@@ -30,3 +30,16 @@ Widget settingButton = IconButton(
     size: 18.0,
   ),
 );
+
+Widget adoptState = Material(
+  elevation: 10.0,
+  borderRadius: const BorderRadius.all(Radius.circular(20.0)),
+  child: Container(
+    padding: const EdgeInsets.fromLTRB(13.0, 8.0, 13.0, 8.0),
+    child: myText('채택 완료', 13.0, Colors.white),
+    decoration: BoxDecoration(
+      color:Palette.adoptOk,
+      borderRadius: const BorderRadius.all(Radius.circular(20.0)),
+    ),
+  ),
+);
