@@ -3,11 +3,9 @@ import 'package:sthep/global/global.dart';
 import 'package:sthep/model/user/user.dart';
 import 'package:sthep/config/palette.dart';
 import 'package:sthep/page/my_page/my_page.dart';
-import 'package:sthep/page/widget/profile.dart';
-
 import 'package:sthep/model/question/question.dart';
-
 import 'package:sthep/page/widget/sidebar.dart';
+
 
 bool isGrid = true;
 User tempUser = User(
@@ -71,6 +69,9 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
+
+    screenSize = MediaQuery.of(context).size;
+
     return Scaffold(
       appBar: mainPageAppBar,
       endDrawer: const SideBar(),
@@ -97,8 +98,6 @@ class Ranking extends StatelessWidget {
       ],
     );
   }
-
-
 }
 
 class QuestionCard extends StatelessWidget {

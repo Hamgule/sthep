@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sthep/global/global.dart';
 import 'package:sthep/page/main_page/main_page.dart';
 
 void main() {
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: MainPage(),

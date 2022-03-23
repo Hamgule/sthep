@@ -44,15 +44,19 @@ Widget profile(User user) => Row(
   ],
 );
 
-Widget myPageProfile = Container(
+Widget myPageProfile(User user) => Container(
   padding: const EdgeInsets.all(10.0,),
+  decoration: BoxDecoration(
+    color: Colors.white.withOpacity(.5),
+    borderRadius: BorderRadius.circular(15.0),
+  ),
   child: Row(
     children: [
-      profilePhoto(tempUser),
+      profilePhoto(user),
       const SizedBox(width: 10.0),
-      myText('Lv. ${tempUser.exp.level}', 13.0, Palette.fontColor2),
+      myText('Lv. ${user.exp.level}', 13.0, Palette.fontColor2),
       const SizedBox(width: 10.0),
-      myText('${tempUser.name} 님', 20.0, Palette.fontColor1),
+      myText('${user.nickname} 님', 20.0, Palette.fontColor1),
       settingButton,
     ],
   ),
