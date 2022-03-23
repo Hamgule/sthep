@@ -4,6 +4,7 @@ import 'package:sthep/model/user/user.dart';
 import 'package:sthep/config/palette.dart';
 import 'package:sthep/page/my_page/my_page.dart';
 import 'package:sthep/model/question/question.dart';
+import 'package:sthep/page/widget/profile.dart';
 import 'package:sthep/page/widget/sidebar.dart';
 
 
