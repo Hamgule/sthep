@@ -1,29 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:sthep/config/palette.dart';
-import 'package:sthep/model/user/user.dart';
+import 'package:sthep/global/global.dart';
+import 'package:sthep/page/widget/sidebar.dart';
 
 bool isGrid = true;
-User tempUser = User(
-  id: 'zihoo1234',
-  name: '양지후',
-  nickname: 'zihoo',
-  password: '',
-);
 
 PreferredSizeWidget myPageAppBar = AppBar(
   backgroundColor: Palette.appbarColor,
   foregroundColor: Palette.iconColor,
-  title: Text(''),
+  centerTitle: false,
+  title: myText('마이페이지', 25.0, Palette.iconColor,),
   actions: [
-    IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
-    StatefulBuilder(
-      builder: (context, setState) => IconButton(
-        onPressed: () => setState(() => isGrid = !isGrid),
-        icon: Icon(
-          isGrid ? Icons.list_alt : Icons.window,
-        ),
-      ),
-    ),
     StatefulBuilder(
       builder: (context, setState) => IconButton(
         onPressed: () => Scaffold.of(context).openEndDrawer(),
@@ -31,6 +18,20 @@ PreferredSizeWidget myPageAppBar = AppBar(
       ),
     ),
   ],
+);
+
+Widget myPageProfile = Container(
+  padding: const EdgeInsets.all(10.0,),
+  child: Row(
+    children: [
+      profilePhoto(tempUser),
+      const SizedBox(width: 10.0),
+      myText('Lv. ${tempUser.exp.level}', 13.0, Palette.fontColor2),
+      const SizedBox(width: 10.0),
+      myText('${tempUser.name} 님', 20.0, Palette.fontColor1),
+      settingButton,
+    ],
+  ),
 );
 
 class MyPage extends StatefulWidget {
@@ -46,111 +47,13 @@ class _MainPageState extends State<MyPage> {
     return Scaffold(
       appBar: myPageAppBar,
       endDrawer: const SideBar(),
-    );
-  }
-}
-
-Widget profile(User user) => Row(
-  children: [
-    Container(
-        width: 50.0,
-        height: 50.0,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          image: DecorationImage(
-            fit: BoxFit.fill,
-            image: user.image.image,
-          ),
-        )
-    ),
-    const SizedBox(width: 15.0),
-    Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      body: Column(
         children: [
-          Container(
-            padding: const EdgeInsets.only(bottom: 3),
-            child: Text(
-              user.id,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+          Row(
+            children: [myPageProfile,],
           ),
-          Text(
-            '${user.name} / ${user.nickname}',
-            style: TextStyle(
-              color: Colors.grey[500],
-            ),
-          ),
-        ],
-      ),
-    ),
-  ],
-);
-
-class SideBar extends StatefulWidget {
-  const SideBar({Key? key}) : super(key: key);
-  @override
-  _SideBarState createState() => _SideBarState();
-}
-
-class _SideBarState extends State<SideBar> {
-  @override
-  Widget build(BuildContext context) {
-    return Drawer(
-      child: ListView(
-        children: [
-          DrawerHeader(
-            child: Container(
-              child: Column(
-                children: [
-                  const Text(
-                    '나의 정보',
-                    style: TextStyle(fontSize: 20.0,),
-                    textAlign: TextAlign.start,
-                  ),
-                  const Padding(padding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 0.0)),
-                  Row(
-                    children: [
-                      Expanded(child: profile(tempUser)),
-                      const Icon(Icons.settings),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            decoration: const BoxDecoration(
-              color: Colors.blue,
-            ),
-          ),
-  
-          //Step 3, set child widgets in drawer
-          ListTile(title: Text('Item 1')),
-          ListTile(title: Text('Item 2')),
-          ListTile(title: Text('Item 3')),
         ],
       ),
     );
   }
 }
-// class SideBar extends StatelessWidget {
-//   const SideBar({Key? key}) : super(key: key);
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Drawer(
-//       child: ListView(children: const [
-//         DrawerHeader(
-//           child: Text('My Page'),
-//           decoration: BoxDecoration(
-//             color: Colors.indigoAccent,
-//           ),
-//         ),
-//         ListTile(title: Text('Item 1')),
-//         ListTile(title: Text('Item 2')),
-//         ListTile(title: Text('Item 3')),
-//       ]),
-//     );
-//   }
-// }
