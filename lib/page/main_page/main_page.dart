@@ -234,27 +234,28 @@ class QuestionCard extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Image.asset('assets/images/math.jpeg', height: 200.0),
+              Image.asset('assets/images/math.jpeg', height: 200.0,),
               Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
-                myText('#수학', Palette.fontColor),
+                myText('#수학', 10.0, Palette.hyperColor),
                 const SizedBox(width: 8),
-                myText('#수능', Palette.fontColor),
+                myText('#수능', 10.0, Palette.hyperColor),
                 Expanded(
                   child: Container(),
                 ),
-                myText('5 min ago', Colors.grey),
+                myText('5 min ago', 10.0, Colors.grey),
               ]),
               Row(
                 children: <Widget>[
-                  myText('2016년도 수능 알려주세요..', Colors.black),
+                  myText('2016년도 수능 알려주세요..', 20.0, Colors.black),
                   const SizedBox(height: 50.0),
               ]
               ),
               Row(
                 children: [
                   Expanded(child: simpleProfile(tempUser)),
-                  const Icon(Icons.comment_rounded),
-                  myText('5', Colors.black),
+                  const Icon(Icons.comment_rounded, size: 20.0),
+                  const SizedBox(width: 5.0),
+                  myText('5', 15.0, Colors.black),
                 ],
               ),
             ],
