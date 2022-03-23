@@ -44,16 +44,52 @@ Widget profile(User user) => Row(
   ],
 );
 
-Widget myPageProfile = Container(
+Widget myPageProfile(User user) => Container(
   padding: const EdgeInsets.all(10.0,),
+  decoration: BoxDecoration(
+    color: Colors.white.withOpacity(.5),
+    borderRadius: BorderRadius.circular(15.0),
+  ),
   child: Row(
     children: [
-      profilePhoto(tempUser),
+      profilePhoto(user),
       const SizedBox(width: 10.0),
-      myText('Lv. ${tempUser.exp.level}', 13.0, Palette.fontColor2),
+      myText('Lv. ${user.exp.level}', 13.0, Palette.fontColor2),
       const SizedBox(width: 10.0),
-      myText('${tempUser.name} 님', 20.0, Palette.fontColor1),
+      myText('${user.nickname} 님', 20.0, Palette.fontColor1),
       settingButton,
     ],
   ),
+);
+
+Widget simpleProfile(User user) => Row(
+  children: [
+    Container(
+        width: 30.0,
+        height: 30.0,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          image: DecorationImage(
+            fit: BoxFit.fill,
+            image: user.image.image,
+          ),
+        )),
+    const SizedBox(width: 15.0),
+    Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.only(bottom: 3),
+            child: Text(
+              user.id,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  ],
 );

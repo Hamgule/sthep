@@ -3,6 +3,7 @@ import 'package:sthep/global/global.dart';
 import 'package:sthep/model/user/user.dart';
 import 'package:sthep/config/palette.dart';
 import 'package:sthep/page/my_page/my_page.dart';
+import 'package:sthep/page/widget/profile.dart';
 
 bool isGrid = true;
 User tempUser = User(
@@ -56,6 +57,9 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
+
+    screenSize = MediaQuery.of(context).size;
+
     return Scaffold(
       appBar: mainPageAppBar,
       endDrawer: const SideBar(),
@@ -74,76 +78,6 @@ class _MainPageState extends State<MainPage> {
     );
   }
 }
-
-Widget profile(User user) => Row(
-      children: [
-        Container(
-            width: 50.0,
-            height: 50.0,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              image: DecorationImage(
-                fit: BoxFit.fill,
-                image: user.image.image,
-              ),
-            )),
-        const SizedBox(width: 15.0),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding: const EdgeInsets.only(bottom: 3),
-                child: Text(
-                  user.id,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              Text(
-                '${user.name} / ${user.nickname}',
-                style: TextStyle(
-                  color: Colors.grey[500],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-
-Widget simpleProfile(User user) => Row(
-  children: [
-    Container(
-        width: 30.0,
-        height: 30.0,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          image: DecorationImage(
-            fit: BoxFit.fill,
-            image: user.image.image,
-          ),
-        )),
-    const SizedBox(width: 15.0),
-    Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.only(bottom: 3),
-            child: Text(
-              user.id,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
-      ),
-    ),
-  ],
-);
 
 class SideBar extends StatefulWidget {
   const SideBar({Key? key}) : super(key: key);

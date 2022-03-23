@@ -6,6 +6,8 @@ import 'package:sthep/model/user/user.dart';
 final users = <User>[];
 final questions = <Question>[];
 
+late Size screenSize;
+
 User tempUser = User(
   id: 'zihoo1234',
   name: '양지후',
