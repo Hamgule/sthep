@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sthep/config/palette.dart';
 import 'package:sthep/global/global.dart';
+import 'package:sthep/page/widget/profile.dart';
 import 'package:sthep/page/widget/sidebar.dart';
 
 bool isGrid = true;
@@ -18,20 +19,6 @@ PreferredSizeWidget myPageAppBar = AppBar(
       ),
     ),
   ],
-);
-
-Widget myPageProfile = Container(
-  padding: const EdgeInsets.all(10.0,),
-  child: Row(
-    children: [
-      profilePhoto(tempUser),
-      const SizedBox(width: 10.0),
-      myText('Lv. ${tempUser.exp.level}', 13.0, Palette.fontColor2),
-      const SizedBox(width: 10.0),
-      myText('${tempUser.name} 님', 20.0, Palette.fontColor1),
-      settingButton,
-    ],
-  ),
 );
 
 class MyPage extends StatefulWidget {

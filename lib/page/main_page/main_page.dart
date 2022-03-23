@@ -265,24 +265,3 @@ class QuestionCard extends StatelessWidget {
     );
   }
 }
-
-// class SideBar extends StatelessWidget {
-//   const SideBar({Key? key}) : super(key: key);
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Drawer(
-//       child: ListView(children: const [
-//         DrawerHeader(
-//           child: Text('My Page'),
-//           decoration: BoxDecoration(
-//             color: Colors.indigoAccent,
-//           ),
-//         ),
-//         ListTile(title: Text('Item 1')),
-//         ListTile(title: Text('Item 2')),
-//         ListTile(title: Text('Item 3')),
-//       ]),
-//     );
-//   }
-// }

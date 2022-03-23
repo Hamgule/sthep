@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sthep/global/global.dart';
+import 'package:sthep/page/widget/profile.dart';
 
 class SideBar extends StatefulWidget {
   const SideBar({Key? key}) : super(key: key);
