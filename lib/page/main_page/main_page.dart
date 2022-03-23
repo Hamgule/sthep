@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sthep/model/user/user.dart';
+import 'package:sthep/config/palette.dart';
+import 'package:sthep/page/my_page/my_page.dart';
 
 bool isGrid = true;
 User tempUser = User(
@@ -10,15 +12,21 @@ User tempUser = User(
 );
 
 PreferredSizeWidget mainPageAppBar = AppBar(
-  backgroundColor: Colors.white,
-  foregroundColor: Colors.black,
+  backgroundColor: Palette.appbarColor,
+  foregroundColor: Palette.iconColor,
   title: Image.asset(
     'assets/images/logo_horizontal.png',
     fit: BoxFit.contain,
-    width: 150,
+    width: 120,
   ),
   actions: [
-    IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
+    Builder(
+      builder: (context) {
+        return IconButton(onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder: (_) => const MyPage()));
+        }, icon: const Icon(Icons.search));
+      }
+    ),
     StatefulBuilder(
       builder: (context, setState) => IconButton(
         onPressed: () => setState(() => isGrid = !isGrid),

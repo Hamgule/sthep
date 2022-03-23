@@ -1,7 +1,5 @@
-import 'package:sthep/main_page/main_page.dart';
-import 'package:sthep/model/question/category.dart';
-import 'package:sthep/model/user/exp.dart';
 import 'package:flutter/material.dart';
+import 'package:sthep/page/main_page/main_page.dart';
 
 void main() {
   runApp(const MyApp());
