@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sthep/config/palette.dart';
 import 'package:sthep/model/user/user.dart';
 
 bool isGrid = true;
@@ -9,14 +10,10 @@ User tempUser = User(
   password: '',
 );
 
-PreferredSizeWidget mainPageAppBar = AppBar(
-  backgroundColor: Colors.white,
-  foregroundColor: Colors.black,
-  title: Image.asset(
-    'assets/images/logo_horizontal.png',
-    fit: BoxFit.contain,
-    width: 150,
-  ),
+PreferredSizeWidget myPageAppBar = AppBar(
+  backgroundColor: Palette.appbarColor,
+  foregroundColor: Palette.iconColor,
+  title: Text(''),
   actions: [
     IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
     StatefulBuilder(
@@ -36,18 +33,18 @@ PreferredSizeWidget mainPageAppBar = AppBar(
   ],
 );
 
-class MainPage extends StatefulWidget {
-  const MainPage({Key? key}) : super(key: key);
+class MyPage extends StatefulWidget {
+  const MyPage({Key? key}) : super(key: key);
 
   @override
-  State<MainPage> createState() => _MainPageState();
+  State<MyPage> createState() => _MainPageState();
 }
 
-class _MainPageState extends State<MainPage> {
+class _MainPageState extends State<MyPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: mainPageAppBar,
+      appBar: myPageAppBar,
       endDrawer: const SideBar(),
     );
   }
