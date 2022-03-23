@@ -6,10 +6,10 @@ import 'package:sthep/model/user/user.dart';
 final users = <User>[];
 final questions = <Question>[];
 
-Widget myText(String text) => Text(
+Widget myText(String text, Color color) => Text(
   text,
   style: TextStyle(
     fontFamily: 'Nemojin020',
-    color: Palette.fontColor,
+    color: color,
   ),
 );
