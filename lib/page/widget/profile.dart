@@ -57,7 +57,7 @@ Widget myPageProfile(User user) => Container(
       myText('Lv. ${user.exp.level}', 13.0, Palette.fontColor2),
       const SizedBox(width: 10.0),
       myText('${user.nickname} 님', 20.0, Palette.fontColor1),
-      settingButton,
+      settingButton(() {}),
     ],
   ),
 );

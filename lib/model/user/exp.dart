@@ -5,8 +5,7 @@ class Exp {
   int level = 1;
 
   /// methods
-  void gainExp(double add) {
-    totalValue += add;
+  void _operate() {
     double _value = totalValue;
     int i = 1;
 
@@ -16,6 +15,15 @@ class Exp {
 
     value = _value;
     level = i;
+  }
+  void setExp(double totalValue) {
+    this.totalValue = totalValue;
+    _operate();
+  }
+
+  void gainExp(double add) {
+    totalValue += add;
+    _operate();
   }
 
   double accumQuantity(int n) {

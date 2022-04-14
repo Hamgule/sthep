@@ -15,17 +15,18 @@ User tempUser = User(
   password: '',
 );
 
-Widget myText(String text, double size, Color color) => Text(
+Widget myText(String text, double size, Color color, {bool bold = true}) => Text(
   text,
   style: TextStyle(
     fontFamily: 'Nemojin030',
     color: color,
     fontSize: size,
+    fontWeight: FontWeight.bold,
   ),
 );
 
-Widget settingButton = IconButton(
-  onPressed: () {},
+Widget settingButton(VoidCallback onPressed) => IconButton(
+  onPressed: onPressed,
   icon: Icon(
     Icons.settings,
     color: Palette.iconColor,

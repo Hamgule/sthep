@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sthep/config/palette.dart';
 import 'package:sthep/global/global.dart';
 import 'package:sthep/page/widget/profile.dart';
 
@@ -19,28 +20,22 @@ class _SideBarState extends State<SideBar> {
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
-                  children: const [
-                    SizedBox(height: 30.0),
-                    Text(
-                      '나의 정보',
-                      style: TextStyle(
-                        fontSize: 20.0,
-                      ),
-                      textAlign: TextAlign.start,
-                    ),
+                  children: [
+                    const SizedBox(height: 30.0),
+                    myText('나의 정보', 20.0, Palette.fontColor2),
                   ],
                 ),
                 const SizedBox(height: 50.0),
                 Row(
                   children: [
                     Expanded(child: profile(tempUser)),
-                    settingButton,
+                    settingButton(() {}),
                   ],
                 ),
               ],
             ),
-            decoration: const BoxDecoration(
-              color: Colors.blue,
+            decoration: BoxDecoration(
+              color: Palette.bgColor.withOpacity(.3),
             ),
           ),
 
