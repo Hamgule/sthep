@@ -128,11 +128,14 @@ Widget questionCard(Question question) {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        myText('#${question.id}', 12.0, Palette.fontColor2),
+        myText('#${question.id}', 12.0, Palette.hyperColor),
         Card(
-          child: ListTile(
-            title: myText(question.title, 20.0, Palette.fontColor1),
-            trailing: Column(),
+          child: InkWell(
+            onTap: () {},
+            child: ListTile(
+              title: myText(question.title, 20.0, Palette.fontColor1),
+              trailing: Column(),
+            ),
           ),
         ),
       ],

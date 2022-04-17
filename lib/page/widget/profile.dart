@@ -15,33 +15,37 @@ Widget profilePhoto(User user) => Container(
   ),
 );
 
-Widget profile(User user) => Row(
-  children: [
-    profilePhoto(user),
-    const SizedBox(width: 15.0),
-    Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.only(bottom: 3),
-            child: Text(
-              user.id,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
+Widget profile(User user) => Padding(
+  padding: const EdgeInsets.all(10.0),
+  child: Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      profilePhoto(user),
+      const SizedBox(width: 15.0),
+      Container(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.only(bottom: 3),
+              child: Text(
+                user.id,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-          ),
-          Text(
-            '${user.name} / ${user.nickname}',
-            style: TextStyle(
-              color: Colors.grey[500],
+            Text(
+              '${user.name} / ${user.nickname}',
+              style: TextStyle(
+                color: Colors.grey[500],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
-  ],
+    ],
+  ),
 );
 
 Widget myPageProfile(User user) => Container(

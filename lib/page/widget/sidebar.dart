@@ -15,27 +15,34 @@ class _SideBarState extends State<SideBar> {
     return Drawer(
       child: ListView(
         children: [
-          DrawerHeader(
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 30.0),
-                    myText('나의 정보', 20.0, Palette.fontColor2),
-                  ],
-                ),
-                const SizedBox(height: 50.0),
-                Row(
-                  children: [
-                    Expanded(child: profile(tempUser)),
-                    settingButton(() {}),
-                  ],
-                ),
-              ],
-            ),
-            decoration: BoxDecoration(
-              color: Palette.bgColor.withOpacity(.3),
+          SizedBox(
+            height: 200.0,
+            child: DrawerHeader(
+              padding: EdgeInsets.zero,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(20.0),
+                    alignment: Alignment.centerLeft,
+                    child: myText('나의 정보', 20.0, Palette.fontColor2),
+                  ),
+                  const SizedBox(height: 50.0),
+                  InkWell(
+                    onTap: () {},
+                    child: Row(
+                      children: [
+                        profile(tempUser),
+                        const Expanded(child: SizedBox()),
+                        settingButton(() {}),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              decoration: BoxDecoration(
+                color: Palette.bgColor.withOpacity(.3),
+              ),
             ),
           ),
 

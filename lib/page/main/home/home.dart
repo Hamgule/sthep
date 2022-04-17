@@ -16,14 +16,20 @@ class _HomePageState extends State<HomePage> {
 
     screenSize = MediaQuery.of(context).size;
 
-    return GridView.count(
-      padding: const EdgeInsets.all(30.0),
-      crossAxisCount: 3,
-      children: List.generate(100, (index) {
-        return const Center(
-          child: QuestionCard(),
-        );
-      }),
+
+    return Column(
+      children: [
+        const Ranking(),
+        Expanded(
+          child: GridView.count(
+            padding: const EdgeInsets.all(30.0),
+            crossAxisCount: 3,
+            children: List.generate(100, (index) {
+              return const QuestionCard();
+            }),
+          ),
+        ),
+      ],
     );
   }
 }
