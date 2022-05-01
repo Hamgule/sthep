@@ -9,7 +9,7 @@ class Sthep extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Shrine',
+      title: 'Sthep',
       home: const MainPage(),
       initialRoute: '/',
       onGenerateRoute: _getRoute,
