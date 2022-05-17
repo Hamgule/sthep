@@ -1,17 +1,52 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sthep/config/palette.dart';
-import 'package:sthep/global/global.dart';
+import 'package:sthep/global/extensions/buttons.dart';
+import 'package:sthep/global/extensions/widgets.dart';
+import 'package:sthep/model/user/user.dart';
 import 'package:sthep/page/widget/profile.dart';
 
-class SideBar extends StatefulWidget {
+class SideBar extends StatelessWidget {
   const SideBar({Key? key}) : super(key: key);
-  @override
-  _SideBarState createState() => _SideBarState();
-}
 
-class _SideBarState extends State<SideBar> {
   @override
   Widget build(BuildContext context) {
+    TextEditingController nicknameController = TextEditingController();
+
+    Future inputNickname() async {
+      await showDialog(
+        context: context,
+        builder: (_) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5.0),
+            ),
+            titlePadding: EdgeInsets.zero,
+            title: Container(
+              padding: const EdgeInsets.all(30.0),
+              decoration: BoxDecoration(
+                color: Palette.bgColor.withOpacity(.3),
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(5.0),
+                  topRight: Radius.circular(5.0),
+                ),
+              ),
+              child: const SthepText('닉네임을 입력하세요.'),
+            ),
+            content: TextFormField(
+              controller: nicknameController,
+            ),
+            actions: [
+              TextButton(
+                child: const Text("확인"),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ],
+          );
+        },
+      );
+    }
+
     return Drawer(
       child: ListView(
         children: [
@@ -25,18 +60,39 @@ class _SideBarState extends State<SideBar> {
                   Container(
                     padding: const EdgeInsets.all(20.0),
                     alignment: Alignment.centerLeft,
-                    child: myText('나의 정보', 20.0, Palette.fontColor2),
+                    child: const SthepText('나의 정보', color: Palette.fontColor2),
                   ),
                   const SizedBox(height: 50.0),
-                  InkWell(
-                    onTap: () {},
-                    child: Row(
-                      children: [
-                        profile(tempUser),
-                        const Expanded(child: SizedBox()),
-                        settingButton(() {}),
-                      ],
-                    ),
+                  Consumer<SthepUser>(
+                    builder: (context, user, _) {
+                      return user.logged ? InkWell(
+                        onTap: () {},
+                        child: Row(
+                          children: [
+                            profile(user),
+                            const Expanded(child: SizedBox()),
+                            SettingButton(onPressed: () {}),
+                          ],
+                        ),
+                      ) : InkWell(
+                        onTap: () async {
+                          await user.sthepLogin();
+                          await inputNickname();
+                          user.setNickname(nicknameController.text);
+                          user.updateDB();
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(vertical: 10.0),
+                              child: const SthepText('GOOGLE 로그인'),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
                   ),
                 ],
               ),

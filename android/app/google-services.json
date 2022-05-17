@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "104900709052",
+    "project_id": "sthep-7ea14",
+    "storage_bucket": "sthep-7ea14.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:104900709052:android:31026ce54d8f3189545eb9",
+        "android_client_info": {
+          "package_name": "com.example.sthep"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "104900709052-7cd2hsm9k45ocuqvi7puk968nrv284qq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkwDd5a18RigK6bopSPV0VRY5oDVWyXeo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "104900709052-7cd2hsm9k45ocuqvi7puk968nrv284qq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

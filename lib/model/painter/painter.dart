@@ -1,6 +1,3 @@
-import 'dart:math';
-import 'dart:ui';
-
 import 'package:sthep/model/painter/dot.dart';
 import 'package:sthep/model/painter/history.dart';
 import 'package:flutter/material.dart';
@@ -50,7 +47,7 @@ class Painter {
   }
 
   void erase(Offset offset) {
-    const eraserSize = 15.0;
+    // const eraserSize = 15.0;
 
     // for (int i = lines.length; i > 0; i--) {
     //   for (Dot dot in lines[i - 1]) {

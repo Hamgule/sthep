@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:sthep/config/palette.dart';
-import 'package:sthep/global/global.dart';
+import 'package:sthep/global/extensions/widgets.dart';
+import 'package:sthep/global/materials.dart';
 import 'package:sthep/page/main/answer/answer.dart';
-import 'package:sthep/page/main/home/home_materials.dart';
 import 'package:sthep/page/main/home/home.dart';
 import 'package:sthep/page/main/my/my.dart';
 import 'package:sthep/page/main/my/my_materials.dart';
@@ -17,18 +17,18 @@ class MainPage extends StatefulWidget {
   State<MainPage> createState() => _MainPageState();
 }
 
-const pages = [
-  HomePage(),
-  QuestionPage(),
-  AnswerPage(),
-  NotificationPage(),
-  MyPage(),
-];
-
 class _MainPageState extends State<MainPage> {
 
   double iconSize = 38.0;
   int pageIndex = 0;
+
+  List<Widget> pages = const [
+    HomePage(),
+    QuestionPage(),
+    AnswerPage(),
+    NotificationPage(),
+    MyPage(),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +36,7 @@ class _MainPageState extends State<MainPage> {
     screenSize = MediaQuery.of(context).size;
 
     return Scaffold(
-      appBar: pageIndex < 4 ? mainPageAppBar : myPageAppBar,
+      appBar: myPageAppBar,
       // appBar: mainPageAppBar,
       endDrawer: const SideBar(),
       body: pages[pageIndex],
@@ -52,7 +52,11 @@ class _MainPageState extends State<MainPage> {
       Icon(Icons.chat_bubble_outline, size: size, color: color),
       Padding(
         padding: const EdgeInsets.only(bottom: 5.0),
-        child: myText(qoa, iconSize * 0.3, color, bold: true),
+        child: SthepText(
+          qoa, size: iconSize * 0.3,
+          color: color,
+          bold: true,
+        ),
       ),
     ],
   );

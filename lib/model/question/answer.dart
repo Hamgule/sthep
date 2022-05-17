@@ -1,16 +1,18 @@
 import 'package:sthep/model/painter/painter.dart';
-import 'package:sthep/model/question/question.dart';
-import 'package:sthep/model/user/user.dart';
 
 class Answer {
   late int id;
-  late User answerer;
-  late Painter? painter;
-  late Question question;
+  late String answererUid;
+  late String questionId;
 
+  Painter? painter;
   bool adopted = false;
 
-  Answer({required this.id, required this.answerer, required this.question});
+  Answer({
+    required this.id,
+    required this.answererUid,
+    required this.questionId,
+  });
 
   void adopt() => adopted = true;
 }

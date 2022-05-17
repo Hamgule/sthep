@@ -1,33 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:sthep/global/global.dart';
-import 'package:sthep/model/user/user.dart';
+import 'package:sthep/global/extensions/widgets.dart';
 import 'package:sthep/config/palette.dart';
-import 'package:sthep/model/question/question.dart';
-import 'package:sthep/model/question/answer.dart';
-
-bool isGrid = true;
-User tempUser = User(
-  id: 'zihoo1234',
-  name: '양지후',
-  nickname: 'zihoo',
-  password: '',
-);
-
-Question tempQuestion = Question(
-  id: 1,
-  title: "이거 모르겠어요..",
-  questioner: tempUser,
-  image: Image.asset(
-    'assets/images/math.jpeg',
-    height: 200.0,
-  ),
-);
-
-Answer tempAnswer = Answer(
-  id: 1,
-  answerer: tempUser,
-  question: tempQuestion,
-);
+import 'package:sthep/page/main/home/home_materials.dart';
 
 class Notifications extends StatelessWidget {
   const Notifications({Key? key}) : super(key: key);
@@ -48,7 +22,7 @@ class Notifications extends StatelessWidget {
                 child: Container(
                   width: 12,
                   height: 12,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: Palette.adoptNot,
                     shape: BoxShape.circle,
                   ),
@@ -61,8 +35,8 @@ class Notifications extends StatelessWidget {
                   color: const Color(0xff5F68B7).withOpacity(0.5),
                   shape: BoxShape.circle,
                 ),
-                child: Align(
-                    child: myText('Q', 20.0, Colors.white),
+                child: const Align(
+                    child: SthepText('Q', color: Colors.white),
                     alignment: Alignment.center),
               ),
               SizedBox(
@@ -73,33 +47,47 @@ class Notifications extends StatelessWidget {
                     children: [
                       Align(
                         alignment: Alignment.centerLeft,
-                        child: myText('#${tempQuestion.id}', 15.0, Colors.grey.withOpacity(0.7)),
+                        child: SthepText(
+                          '#${tempQuestion.id}', size: 15.0,
+                          color: Colors.grey.withOpacity(0.7),
+                        ),
                       ),
                       Align(
                         alignment: Alignment.centerLeft,
-                        child: myText(tempQuestion.title, 25.0, Colors.grey),
+                        child: SthepText(
+                          tempQuestion.title,
+                          size: 25.0,
+                          color: Colors.grey,
+                        ),
                       ),
                     ],
                   ),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 width: 600,
                 height: 50,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                  padding: EdgeInsets.symmetric(horizontal: 10.0),
                   child: Align(
-                      child: myText('새로운 답변이 달렸습니다.', 25.0, Colors.black),
+                      child: SthepText(
+                        '새로운 답변이 달렸습니다.',
+                        size: 25.0,
+                      ),
                       alignment: Alignment.centerLeft),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 width: 100,
                 height: 50,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                  padding: EdgeInsets.symmetric(horizontal: 30.0),
                   child: Align(
-                      child: myText('5분전', 15.0, Palette.hyperColor),
+                      child: SthepText(
+                        '5분전',
+                        size: 15.0,
+                        color: Palette.hyperColor,
+                      ),
                       alignment: Alignment.centerLeft),
                 ),
               ),
