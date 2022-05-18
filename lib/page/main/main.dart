@@ -8,7 +8,9 @@ import 'package:sthep/page/main/my/my.dart';
 import 'package:sthep/page/main/my/my_materials.dart';
 import 'package:sthep/page/main/notification/notification.dart';
 import 'package:sthep/page/main/question/question.dart';
+import 'package:sthep/page/upload/upload.dart';
 import 'package:sthep/page/widget/sidebar.dart';
+
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -41,6 +43,13 @@ class _MainPageState extends State<MainPage> {
       endDrawer: const SideBar(),
       body: pages[pageIndex],
       bottomNavigationBar: _buildBottomBar(context),
+      floatingActionButton: pageIndex == 0 ? FloatingActionButton(
+        onPressed: () {
+          const UploadPage();
+        },
+        child: const Icon(Icons.add),
+        backgroundColor: Palette.hyperColor,
+      ) : null,
     );
   }
 

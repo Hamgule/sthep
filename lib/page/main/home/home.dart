@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sthep/global/global.dart';
 import 'package:sthep/page/main/home/home_materials.dart';
+import 'package:sthep/config/palette.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -29,6 +30,7 @@ class _HomePageState extends State<HomePage> {
             }),
           ),
         ),
+
       ],
     );
   }
