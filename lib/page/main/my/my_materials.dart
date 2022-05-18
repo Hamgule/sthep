@@ -1,17 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:sthep/config/palette.dart';
-import 'package:sthep/global/global.dart';
+import 'package:sthep/global/extensions/widgets.dart';
+import 'package:sthep/global/materials.dart';
 import 'package:sthep/model/question/question.dart';
 import 'package:sthep/model/user/exp.dart';
 import 'package:sthep/model/user/user.dart';
-import 'package:sthep/page/main/my/my.dart';
 import 'package:sthep/page/widget/profile.dart';
+
+import 'my.dart';
 
 PreferredSizeWidget myPageAppBar = AppBar(
   backgroundColor: Palette.appbarColor,
   foregroundColor: Palette.iconColor,
   centerTitle: false,
-  title: myText('마이페이지', 25.0, Palette.iconColor,),
+  title: const SthepText(
+    '마이페이지',
+    size: 25.0,
+    color: Palette.iconColor,
+  ),
   actions: [
     StatefulBuilder(
       builder: (context, setState) => IconButton(
@@ -22,7 +28,7 @@ PreferredSizeWidget myPageAppBar = AppBar(
   ],
 );
 
-Widget myInfoArea(User user) {
+Widget myInfoArea(SthepUser user) {
   return Container(
     width: screenSize.width * .8,
     height: screenSize.height * .25,
@@ -63,16 +69,24 @@ Widget expPoint(Exp exp) {
     child: Stack(
       children: [
         AnimatedPositioned(
-          duration: duration,
-          left: animFin ? percentBoxPosAfter : percentBoxPosBefore,
+          duration: MyPage.duration,
+          left: MyPage.animFin ? percentBoxPosAfter : percentBoxPosBefore,
           curve: Curves.fastOutSlowIn,
           child: SizedBox(
             width: percentBoxSize.width,
             height: percentBoxSize.height,
             child: Column(
               children: [
-                myText('${(100 * exp.exp).toStringAsFixed(1)}%', 15.0, Palette.hyperColor),
-                Icon(Icons.location_on, size: 15.0, color: Palette.hyperColor,),
+                SthepText(
+                  '${(100 * exp.exp).toStringAsFixed(1)}%',
+                  size: 15.0,
+                  color: Palette.hyperColor,
+                ),
+                const Icon(
+                  Icons.location_on,
+                  size: 15.0,
+                  color: Palette.hyperColor
+                ),
               ],
             ),
           ),
@@ -98,8 +112,8 @@ Widget expBar(Exp exp) {
         ),
       ),
       AnimatedPositioned(
-        duration: duration,
-        left: animFin ? 0 : -expBarWidth,
+        duration: MyPage.duration,
+        left: MyPage.animFin ? 0 : -expBarWidth,
         curve: Curves.fastOutSlowIn,
         child: Container(
           width: expBarWidth,
@@ -128,12 +142,16 @@ Widget questionCard(Question question) {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        myText('#${question.id}', 12.0, Palette.hyperColor),
+        SthepText(
+          '#${question.id}',
+          size: 12.0,
+          color: Palette.hyperColor
+        ),
         Card(
           child: InkWell(
             onTap: () {},
             child: ListTile(
-              title: myText(question.title, 20.0, Palette.fontColor1),
+              title: SthepText(question.title),
               trailing: Column(),
             ),
           ),
@@ -151,10 +169,18 @@ Widget myThreeActivities(List<Question> questions, String headerText) => Column(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            myText(headerText, 25.0, Palette.fontColor1, bold: true),
+            SthepText(
+              headerText,
+              size: 25.0,
+              bold: true,
+            ),
             TextButton(
               onPressed: () {},
-              child: myText('더 보기', 10.0, Palette.hyperColor),
+              child: const SthepText(
+                '더 보기',
+                size: 10.0,
+                color: Palette.hyperColor,
+              ),
             ),
           ],
         ),

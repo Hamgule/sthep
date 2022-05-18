@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:sthep/global/global.dart';
+import 'package:provider/provider.dart';
+import 'package:sthep/global/materials.dart';
 import 'package:sthep/page/main/home/home_materials.dart';
-import 'package:sthep/config/palette.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -17,21 +17,27 @@ class _HomePageState extends State<HomePage> {
 
     screenSize = MediaQuery.of(context).size;
 
-
-    return Column(
-      children: [
-        const Ranking(),
-        Expanded(
-          child: GridView.count(
-            padding: const EdgeInsets.all(30.0),
-            crossAxisCount: 3,
-            children: List.generate(100, (index) {
-              return const QuestionCard();
-            }),
-          ),
-        ),
-
-      ],
+    return Consumer<Materials>(
+      builder: (context, home, _) {
+        return Column(
+          children: [
+            const Ranking(),
+            Expanded(
+              child: home.isGrid ? GridView.count(
+                padding: const EdgeInsets.all(30.0),
+                crossAxisCount: 3,
+                children: List.generate(100, (index) {
+                  return const QuestionCard();
+                }),
+              ) : ListView.builder(
+                itemBuilder: (context, index) {
+                  return const QuestionCard();
+                },
+              ),
+            ),
+          ],
+        );
+      }
     );
   }
 }

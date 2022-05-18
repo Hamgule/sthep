@@ -1,58 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:sthep/global/global.dart';
-import 'package:sthep/model/user/user.dart';
+import 'package:sthep/global/extensions/icons.dart';
+import 'package:sthep/global/extensions/widgets.dart';
 import 'package:sthep/config/palette.dart';
 import 'package:sthep/model/question/question.dart';
+import 'package:sthep/model/user/user.dart';
 import 'package:sthep/page/widget/profile.dart';
 
-bool isGrid = true;
-User tempUser = User(
-  id: 'zihoo1234',
+SthepUser tempUser = SthepUser(
+  uid: 'zihoo1234',
   name: '양지후',
+  email: 'asdf@asdf.com',
   nickname: 'zihoo',
-  password: '',
 );
 
 Question tempQuestion = Question(
   id: 1,
-  title: "2016년도 수능 알려주세요..",
-  questioner: tempUser,
-  image: Image.asset(
-    'assets/images/math.jpeg',
-    height: 200.0,
-  ),
+  title: '2016년도 수능 알려주세요..',
+  imageUrl: 'assets/images/math.jpeg',
+  questionerUid: tempUser.uid!,
 );
 
-PreferredSizeWidget mainPageAppBar = AppBar(
-  backgroundColor: Palette.appbarColor,
-  foregroundColor: Palette.iconColor,
-  title: Image.asset(
-    'assets/images/logo_horizontal.png',
-    fit: BoxFit.contain,
-    width: 120,
-  ),
-  actions: [
-    Builder(builder: (context) {
-      return IconButton(
-          onPressed: () => Navigator.pushNamed(context, '/My'),
-          icon: const Icon(Icons.search));
-    }),
-    StatefulBuilder(
-      builder: (context, setState) => IconButton(
-        onPressed: () => setState(() => isGrid = !isGrid),
-        icon: Icon(
-          isGrid ? Icons.list_alt : Icons.window,
-        ),
-      ),
-    ),
-    StatefulBuilder(
-      builder: (context, setState) => IconButton(
-        onPressed: () => Scaffold.of(context).openEndDrawer(),
-        icon: const Icon(Icons.menu),
-      ),
-    ),
-  ],
-);
+
 
 class Ranking extends StatefulWidget {
   const Ranking({Key? key}) : super(key: key);
@@ -111,9 +79,13 @@ class _RankingState extends State<Ranking> with SingleTickerProviderStateMixin {
               height: 100.0,
               child: Row(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 150.0),
-                    child: myText('오늘의 최다 답변자', 20.0, Palette.fontColor1),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 150.0),
+                    child: SthepText(
+                      '오늘의 최다 답변자',
+                      size: 20.0,
+                      color: Palette.fontColor1,
+                    ),
                   ),
                   Container(
                     width: 30,
@@ -172,18 +144,18 @@ class QuestionCard extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
-                      myText('#수학', 10.0, Palette.hyperColor),
+                      const SthepText('#수학', size: 10.0, color: Palette.hyperColor),
                       const SizedBox(width: 8),
-                      myText('#수능', 10.0, Palette.hyperColor),
+                      const SthepText('#수능', size: 10.0, color: Palette.hyperColor),
                       Expanded(
                         child: Container(),
                       ),
-                      myText('5 min ago', 10.0, Colors.grey),
+                      const SthepText('5 min ago', size: 10.0, color: Colors.grey),
                     ],
                   ),
                   Row(
                     children: <Widget>[
-                      myText(tempQuestion.title, 20.0, Colors.black),
+                      SthepText(tempQuestion.title),
                       const SizedBox(height: 50.0),
                     ],
                   ),
@@ -192,7 +164,7 @@ class QuestionCard extends StatelessWidget {
                       Expanded(child: simpleProfile(tempUser)),
                       const Icon(Icons.comment_rounded, size: 20.0),
                       const SizedBox(width: 5.0),
-                      myText('5', 15.0, Colors.black),
+                      const SthepText('5', size: 15.0),
                     ],
                   ),
                 ],
@@ -200,12 +172,24 @@ class QuestionCard extends StatelessWidget {
             ),
           ),
         ),
-        Positioned(
+        const Positioned(
           right: 30,
           top: 10,
-          child: adoptState,
+          child: AdoptStateIcon(),
         ),
       ],
+    );
+  }
+}
+
+
+class QuestionList extends StatelessWidget {
+  const QuestionList({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const ListTile(
+
     );
   }
 }

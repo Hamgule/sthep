@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>104900709052-8c5tus0vq4ojbe8vdfju5hr1sa7gp56d.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.104900709052-8c5tus0vq4ojbe8vdfju5hr1sa7gp56d</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBxT-MOiCTr1_B_1mGWqW5KUKzcKN0YKkk</string>
+	<key>GCM_SENDER_ID</key>
+	<string>104900709052</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.sthep</string>
+	<key>PROJECT_ID</key>
+	<string>sthep-7ea14</string>
+	<key>STORAGE_BUCKET</key>
+	<string>sthep-7ea14.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:104900709052:ios:0ce64681fa09356c545eb9</string>
+</dict>
+</plist>
