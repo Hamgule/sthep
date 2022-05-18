@@ -45,7 +45,7 @@ class _MainPageState extends State<MainPage> {
       bottomNavigationBar: _buildBottomBar(context),
       floatingActionButton: pageIndex == 0 ? FloatingActionButton(
         onPressed: () {
-          const UploadPage();
+          //const UploadPage();
         },
         child: const Icon(Icons.add),
         backgroundColor: Palette.hyperColor,

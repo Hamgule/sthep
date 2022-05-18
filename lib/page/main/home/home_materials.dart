@@ -18,6 +18,7 @@ Question tempQuestion = Question(
   title: '2016년도 수능 알려주세요..',
   imageUrl: 'assets/images/math.jpeg',
   questionerUid: tempUser.uid!,
+  regDate: DateTime.now(),
 );
 
 

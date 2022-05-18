@@ -21,6 +21,7 @@ class Question {
     required this.title,
     required this.questionerUid,
     this.imageUrl,
+    required this.regDate,
   });
 
   /// methods

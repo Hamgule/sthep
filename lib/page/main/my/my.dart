@@ -39,7 +39,8 @@ class _MainPageState extends State<MyPage> {
         id: index,
         title: '$index',
         questionerUid: '',
-      ),
+        regDate: DateTime.now(),
+    ),
     );
 
     return Column(
