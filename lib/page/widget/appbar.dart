@@ -1,14 +1,58 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sthep/config/palette.dart';
+import 'package:sthep/global/extensions/widgets.dart';
 import 'package:sthep/global/materials.dart';
 import 'package:sthep/model/logo/logo.dart';
+import 'package:sthep/model/user/user.dart';
 
-class HomeAppBar extends StatelessWidget {
+const double appbarHeight = 60.0;
+
+class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   const HomeAppBar({Key? key}) : super(key: key);
 
   @override
+  Size get preferredSize => const Size.fromHeight(appbarHeight);
+
+  @override
   Widget build(BuildContext context) {
+    SthepUser user = Provider.of<SthepUser>(context);
+
+    TextEditingController nicknameController = TextEditingController();
+
+    Future inputNickname() async {
+      await showDialog(
+        context: context,
+        builder: (_) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5.0),
+            ),
+            titlePadding: EdgeInsets.zero,
+            title: Container(
+              padding: const EdgeInsets.all(30.0),
+              decoration: BoxDecoration(
+                color: Palette.bgColor.withOpacity(.3),
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(5.0),
+                  topRight: Radius.circular(5.0),
+                ),
+              ),
+              child: const SthepText('닉네임을 입력하세요.'),
+            ),
+            content: TextFormField(
+              controller: nicknameController,
+            ),
+            actions: [
+              TextButton(
+                child: const Text("확인"),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ],
+          );
+        },
+      );
+    }
 
     Widget searchButton() => StatefulBuilder(
       builder: (context, setState) {
@@ -31,9 +75,29 @@ class HomeAppBar extends StatelessWidget {
     }
 
     Widget drawerButton() {
+      return StatefulBuilder(
+        builder: (context, setState) => IconButton(
+          onPressed: () => Scaffold.of(context).openEndDrawer(),
+          icon: const Icon(Icons.menu),
+        ),
+      );
+    }
+
+    Widget loginButton() {
       return IconButton(
-        onPressed: () => Scaffold.of(context).openDrawer(),
-        icon: const Icon(Icons.menu),
+        onPressed: () async {
+          await user.sthepLogin();
+          await inputNickname();
+          user.setNickname(nicknameController.text);
+          user.updateDB();
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              duration: const Duration(milliseconds: 1000),
+              content: Text('\'${user.nickname}\'님 환영합니다.'),
+            ),
+          );
+        }, icon: const Icon(Icons.login),
       );
     }
 
@@ -48,8 +112,77 @@ class HomeAppBar extends StatelessWidget {
       actions: [
         searchButton(),
         listGridToggleButton(),
-        drawerButton(),
+        user.logged ? drawerButton() : loginButton(),
       ],
     );
   }
+}
+
+class UploadAppBar extends StatelessWidget implements PreferredSizeWidget {
+  const UploadAppBar({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      backgroundColor: Palette.appbarColor,
+      foregroundColor: Palette.iconColor,
+      centerTitle: false,
+      title: const SthepText(
+        '질문하기',
+        size: 25.0,
+        color: Palette.iconColor,
+      ),
+      leading: Consumer<Materials>(
+        builder: (context, upload, _) {
+          return IconButton(
+            onPressed: () => upload.setPageIndex(upload.pageIndex),
+            icon: const Icon(Icons.arrow_back_ios),
+          );
+        }
+      ),
+      actions: [
+        StatefulBuilder(
+          builder: (context, setState) => IconButton(
+            onPressed: () => Scaffold.of(context).openEndDrawer(),
+            icon: const Icon(Icons.menu),
+          ),
+        ),
+      ],
+    );
+  }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(appbarHeight);
+}
+
+
+class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
+  const MainAppBar({Key? key, required this.title}) : super(key: key);
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      backgroundColor: Palette.appbarColor,
+      foregroundColor: Palette.iconColor,
+      centerTitle: false,
+      title: SthepText(
+        title,
+        size: 25.0,
+        color: Palette.iconColor,
+      ),
+      actions: [
+        StatefulBuilder(
+          builder: (context, setState) => IconButton(
+            onPressed: () => Scaffold.of(context).openEndDrawer(),
+            icon: const Icon(Icons.menu),
+          ),
+        ),
+      ],
+    );
+  }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(appbarHeight);
 }

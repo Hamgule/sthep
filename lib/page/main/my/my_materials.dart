@@ -188,7 +188,7 @@ Widget myThreeActivities(List<Question> questions, String headerText) => Column(
       const SizedBox(height: 10.0),
       SizedBox(
         width: screenSize.width * .35,
-        height: screenSize.height * .35,
+        height: screenSize.height * .30,
         child: ListView.builder(
           physics: const NeverScrollableScrollPhysics(),
           itemCount: questions.length,

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sthep/global/extensions/icons.dart';
 import 'package:sthep/model/painter/painter.dart';
 
 class Question {
@@ -22,6 +23,7 @@ class Question {
     required this.questionerUid,
     required this.regDate,
     this.imageUrl,
+    this.adoptedAnswerId,
   });
 
   /// methods
@@ -33,6 +35,7 @@ class Question {
     tags = data['tags'].cast<String>();
     regDate = (data['regDate'] as Timestamp).toDate();
     questionerUid = data['questionerUid'];
+    adoptedAnswerId = data['adoptedAnswerId'];
   }
 
   Map<String, dynamic> toJson() => {
@@ -41,5 +44,6 @@ class Question {
     'tags': tags,
     'regDate': regDate,
     'questionerUid': questionerUid,
+    'adoptedAnswerId': adoptedAnswerId,
   };
 }

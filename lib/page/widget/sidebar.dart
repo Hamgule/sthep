@@ -11,41 +11,6 @@ class SideBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController nicknameController = TextEditingController();
-
-    Future inputNickname() async {
-      await showDialog(
-        context: context,
-        builder: (_) {
-          return AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(5.0),
-            ),
-            titlePadding: EdgeInsets.zero,
-            title: Container(
-              padding: const EdgeInsets.all(30.0),
-              decoration: BoxDecoration(
-                color: Palette.bgColor.withOpacity(.3),
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(5.0),
-                  topRight: Radius.circular(5.0),
-                ),
-              ),
-              child: const SthepText('닉네임을 입력하세요.'),
-            ),
-            content: TextFormField(
-              controller: nicknameController,
-            ),
-            actions: [
-              TextButton(
-                child: const Text("확인"),
-                onPressed: () => Navigator.pop(context),
-              ),
-            ],
-          );
-        },
-      );
-    }
 
     return Drawer(
       child: ListView(
@@ -76,10 +41,10 @@ class SideBar extends StatelessWidget {
                         ),
                       ) : InkWell(
                         onTap: () async {
-                          await user.sthepLogin();
-                          await inputNickname();
-                          user.setNickname(nicknameController.text);
-                          user.updateDB();
+                          // await user.sthepLogin();
+                          // await inputNickname();
+                          // user.setNickname(nicknameController.text);
+                          // user.updateDB();
                         },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -113,9 +78,6 @@ class SideBar extends StatelessWidget {
             indent: 20.0,
             endIndent: 20.0,
           ),
-          const ListTile(title: Text('아이디 변경')),
-          const ListTile(title: Text('비밀번호 변경')),
-          const ListTile(title: Text('이메일 변경')),
           const ListTile(title: Text('로그아웃')),
           const ListTile(title: Text('회원 탈퇴')),
           const  ListTile(title: Text('내 활동')),
