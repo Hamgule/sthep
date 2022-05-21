@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sthep/firebase/firebase.dart';
 import 'package:sthep/global/materials.dart';
+import 'package:sthep/model/question/question.dart';
 import 'package:sthep/page/main/home/home_materials.dart';
 
 class HomePage extends StatefulWidget {
@@ -16,6 +18,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
 
     screenSize = MediaQuery.of(context).size;
+    Materials materials = Provider.of<Materials>(context);
 
     return Consumer<Materials>(
       builder: (context, home, _) {
@@ -23,17 +26,21 @@ class _HomePageState extends State<HomePage> {
           children: [
             const Ranking(),
             Expanded(
-              child: home.isGrid ? GridView.count(
-                padding: const EdgeInsets.all(30.0),
-                crossAxisCount: 3,
-                children: List.generate(100, (index) {
-                  return const QuestionCard();
-                }),
-              ) : ListView.builder(
-                itemBuilder: (context, index) {
-                  return const QuestionCard();
-                },
-              ),
+              child: MyFirebase.readContinuously('questions', (context, snapshot) {
+                materials.questions = [];
+                snapshot.data?.docs.forEach((doc) {
+                  var data = doc.data()! as Map<String, dynamic>;
+                  Question q = Question.fromJson(data);
+                  materials.addQuestion(q);
+                });
+                return GridView.count(
+                  padding: const EdgeInsets.all(30.0),
+                  crossAxisCount: 3,
+                  children: materials.questions.map(
+                  (question) => QuestionCard(question: question),
+                  ).toList(),
+                );
+              }),
             ),
           ],
         );

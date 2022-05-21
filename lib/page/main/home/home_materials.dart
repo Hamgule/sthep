@@ -3,6 +3,7 @@ import 'package:sthep/global/extensions/icons.dart';
 import 'package:sthep/global/extensions/widgets.dart';
 import 'package:sthep/config/palette.dart';
 import 'package:sthep/model/question/question.dart';
+import 'package:sthep/model/time/time.dart';
 import 'package:sthep/model/user/user.dart';
 import 'package:sthep/page/widget/profile.dart';
 
@@ -35,7 +36,7 @@ class _RankingState extends State<Ranking> with SingleTickerProviderStateMixin {
   late Animation _animation;
 
   // animation control variables
-  bool animate = true;
+  bool animate = false;
   int aniVelocity = 15000;
 
   @override
@@ -122,7 +123,12 @@ class _RankingState extends State<Ranking> with SingleTickerProviderStateMixin {
 }
 
 class QuestionCard extends StatelessWidget {
-  const QuestionCard({Key? key}) : super(key: key);
+  const QuestionCard({
+    Key? key,
+    required this.question,
+  }) : super(key: key);
+
+  final Question question;
 
   @override
   Widget build(BuildContext context) {
@@ -145,18 +151,16 @@ class QuestionCard extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
-                      const SthepText('#수학', size: 10.0, color: Palette.hyperColor),
-                      const SizedBox(width: 8),
-                      const SthepText('#수능', size: 10.0, color: Palette.hyperColor),
-                      Expanded(
-                        child: Container(),
-                      ),
-                      const SthepText('5 min ago', size: 10.0, color: Colors.grey),
+                      if (question.tags.isNotEmpty)
+                      for (String tag in question.tags)
+                      SthepText('#$tag  ', size: 10.0, color: Palette.hyperColor),
+                      Expanded(child: Container()),
+                      SthepText(Time(t: question.regDate).toString(), size: 10.0, color: Colors.grey),
                     ],
                   ),
                   Row(
                     children: <Widget>[
-                      SthepText(tempQuestion.title),
+                      SthepText(question.title),
                       const SizedBox(height: 50.0),
                     ],
                   ),
