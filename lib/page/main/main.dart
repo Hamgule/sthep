@@ -31,7 +31,7 @@ class _MainPageState extends State<MainPage> {
     NotificationPage(),
     MyPage(),
   ];
-
+  bool upload = false;
   @override
   Widget build(BuildContext context) {
 
@@ -41,11 +41,13 @@ class _MainPageState extends State<MainPage> {
       appBar: myPageAppBar,
       // appBar: mainPageAppBar,
       endDrawer: const SideBar(),
-      body: pages[pageIndex],
+      body: upload ? const UploadPage() : pages[pageIndex],
       bottomNavigationBar: _buildBottomBar(context),
       floatingActionButton: pageIndex == 0 ? FloatingActionButton(
         onPressed: () {
-          //const UploadPage();
+          setState(() {
+            upload = true;
+          });
         },
         child: const Icon(Icons.add),
         backgroundColor: Palette.hyperColor,
