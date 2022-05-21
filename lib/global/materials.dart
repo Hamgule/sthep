@@ -9,13 +9,10 @@ class Materials with ChangeNotifier {
 
   void addQuestion(Question q) {
     questions.add(q);
-    notifyListeners();
+    // notifyListeners();
   }
 
-  // Homepage
   bool isGrid = true;
-
-  /// methods
 
   // Homepage
   void toggleGrid() {
