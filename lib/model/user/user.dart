@@ -39,8 +39,10 @@ class SthepUser with ChangeNotifier {
     uid = user.uid;
     name = user.displayName;
     email = user.email;
-    nickname = '';
     logged = true;
+
+    var loadData = await MyFirebase.readOnce('users', uid!);
+    nickname = loadData?['nickname'];
 
     notifyListeners();
   }

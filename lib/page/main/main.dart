@@ -45,17 +45,26 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     screenSize = MediaQuery.of(context).size;
+    SthepUser user = Provider.of<SthepUser>(context, listen: false);
 
     return Consumer<Materials>(
-      builder: (context, upload, _) {
+      builder: (context, main, _) {
         return Scaffold(
-          appBar: appbars[upload.newPageIndex],
+          appBar: appbars[main.newPageIndex],
           endDrawer: const SideBar(),
-          body: pages[upload.newPageIndex],
+          body: pages[main.newPageIndex],
           bottomNavigationBar: _buildBottomBar(context),
-          floatingActionButton: upload.pageIndex == 0 ? FloatingActionButton(
-            onPressed: () => setState(() => upload.setPageIndex(5)),
-            child: const Icon(Icons.add),
+          floatingActionButton: main.pageIndex == 0 ? FloatingActionButton(
+            onPressed: () {
+              if (!user.logged) {
+                showMySnackBar(context, '로그인이 필요합니다.');
+                return;
+              }
+              main.setPageIndex(5);
+            },
+            child: Icon(
+              main.newPageIndex == 5 ? Icons.add : Icons.edit,
+            ),
             backgroundColor: Palette.hyperColor,
           ) : null,
         );
@@ -80,20 +89,15 @@ class _MainPageState extends State<MainPage> {
 
   Widget _buildBottomBar(BuildContext context) {
     return Consumer<Materials>(
-      builder: (context, upload, _) {
-        void setIndex(int index) {
-          SthepUser user = Provider.of<SthepUser>(context, listen: false);
+      builder: (context, main, _) {
+        SthepUser user = Provider.of<SthepUser>(context, listen: false);
 
+        void setIndex(int index) {
           if (user.logged || index == 0) {
-            upload.setPageIndex(index);
+            main.setPageIndex(index);
             return;
           }
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              duration: Duration(milliseconds: 500),
-              content: Text('먼저 로그인이 필요합니다.'),
-            ),
-          );
+          showMySnackBar(context, '로그인이 필요합니다.');
         }
 
         return BottomNavigationBar(
@@ -110,14 +114,14 @@ class _MainPageState extends State<MainPage> {
             BottomNavigationBarItem(
               icon: iconQnA(
                 'Q', iconSize,
-                Palette.iconColor.withOpacity(upload.pageIndex == 1 ? 1 : .3),
+                Palette.iconColor.withOpacity(main.pageIndex == 1 ? 1 : .3),
               ),
               label: 'Question',
             ),
             BottomNavigationBarItem(
               icon: iconQnA(
                 'A', iconSize,
-                Palette.iconColor.withOpacity(upload.pageIndex == 2 ? 1 : .3),
+                Palette.iconColor.withOpacity(main.pageIndex == 2 ? 1 : .3),
               ),
               label: 'Answer',
             ),
@@ -130,7 +134,7 @@ class _MainPageState extends State<MainPage> {
               label: 'My',
             ),
           ],
-          currentIndex: upload.newPageIndex < 5 ? upload.newPageIndex : upload.pageIndex,
+          currentIndex: main.newPageIndex < 5 ? main.newPageIndex : main.pageIndex,
           onTap: setIndex,
         );
       }

@@ -5,7 +5,7 @@ late Size screenSize;
 
 class Materials with ChangeNotifier {
 
-  /// upload
+  /// main
   int pageIndex = 0;
   int newPageIndex = 0;
 
@@ -18,9 +18,8 @@ class Materials with ChangeNotifier {
   ///
   List<Question> questions = [];
 
-  void addQuestion(Question q) {
-    questions.add(q);
-    // notifyListeners();
+  Question getQuestionById(int id) {
+    return questions.where((e) => e.id == id).toList().first;
   }
 
   /// Home
@@ -30,4 +29,9 @@ class Materials with ChangeNotifier {
     isGrid = !isGrid;
     notifyListeners();
   }
+
+  /// Upload
+  late String title;
+  List<String> tags = [];
+
 }

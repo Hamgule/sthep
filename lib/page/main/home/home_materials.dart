@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:sthep/firebase/firebase.dart';
 import 'package:sthep/global/extensions/icons.dart';
 import 'package:sthep/global/extensions/widgets.dart';
 import 'package:sthep/config/palette.dart';
+import 'package:sthep/global/materials.dart';
 import 'package:sthep/model/question/question.dart';
 import 'package:sthep/model/time/time.dart';
 import 'package:sthep/model/user/user.dart';
@@ -57,7 +60,6 @@ class _RankingState extends State<Ranking> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     _animation = CurvedAnimation(parent: _controller, curve: Curves.linear);
-
     _animation.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         _controller.repeat();
@@ -122,13 +124,28 @@ class _RankingState extends State<Ranking> with SingleTickerProviderStateMixin {
   }
 }
 
-class QuestionCard extends StatelessWidget {
+class QuestionCard extends StatefulWidget {
   const QuestionCard({
     Key? key,
     required this.question,
   }) : super(key: key);
 
   final Question question;
+
+  @override
+  State<QuestionCard> createState() => _QuestionCardState();
+}
+
+class _QuestionCardState extends State<QuestionCard> {
+  AdoptState state = AdoptState.notAnswered;
+
+  void changeState() {
+    if (widget.question.adoptedAnswerId != null) {
+      state = AdoptState.adopted;
+    } else if (widget.question.answerIds.isNotEmpty) {
+      state = AdoptState.notAdopted;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -151,16 +168,20 @@ class QuestionCard extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
-                      if (question.tags.isNotEmpty)
-                      for (String tag in question.tags)
+                      if (widget.question.tags.isNotEmpty)
+                      for (String tag in widget.question.tags)
                       SthepText('#$tag  ', size: 10.0, color: Palette.hyperColor),
                       Expanded(child: Container()),
-                      SthepText(Time(t: question.regDate).toString(), size: 10.0, color: Colors.grey),
+                      SthepText(
+                        Time(t: widget.question.regDate).toString(),
+                        size: 10.0,
+                        color: Colors.grey,
+                      ),
                     ],
                   ),
                   Row(
                     children: <Widget>[
-                      SthepText(question.title),
+                      SthepText(widget.question.title),
                       const SizedBox(height: 50.0),
                     ],
                   ),
@@ -177,16 +198,26 @@ class QuestionCard extends StatelessWidget {
             ),
           ),
         ),
-        const Positioned(
+        Positioned(
           right: 30,
           top: 10,
-          child: AdoptStateIcon(),
+          child: MyFirebase.readContinuously(
+            path: 'questions',
+            id: widget.question.idToString(),
+            builder: (context, snapshot) {
+              if (snapshot.data == null) return Container();
+              var loadData = snapshot.data.data();
+              Materials materials = Provider.of<Materials>(context);
+              materials.getQuestionById(loadData['id']);
+              changeState();
+              return AdoptStateIcon(state: state);
+            }
+          ),
         ),
       ],
     );
   }
 }
-
 
 class QuestionList extends StatelessWidget {
   const QuestionList({Key? key}) : super(key: key);

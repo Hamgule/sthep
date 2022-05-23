@@ -87,8 +87,10 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
       return IconButton(
         onPressed: () async {
           await user.sthepLogin();
-          await inputNickname();
-          user.setNickname(nicknameController.text);
+          if (user.nickname == null) {
+            await inputNickname();
+            user.setNickname(nicknameController.text.trim());
+          }
           user.updateDB();
 
           ScaffoldMessenger.of(context).showSnackBar(

@@ -23,7 +23,7 @@ class Notifications extends StatelessWidget {
                   width: 12,
                   height: 12,
                   decoration: const BoxDecoration(
-                    color: Palette.adoptNot,
+                    color: Palette.notAdopted,
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -56,7 +56,6 @@ class Notifications extends StatelessWidget {
                         alignment: Alignment.centerLeft,
                         child: SthepText(
                           tempQuestion.title,
-                          size: 25.0,
                           color: Colors.grey,
                         ),
                       ),

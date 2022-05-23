@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sthep/global/extensions/icons.dart';
 import 'package:sthep/model/painter/painter.dart';
 
 class Question {
@@ -35,6 +34,7 @@ class Question {
     tags = data['tags'].cast<String>();
     regDate = (data['regDate'] as Timestamp).toDate();
     questionerUid = data['questionerUid'];
+    answerIds = (data['answerIds'] ?? []).cast<String>();
     adoptedAnswerId = data['adoptedAnswerId'];
   }
 
@@ -44,6 +44,9 @@ class Question {
     'tags': tags,
     'regDate': regDate,
     'questionerUid': questionerUid,
+    'answerIds': answerIds,
     'adoptedAnswerId': adoptedAnswerId,
   };
+
+  String idToString() => '$id'.padLeft(3, '0');
 }

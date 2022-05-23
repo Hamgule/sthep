@@ -26,13 +26,16 @@ class _HomePageState extends State<HomePage> {
           children: [
             const Ranking(),
             Expanded(
-              child: MyFirebase.readContinuously('questions', (context, snapshot) {
-                materials.questions = [];
-                snapshot.data?.docs.forEach((doc) {
-                  var data = doc.data()! as Map<String, dynamic>;
-                  Question q = Question.fromJson(data);
-                  materials.addQuestion(q);
-                });
+              child: MyFirebase.readContinuously(
+                path: 'questions',
+                builder: (context, snapshot) {
+                  materials.questions = [];
+                  snapshot.data?.docs.forEach((doc) {
+                    var data = doc.data()! as Map<String, dynamic>;
+                    Question q = Question.fromJson(data);
+                    materials.questions.add(q);
+                  },
+                );
                 return GridView.count(
                   padding: const EdgeInsets.all(30.0),
                   crossAxisCount: 3,
