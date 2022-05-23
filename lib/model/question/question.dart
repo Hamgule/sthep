@@ -6,35 +6,35 @@ class Question {
   late int id;
   late String title;
   late String questionerUid;
-  late DateTime regDate;
+  DateTime? regDate = DateTime.now();
 
   List<String> tags = [];
-  List<String> answerIds = [];
+  List<int> answerIds = [];
 
   Painter? painter;
   String? imageUrl;
-  String? adoptedAnswerId;
+  int? adoptedAnswerId;
 
   /// constructor
   Question({
     required this.id,
-    required this.title,
+    this.title = '',
     required this.questionerUid,
-    required this.regDate,
+    this.regDate,
     this.imageUrl,
     this.adoptedAnswerId,
   });
 
   /// methods
-  void adopt(String id) => adoptedAnswerId ??= id;
+  void adopt(int id) => adoptedAnswerId ??= id;
 
   Question.fromJson(Map<String, dynamic> data) {
     id = data['id'];
     title = data['title'];
     tags = data['tags'].cast<String>();
-    regDate = (data['regDate'] as Timestamp).toDate();
+    regDate = (data['regDate'] ?? Timestamp.now()).toDate();
     questionerUid = data['questionerUid'];
-    answerIds = (data['answerIds'] ?? []).cast<String>();
+    answerIds = (data['answerIds'] ?? []).cast<int>();
     adoptedAnswerId = data['adoptedAnswerId'];
   }
 

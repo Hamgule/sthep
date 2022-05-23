@@ -50,12 +50,12 @@ class _UploadPageState extends State<UploadPage> {
                       hintText: '제목을 입력하세요',
                     ),
                     onChanged: (text) {
-                      upload.title = text;
+                      upload.newQuestion.title = text;
                     },
                   ),
                   const SizedBox(height: 20.0),
                   TagEditor(
-                    length: upload.tags.length,
+                    length: upload.newQuestion.tags.length,
                     controller: tagCont,
                     focusNode: _focusNode,
                     delimiters: const [',', ' '],
@@ -64,8 +64,8 @@ class _UploadPageState extends State<UploadPage> {
                     onSubmitted: (outstandingValue) {
                       if (mounted) {
                         setState(() {
-                          if (!upload.tags.contains(outstandingValue)) {
-                            upload.tags.add(outstandingValue);
+                          if (!upload.newQuestion.tags.contains(outstandingValue)) {
+                            upload.newQuestion.tags.add(outstandingValue);
                           }
                         });
                       }
@@ -76,17 +76,21 @@ class _UploadPageState extends State<UploadPage> {
                     onTagChanged: (newValue) {
                       if (mounted) {
                         setState(() {
-                          if (!upload.tags.contains(newValue)) {
-                            upload.tags.add(newValue);
+                          if (!upload.newQuestion.tags.contains(newValue)) {
+                            upload.newQuestion.tags.add(newValue);
                           }
                         });
                       }
                     },
                     tagBuilder: (context, index) => _Chip(
                       index: index,
-                      label: upload.tags[index],
+                      label: upload.newQuestion.tags[index],
                       onDeleted: (index) {
-                        if (mounted) setState(() => upload.tags.removeAt(index));
+                        if (mounted) {
+                          setState(() {
+                            upload.newQuestion.tags.removeAt(index);
+                          });
+                        }
                       },
                     ),
                     // InputFormatters example, this disallow \ and /

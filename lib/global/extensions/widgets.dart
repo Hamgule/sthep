@@ -14,6 +14,7 @@ class SthepText extends StatelessWidget {
     this.color = Palette.fontColor1,
     this.bold = false,
     this.italic = false,
+    this.overflow = false,
   }) : super(key: key);
 
   final String text;
@@ -21,6 +22,7 @@ class SthepText extends StatelessWidget {
   final Color color;
   final bool bold;
   final bool italic;
+  final bool overflow;
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +35,8 @@ class SthepText extends StatelessWidget {
         fontWeight: bold ? FontWeight.bold : FontWeight.normal,
         fontStyle: italic ? FontStyle.italic : FontStyle.normal,
       ),
+      // overflow: overflow ? TextOverflow.ellipsis : TextOverflow.visible,
+      overflow: TextOverflow.ellipsis,
     );
   }
 }

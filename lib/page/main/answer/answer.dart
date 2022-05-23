@@ -68,7 +68,7 @@ class AnswerPage extends StatelessWidget {
               SizedBox(
                 width: 150,
                 child: SthepText(
-                  DateFormat('yyyy-MM-dd').format(question.regDate),
+                  DateFormat('yyyy-MM-dd').format(question.regDate!),
                   size: 17.0,
                 ),
               ),

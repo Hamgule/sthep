@@ -30,8 +30,5 @@ class Materials with ChangeNotifier {
     notifyListeners();
   }
 
-  /// Upload
-  late String title;
-  List<String> tags = [];
-
+  late Question newQuestion;
 }

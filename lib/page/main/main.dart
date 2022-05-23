@@ -1,8 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sthep/config/palette.dart';
+import 'package:sthep/firebase/firebase.dart';
 import 'package:sthep/global/extensions/widgets.dart';
 import 'package:sthep/global/materials.dart';
+import 'package:sthep/model/question/question.dart';
 import 'package:sthep/model/user/user.dart';
 import 'package:sthep/page/main/answer/answer.dart';
 import 'package:sthep/page/main/home/home.dart';
@@ -55,12 +58,32 @@ class _MainPageState extends State<MainPage> {
           body: pages[main.newPageIndex],
           bottomNavigationBar: _buildBottomBar(context),
           floatingActionButton: main.pageIndex == 0 ? FloatingActionButton(
-            onPressed: () {
+            onPressed: () async {
+              Map<String, dynamic>? data = await MyFirebase.readOnce('autoIncrement', 'question');
+              int nextId = data!['currentId'] + 1;
+
               if (!user.logged) {
                 showMySnackBar(context, '로그인이 필요합니다.');
                 return;
               }
-              main.setPageIndex(5);
+              if (main.newPageIndex == 0) {
+                main.setPageIndex(5);
+                main.newQuestion = Question(
+                  id: nextId,
+                  questionerUid: user.uid!,
+                );
+              } else if (main.newPageIndex == 5) {
+                Map<String, dynamic> addData = main.newQuestion.toJson();
+                addData['regDate'] = FieldValue.serverTimestamp();
+                MyFirebase.write(
+                  'questions',
+                  main.newQuestion.idToString(),
+                  addData,
+                );
+                main.setPageIndex(0);
+              }
+
+              MyFirebase.write('autoIncrement', 'question', {'currentId': nextId});
             },
             child: Icon(
               main.newPageIndex == 5 ? Icons.add : Icons.edit,
