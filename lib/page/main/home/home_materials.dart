@@ -22,7 +22,6 @@ Question tempQuestion = Question(
   title: '2016년도 수능 알려주세요..',
   imageUrl: 'assets/images/math.jpeg',
   questionerUid: tempUser.uid!,
-  regDate: DateTime.now(),
 );
 
 
@@ -166,14 +165,19 @@ class _QuestionCardState extends State<QuestionCard> {
                     height: 200.0,
                   ),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      if (widget.question.tags.isNotEmpty)
-                      for (String tag in widget.question.tags)
-                      SthepText('#$tag  ', size: 10.0, color: Palette.hyperColor),
-                      Expanded(child: Container()),
+                      widget.question.tags.isEmpty ? Container() :
+                      Flexible(
+                        child: SthepText(
+                          widget.question.tags.map((e) => '#$e').join('  '),
+                          size: 10.0,
+                          color: Palette.hyperColor,
+                          overflow: true,
+                        ),
+                      ),
                       SthepText(
-                        Time(t: widget.question.regDate).toString(),
+                        Time(t: widget.question.regDate!).toString(),
                         size: 10.0,
                         color: Colors.grey,
                       ),
