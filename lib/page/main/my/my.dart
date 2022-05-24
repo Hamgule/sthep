@@ -4,7 +4,8 @@ import 'package:sthep/global/materials.dart';
 import 'package:sthep/model/question/question.dart';
 import 'package:sthep/page/main/home/home_materials.dart';
 import 'package:sthep/page/main/my/my_materials.dart';
-
+import 'package:sthep/firebase/firebase.dart';
+import 'package:sthep/model/user/user.dart';
 
 class MyPage extends StatefulWidget {
   const MyPage({Key? key}) : super(key: key);
@@ -17,15 +18,14 @@ class MyPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MyPage> {
-
   @override
   void initState() {
     MyPage.animFin = false;
     super.initState();
   }
 
-  Future animate() async =>
-      await Future.delayed(Duration.zero, () => setState(() => MyPage.animFin = true));
+  Future animate() async => await Future.delayed(
+      Duration.zero, () => setState(() => MyPage.animFin = true));
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +35,8 @@ class _MainPageState extends State<MyPage> {
 
     Materials materials = Provider.of<Materials>(context);
     materials.questions = List.generate(
-      100, (index) => Question(
+      100,
+      (index) => Question(
         id: index,
         title: '$index',
         questionerUid: '',
@@ -46,18 +47,40 @@ class _MainPageState extends State<MyPage> {
     return Column(
       children: [
         Center(
-          child: Padding(
-            padding: const EdgeInsets.all(50.0),
-            child: myInfoArea(tempUser),
+          child: Expanded(
+            child: MyFirebase.readContinuously(
+                path: 'users',
+                builder: (context, snapshot) {
+                  List<int> questions = [];
+                  snapshot.data?.docs.forEach(
+                    (doc) {
+                      var data = doc.data()! as Map<String, dynamic>;
+                      SthepUser u = SthepUser.fromJson(data);
+                      for (var question in u.questions) {
+                        questions.add(question);
+                        print(question);
+                      }
+                    },
+                  );
+                  return Padding(
+                    padding: const EdgeInsets.all(50.0),
+                    child: myInfoArea(tempUser),
+                  );
+                }),
           ),
         ),
         IntrinsicHeight(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              myThreeActivities(materials.questions.getRange(0, 3).toList(), '나의 질문'),
-              SizedBox(width: 70.0, height: screenSize.width * .10,),
-              myThreeActivities(materials.questions.getRange(0, 3).toList(), '나의 답변'),
+              myThreeActivities(
+                  materials.questions.getRange(0, 3).toList(), '나의 질문'),
+              SizedBox(
+                width: 70.0,
+                height: screenSize.width * .10,
+              ),
+              myThreeActivities(
+                  materials.questions.getRange(0, 3).toList(), '나의 답변'),
             ],
           ),
         ),

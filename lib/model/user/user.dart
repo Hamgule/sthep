@@ -64,4 +64,13 @@ class SthepUser with ChangeNotifier {
   void updateDB() async {
     await MyFirebase.write('users', uid!, toJson());
   }
+
+  SthepUser.fromJson(Map<String, dynamic> data) {
+    uid = data['uid'];
+    name = data['name'];
+    email = data['email'];
+    nickname = data['email'];
+    imageUrl = data['imageUrl'];
+    questions = (data['questions'] ?? []).cast<int>();
+  }
 }
