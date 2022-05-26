@@ -6,9 +6,24 @@ class MyFirebase {
   static FirebaseFirestore f = FirebaseFirestore.instance;
   static FirebaseStorage s = FirebaseStorage.instance;
 
-  static Future<Map<String, dynamic>?> readOnce(String path, String id) async {
+  static Future<Map<String, dynamic>?> readData(String path, String id) async {
     var snapshot = await f.collection(path).doc(id).get();
     return snapshot.data();
+  }
+
+  static Widget readOnce({
+    required String path,
+    String? id,
+    required AsyncWidgetBuilder<dynamic> builder,
+  }) {
+    Future<Object> future = id == null
+        ? f.collection(path).get()
+        : f.collection(path).doc(id).get();
+
+    return FutureBuilder(
+      future: future,
+      builder: builder,
+    );
   }
 
   static Widget readContinuously({

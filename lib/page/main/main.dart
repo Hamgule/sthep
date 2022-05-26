@@ -59,7 +59,7 @@ class _MainPageState extends State<MainPage> {
           bottomNavigationBar: _buildBottomBar(context),
           floatingActionButton: main.pageIndex == 0 ? FloatingActionButton(
             onPressed: () async {
-              Map<String, dynamic>? data = await MyFirebase.readOnce('autoIncrement', 'question');
+              Map<String, dynamic>? data = await MyFirebase.readData('autoIncrement', 'question');
               int nextId = data!['currentId'] + 1;
 
               if (!user.logged) {

@@ -86,19 +86,21 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
     Widget loginButton() {
       return IconButton(
         onPressed: () async {
-          await user.sthepLogin();
-          if (user.nickname == null) {
-            await inputNickname();
-            user.setNickname(nicknameController.text.trim());
-          }
-          user.updateDB();
+          try { await user.sthepLogin(); }
+          catch (e) {
+            if (user.nickname == null) {
+              await inputNickname();
+              user.setNickname(nicknameController.text.trim());
+            }
+            user.updateDB();
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              duration: const Duration(milliseconds: 1000),
-              content: Text('\'${user.nickname}\'님 환영합니다.'),
-            ),
-          );
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                duration: const Duration(milliseconds: 1000),
+                content: Text('\'${user.nickname}\'님 환영합니다.'),
+              ),
+            );
+          }
         }, icon: const Icon(Icons.login),
       );
     }

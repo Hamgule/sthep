@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sthep/firebase/firebase.dart';
 import 'package:sthep/model/painter/painter.dart';
+import 'package:sthep/model/user/user.dart';
 
 class Question {
   /// variables
@@ -49,4 +51,5 @@ class Question {
   };
 
   String idToString() => '$id'.padLeft(3, '0');
+
 }
