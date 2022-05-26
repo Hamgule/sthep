@@ -34,6 +34,7 @@ class _MainPageState extends State<MyPage> {
     animate();
 
     Materials materials = Provider.of<Materials>(context);
+    SthepUser user = Provider.of<SthepUser>(context, listen: false);
     materials.questions = List.generate(
       100,
       (index) => Question(
@@ -47,21 +48,21 @@ class _MainPageState extends State<MyPage> {
     return Column(
       children: [
         Center(
-          child: Expanded(
+          child: SizedBox(
             child: MyFirebase.readContinuously(
                 path: 'users',
                 builder: (context, snapshot) {
                   List<int> questions = [];
-                  snapshot.data?.docs.forEach(
-                    (doc) {
-                      var data = doc.data()! as Map<String, dynamic>;
-                      SthepUser u = SthepUser.fromJson(data);
-                      for (var question in u.questions) {
-                        questions.add(question);
-                        print(question);
-                      }
-                    },
-                  );
+                  // snapshot.data?.docs.forEach(
+                  //   (doc) {
+                  //     var data = doc.data()! as Map<String, dynamic>;
+                  //     SthepUser u = SthepUser.fromJson(data);
+                  //     print(u.nickname);
+                  //     print(u.name);
+                  //     print(u.questions.length);
+                  //
+                  //   },
+                  // );
                   return Padding(
                     padding: const EdgeInsets.all(50.0),
                     child: myInfoArea(tempUser),

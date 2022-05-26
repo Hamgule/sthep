@@ -20,7 +20,7 @@ class SthepUser with ChangeNotifier {
   SthepUser({this.uid, this.name, this.email, this.nickname});
 
   Exp exp = Exp();
-  List<int> questions = []; // 나의 질문들의 id 값
+  List<int>? questions; // 나의 질문들의 id 값
 
   void setNickname(String nickname) async {
     this.nickname = nickname;
@@ -43,6 +43,16 @@ class SthepUser with ChangeNotifier {
 
     var loadData = await MyFirebase.readOnce('users', uid!);
     nickname = loadData?['nickname'];
+    if (loadData?['questions'] != null) {
+      loadData?['questions'].forEach((dynamic question) {
+        print(question);
+        //questions?.add(question as int);
+      }
+    );
+    }
+
+
+    print(questions?.length);
 
     notifyListeners();
   }
@@ -69,7 +79,7 @@ class SthepUser with ChangeNotifier {
     uid = data['uid'];
     name = data['name'];
     email = data['email'];
-    nickname = data['email'];
+    nickname = data['nickname'];
     imageUrl = data['imageUrl'];
     questions = (data['questions'] ?? []).cast<int>();
   }
