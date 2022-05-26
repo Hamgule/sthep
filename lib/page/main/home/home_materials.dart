@@ -191,10 +191,20 @@ class _QuestionCardState extends State<QuestionCard> {
                   ),
                   Row(
                     children: [
-                      Expanded(child: simpleProfile(tempUser)),
+                      Expanded(
+                        child: MyFirebase.readOnce(
+                          path: 'users',
+                          id: widget.question.questionerUid,
+                          builder: (context, snapshot) {
+                            if (snapshot.data == null) return Container();
+                            var loadData = snapshot.data.data();
+                            return simpleProfile(SthepUser.fromJson(loadData));
+                          },
+                        ),
+                      ),
                       const Icon(Icons.comment_rounded, size: 20.0),
                       const SizedBox(width: 5.0),
-                      const SthepText('5', size: 15.0),
+                      SthepText('${widget.question.answerIds.length}', size: 15.0),
                     ],
                   ),
                 ],
@@ -215,7 +225,7 @@ class _QuestionCardState extends State<QuestionCard> {
               materials.getQuestionById(loadData['id']);
               changeState();
               return AdoptStateIcon(state: state);
-            }
+            },
           ),
         ),
       ],

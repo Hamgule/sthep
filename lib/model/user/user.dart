@@ -16,6 +16,7 @@ class SthepUser with ChangeNotifier {
   String? nickname;
   String imageUrl = defaultImageUrl;
   bool logged = false;
+  List<int> questionIds = [];
 
   SthepUser({this.uid, this.name, this.email, this.nickname});
 
@@ -41,7 +42,7 @@ class SthepUser with ChangeNotifier {
     email = user.email;
     logged = true;
 
-    var loadData = await MyFirebase.readOnce('users', uid!);
+    var loadData = await MyFirebase.readData('users', uid!);
     nickname = loadData?['nickname'];
 
     notifyListeners();
@@ -53,12 +54,21 @@ class SthepUser with ChangeNotifier {
     notifyListeners();
   }
 
+  SthepUser.fromJson(Map <String, dynamic> data) {
+    uid = data['uid'];
+    name = data['name'];
+    nickname = data['nickname'];
+    email = data['email'];
+    questionIds = (data['questionIds'] ?? []).cast<int>();
+  }
+
   Map<String, dynamic> toJson() => {
     'uid': uid,
     'name': name,
     'email': email,
     'nickname': nickname,
     'imageUrl': imageUrl,
+    'questionIds': questionIds,
   };
 
   void updateDB() async {
