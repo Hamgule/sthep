@@ -1,30 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:sthep/firebase/firebase.dart';
 import 'package:sthep/global/extensions/icons.dart';
 import 'package:sthep/global/extensions/widgets.dart';
 import 'package:sthep/config/palette.dart';
-import 'package:sthep/global/materials.dart';
 import 'package:sthep/model/question/question.dart';
 import 'package:sthep/model/time/time.dart';
 import 'package:sthep/model/user/user.dart';
+import 'package:sthep/page/main/notification/notification_materials.dart';
 import 'package:sthep/page/widget/profile.dart';
-
-SthepUser tempUser = SthepUser(
-  uid: 'zihoo1234',
-  name: '양지후',
-  email: 'asdf@asdf.com',
-  nickname: 'zihoo',
-);
-
-Question tempQuestion = Question(
-  id: 1,
-  title: '2016년도 수능 알려주세요..',
-  imageUrl: 'assets/images/math.jpeg',
-  questionerUid: tempUser.uid!,
-);
-
-
 
 class Ranking extends StatefulWidget {
   const Ranking({Key? key}) : super(key: key);
@@ -136,15 +119,6 @@ class QuestionCard extends StatefulWidget {
 }
 
 class _QuestionCardState extends State<QuestionCard> {
-  AdoptState state = AdoptState.notAnswered;
-
-  void changeState() {
-    if (widget.question.adoptedAnswerId != null) {
-      state = AdoptState.adopted;
-    } else if (widget.question.answerIds.isNotEmpty) {
-      state = AdoptState.notAdopted;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -154,14 +128,16 @@ class _QuestionCardState extends State<QuestionCard> {
           elevation: 10.0,
           margin: const EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
           child: InkWell(
-            onTap: () {},
+            onTap: () {
+              // Provider.of<Materials>(context).setPageIndex(index)
+            },
             child: Padding(
               padding: const EdgeInsets.all(10.0),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Image.asset(
-                    'assets/images/math.jpeg',
+                  Image.network(
+                    widget.question.imageUrl!,
                     height: 200.0,
                   ),
                   Row(
@@ -204,7 +180,7 @@ class _QuestionCardState extends State<QuestionCard> {
                       ),
                       const Icon(Icons.comment_rounded, size: 20.0),
                       const SizedBox(width: 5.0),
-                      SthepText('${widget.question.answerIds.length}', size: 15.0),
+                      SthepText('${widget.question.answers.length}', size: 15.0),
                     ],
                   ),
                 ],
@@ -215,18 +191,7 @@ class _QuestionCardState extends State<QuestionCard> {
         Positioned(
           right: 30,
           top: 10,
-          child: MyFirebase.readContinuously(
-            path: 'questions',
-            id: widget.question.idToString(),
-            builder: (context, snapshot) {
-              if (snapshot.data == null) return Container();
-              var loadData = snapshot.data.data();
-              Materials materials = Provider.of<Materials>(context);
-              materials.getQuestionById(loadData['id']);
-              changeState();
-              return AdoptStateIcon(state: state);
-            },
-          ),
+          child: AdoptStateIcon(state: widget.question.state),
         ),
       ],
     );

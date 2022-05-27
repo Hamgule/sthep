@@ -7,11 +7,9 @@ import 'package:sthep/global/extensions/widgets.dart';
 import 'package:sthep/global/materials.dart';
 import 'package:sthep/model/question/question.dart';
 import 'package:sthep/model/user/user.dart';
-import 'package:sthep/page/main/answer/answer.dart';
 import 'package:sthep/page/main/home/home.dart';
 import 'package:sthep/page/main/my/my.dart';
 import 'package:sthep/page/main/notification/notification.dart';
-import 'package:sthep/page/main/question/question.dart';
 import 'package:sthep/page/upload/upload.dart';
 import 'package:sthep/page/widget/appbar.dart';
 import 'package:sthep/page/widget/sidebar.dart';
@@ -27,8 +25,8 @@ List<PreferredSizeWidget> appbars = const [
 
 List<Widget> pages = const [
   HomePage(),
-  QuestionPage(),
-  AnswerPage(),
+  HomePage(type: 'question'),
+  HomePage(type: 'answer'),
   NotificationPage(),
   MyPage(),
   UploadPage(),
@@ -44,6 +42,7 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
 
   double iconSize = 38.0;
+  bool imageLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +54,22 @@ class _MainPageState extends State<MainPage> {
         return Scaffold(
           appBar: appbars[main.newPageIndex],
           endDrawer: const SideBar(),
-          body: pages[main.newPageIndex],
+          body: Stack(
+            children: [
+              pages[main.newPageIndex],
+              if (imageLoading)
+              Positioned.fill(
+                child: Container(
+                  color: Colors.black.withOpacity(.3),
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: Palette.bgColor,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
           bottomNavigationBar: _buildBottomBar(context),
           floatingActionButton: main.pageIndex == 0 ? FloatingActionButton(
             onPressed: () async {
@@ -72,7 +86,27 @@ class _MainPageState extends State<MainPage> {
                   id: nextId,
                   questionerUid: user.uid!,
                 );
-              } else if (main.newPageIndex == 5) {
+              }
+
+              // Upload Page
+              else if (main.newPageIndex == 5) {
+                if (main.newQuestion.title == '') {
+                  showMySnackBar(context, '제목을 입력하세요');
+                  return;
+                }
+
+                if (main.newQuestion.imageUrl == null) {
+                  setState(() => imageLoading = true);
+                }
+
+                main.newQuestion.imageUrl = await MyFirebase.uploadImage(
+                  'questions',
+                  main.newQuestion.idToString(),
+                  main.image,
+                );
+
+                setState(() => imageLoading = false);
+
                 Map<String, dynamic> addData = main.newQuestion.toJson();
                 addData['regDate'] = FieldValue.serverTimestamp();
                 MyFirebase.write(

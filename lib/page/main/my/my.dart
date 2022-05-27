@@ -4,6 +4,7 @@ import 'package:sthep/global/materials.dart';
 import 'package:sthep/model/question/question.dart';
 import 'package:sthep/page/main/home/home_materials.dart';
 import 'package:sthep/page/main/my/my_materials.dart';
+import 'package:sthep/page/main/notification/notification_materials.dart';
 
 
 class MyPage extends StatefulWidget {

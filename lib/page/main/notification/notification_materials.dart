@@ -1,7 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:sthep/global/extensions/widgets.dart';
 import 'package:sthep/config/palette.dart';
-import 'package:sthep/page/main/home/home_materials.dart';
+import 'package:sthep/model/question/question.dart';
+import 'package:sthep/model/user/user.dart';
+
+SthepUser tempUser = SthepUser(
+  uid: 'zihoo1234',
+  name: '양지후',
+  email: 'asdf@asdf.com',
+  nickname: 'zihoo',
+);
+
+Question tempQuestion = Question(
+  id: 1,
+  title: '2016년도 수능 알려주세요..',
+  imageUrl: 'assets/images/math.jpeg',
+  questionerUid: tempUser.uid!,
+);
+
 
 class Notifications extends StatelessWidget {
   const Notifications({Key? key}) : super(key: key);

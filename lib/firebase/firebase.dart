@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +7,11 @@ import 'package:flutter/material.dart';
 class MyFirebase {
   static FirebaseFirestore f = FirebaseFirestore.instance;
   static FirebaseStorage s = FirebaseStorage.instance;
+
+  static Future<List<Map<String, dynamic>>> readCollection(String path) async {
+    var snapshot = await f.collection(path).get();
+    return snapshot.docs.map((doc) => doc.data()).toList();
+  }
 
   static Future<Map<String, dynamic>?> readData(String path, String id) async {
     var snapshot = await f.collection(path).doc(id).get();
@@ -45,7 +52,10 @@ class MyFirebase {
     await f.collection(path).doc(id).set(data);
   }
 
-  static void uploadImage(String imageUrl) {
-
+  static Future<String> uploadImage(String path, String id, File? file) async {
+    if (file == null) return '';
+    Reference ref = s.ref('$path/$id');
+    TaskSnapshot task = await ref.putFile(file);
+    return await task.ref.getDownloadURL();
   }
 }

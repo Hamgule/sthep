@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sthep/firebase/firebase.dart';
+import 'package:sthep/global/extensions/icons.dart';
 import 'package:sthep/model/painter/painter.dart';
-import 'package:sthep/model/user/user.dart';
 
 class Question {
   /// variables
@@ -11,11 +10,13 @@ class Question {
   DateTime? regDate = DateTime.now();
 
   List<String> tags = [];
-  List<int> answerIds = [];
+  List<dynamic> answers = [];
 
   Painter? painter;
   String? imageUrl;
   int? adoptedAnswerId;
+
+  AdoptState state = AdoptState.notAnswered;
 
   /// constructor
   Question({
@@ -36,8 +37,12 @@ class Question {
     tags = data['tags'].cast<String>();
     regDate = (data['regDate'] ?? Timestamp.now()).toDate();
     questionerUid = data['questionerUid'];
-    answerIds = (data['answerIds'] ?? []).cast<int>();
+    answers = (data['answers'] ?? []);
     adoptedAnswerId = data['adoptedAnswerId'];
+    imageUrl = data['imageUrl'];
+
+    if (answers.isNotEmpty) state = AdoptState.notAdopted;
+    if (adoptedAnswerId != null) state = AdoptState.adopted;
   }
 
   Map<String, dynamic> toJson() => {
@@ -46,8 +51,9 @@ class Question {
     'tags': tags,
     'regDate': regDate,
     'questionerUid': questionerUid,
-    'answerIds': answerIds,
+    'answers': answers,
     'adoptedAnswerId': adoptedAnswerId,
+    'imageUrl': imageUrl,
   };
 
   String idToString() => '$id'.padLeft(3, '0');

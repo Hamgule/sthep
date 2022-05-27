@@ -1,30 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:sthep/firebase/firebase.dart';
 import 'package:sthep/global/extensions/widgets.dart';
 import 'package:sthep/config/palette.dart';
-import 'package:sthep/page/widget/profile.dart';
-import 'package:sthep/model/user/user.dart';
 import 'package:sthep/model/question/question.dart';
+import 'package:sthep/model/user/user.dart';
+import 'package:sthep/page/widget/profile.dart';
 import 'package:intl/intl.dart';
 
 class QuestionPage extends StatelessWidget {
-  const QuestionPage({Key? key}) : super(key: key);
+  const QuestionPage({Key? key, required this.question}) : super(key: key);
+
+  final Question question;
 
   @override
   Widget build(BuildContext context) {
-    SthepUser user = SthepUser(
-      uid: 'zihoo1234',
-      name: '양지후',
-      email: 'asdf@asdf.com',
-      nickname: 'zihoo',
-    );
-    Question question = Question(
-      id: 1,
-      title: '2020년도 수학',
-      questionerUid: '1234',
-      imageUrl: 'test',
-      regDate: DateTime.now(),
-    );
-
     return Container(
       padding: const EdgeInsets.all(30.0),
       child: Column(
@@ -47,14 +36,22 @@ class QuestionPage extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(
                     horizontal: 8.0,
                   ),
-                  child: Row(
-                    children: [
-                      profilePhoto(user),
-                      SthepText(
-                        '${user.nickname}님의 질문',
-                        size: 17.0,
-                      ),
-                    ],
+                  child: MyFirebase.readOnce(
+                    path: 'users',
+                    id: question.questionerUid,
+                    builder: (context, snapshot) {
+                      var data = snapshot.data.data();
+                      SthepUser user = SthepUser.fromJson(data);
+                      return Row(
+                        children: [
+                          profilePhoto(user),
+                          SthepText(
+                            '${user.nickname}님의 질문',
+                            size: 17.0,
+                          ),
+                        ],
+                      );
+                    },
                   ),
                 ),
               ),
