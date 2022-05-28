@@ -5,8 +5,8 @@ import 'package:sthep/global/extensions/widgets.dart';
 import 'package:sthep/model/user/user.dart';
 
 Widget profilePhoto(SthepUser user) => Container(
-  width: 50.0,
-  height: 50.0,
+  width: 40.0,
+  height: 40.0,
   decoration: BoxDecoration(
     shape: BoxShape.circle,
     image: DecorationImage(
@@ -22,7 +22,7 @@ Widget profile(SthepUser user) => Padding(
     mainAxisSize: MainAxisSize.min,
     children: [
       profilePhoto(user),
-      const SizedBox(width: 15.0),
+      const SizedBox(width: 20.0),
       Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,

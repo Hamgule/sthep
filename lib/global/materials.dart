@@ -26,6 +26,7 @@ class Materials with ChangeNotifier {
 
   /// Home
   bool isGrid = true;
+  Question? destQuestion;
 
   void toggleGrid() {
     isGrid = !isGrid;

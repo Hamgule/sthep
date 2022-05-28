@@ -102,7 +102,7 @@ class _UploadPageState extends State<UploadPage> {
                       children: [
                         IconButton(
                           icon: const Icon(
-                            Icons.add_a_photo,
+                            Icons.camera_alt_outlined,
                             size: 40.0,
                             color: Palette.iconColor,
                           ),
@@ -111,7 +111,7 @@ class _UploadPageState extends State<UploadPage> {
                         const SizedBox(width: 50),
                         IconButton(
                           icon: const Icon(
-                            Icons.photo,
+                            Icons.photo_outlined,
                             size: 40.0,
                             color: Palette.iconColor,
                           ),

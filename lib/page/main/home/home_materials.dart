@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sthep/firebase/firebase.dart';
 import 'package:sthep/global/extensions/icons.dart';
 import 'package:sthep/global/extensions/widgets.dart';
 import 'package:sthep/config/palette.dart';
+import 'package:sthep/global/materials.dart';
 import 'package:sthep/model/question/question.dart';
 import 'package:sthep/model/time/time.dart';
 import 'package:sthep/model/user/user.dart';
@@ -62,40 +64,56 @@ class _RankingState extends State<Ranking> with SingleTickerProviderStateMixin {
         children: [
           Positioned(
             child: SizedBox(
-              height: 100.0,
+              height: 80.0,
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 150.0),
-                    child: SthepText(
-                      '오늘의 최다 답변자',
-                      size: 20.0,
-                      color: Palette.fontColor1,
-                    ),
+                  if (MediaQuery.of(context).orientation == Orientation.landscape)
+                  const SthepText(
+                    '오늘의 최다 답변자',
+                    size: 20.0,
+                    color: Palette.fontColor1,
                   ),
-                  Container(
-                    width: 30,
-                    height: 30,
-                    color: Colors.yellow,
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            width: 30,
+                            height: 30,
+                            color: Colors.yellow,
+                            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                          ),
+                          profile(tempUser),
+                        ],
+                      ),
+                      const SizedBox(width: 30),
+                      Row(
+                        children: [
+                          Container(
+                            width: 30,
+                            height: 30,
+                            color: Colors.grey,
+                            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                          ),
+                          profile(tempUser),
+                        ],
+                      ),
+                      const SizedBox(width: 30),
+                      Row(
+                        children: [
+                          Container(
+                            width: 30,
+                            height: 30,
+                            color: Colors.orange,
+                            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                          ),
+                          profile(tempUser),
+                        ],
+                      ),
+                    ],
                   ),
-                  profile(tempUser),
-                  const SizedBox(width: 30),
-                  Container(
-                    width: 30,
-                    height: 30,
-                    color: Colors.grey,
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  ),
-                  profile(tempUser),
-                  const SizedBox(width: 30),
-                  Container(
-                    width: 30,
-                    height: 30,
-                    color: Colors.orange,
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  ),
-                  profile(tempUser),
                 ],
               ),
             ),
@@ -129,17 +147,20 @@ class _QuestionCardState extends State<QuestionCard> {
           margin: const EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
           child: InkWell(
             onTap: () {
-              // Provider.of<Materials>(context).setPageIndex(index)
+              Materials home = Provider.of<Materials>(context, listen: false);
+              home.setPageIndex(6);
+              home.destQuestion = widget.question;
             },
             child: Padding(
               padding: const EdgeInsets.all(10.0),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
+                children: [
                   Image.network(
                     widget.question.imageUrl!,
                     height: 200.0,
                   ),
+                  const SizedBox(height: 10.0),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
@@ -159,11 +180,19 @@ class _QuestionCardState extends State<QuestionCard> {
                       ),
                     ],
                   ),
-                  Row(
-                    children: <Widget>[
-                      SthepText(widget.question.title),
-                      const SizedBox(height: 50.0),
-                    ],
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10.0),
+                    child: Row(
+                      children: [
+                        SthepText(
+                          '${widget.question.id}',
+                          size: 12.0,
+                          color: Palette.fontColor2,
+                        ),
+                        const SizedBox(width: 10.0),
+                        SthepText(widget.question.title),
+                      ],
+                    ),
                   ),
                   Row(
                     children: [

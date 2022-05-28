@@ -48,11 +48,10 @@ class _HomePageState extends State<HomePage> {
                       }
                     }
                     else if (widget.type == 'answer') {
-                      if (q.answers.isEmpty) return;
                       q.answers.forEach((answer) async {
-                        if (user.uid != (await answer.get()).data()['answererUid']) {
-                          return;
-                        }
+                        var answerers = await answer.get();
+                        if (answerers.data() == null) return;
+                        if (user.uid != answerers.data()['answererUid']) return;
                       });
                     }
                     materials.questions.add(q);
@@ -60,7 +59,7 @@ class _HomePageState extends State<HomePage> {
                 );
                 return GridView.count(
                   padding: const EdgeInsets.all(30.0),
-                  crossAxisCount: 3,
+                  crossAxisCount: MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 3,
                   children: materials.questions.map(
                   (question) => QuestionCard(question: question),
                   ).toList(),
