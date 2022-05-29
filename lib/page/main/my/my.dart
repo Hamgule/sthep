@@ -8,7 +8,7 @@ import 'package:sthep/firebase/firebase.dart';
 import 'package:sthep/model/user/user.dart';
 import 'package:sthep/page/main/notification/notification_materials.dart';
 
-import '../../widget/profile.dart';
+import 'package:sthep/page/widget/profile.dart';
 
 class MyPage extends StatefulWidget {
   const MyPage({Key? key}) : super(key: key);
@@ -48,22 +48,10 @@ class _MainPageState extends State<MyPage> {
         regDate: DateTime.now(),
       ),
     );
+    // print(materials.getQuestionsByUserID(user.uid!));
 
     return Column(
       children: [
-        Center(
-          child: SizedBox(
-            child: MyFirebase.readOnce(
-              path: 'users',
-              id: user.uid,
-              builder: (context, snapshot) {
-                if (snapshot.data == null) return Container();
-                var loadData = snapshot.data.data();
-                return simpleProfile(SthepUser.fromJson(loadData));
-              },
-            ),
-          ),
-        ),
         Padding(
           padding: const EdgeInsets.all(50.0),
           child: MyFirebase.readOnce(

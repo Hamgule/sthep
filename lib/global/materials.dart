@@ -32,6 +32,10 @@ class Materials with ChangeNotifier {
     return questions.where((e) => e.id == id).toList().first;
   }
 
+  List<Question> getQuestionsByUserID(String uid) {
+    return questions.where((e) => e.questionerUid == uid).toList();
+  }
+
   /// Home
   bool isGrid = true;
 

@@ -149,12 +149,12 @@ class _UpdatePageState extends State<UpdatePage> {
                   Padding(
                     padding: const EdgeInsets.all(canvasPadding),
                     child: SizedBox(
-                      width: screenSize.width * .40,
-                      child: upload.image == null
-                          ? widget.question!.imageUrl == null
-                          ? const SthepText('이미지를 선택하세요')
-                          : Image.network(widget.question!.imageUrl!, fit: BoxFit.fitWidth)
-                          : Image.file(upload.image!, fit: BoxFit.fitWidth)
+                        width: screenSize.width * .40,
+                        child: upload.image == null
+                            ? widget.question!.imageUrl == null
+                            ? const SthepText('이미지를 선택하세요')
+                            : Image.network(widget.question!.imageUrl!, fit: BoxFit.fitWidth)
+                            : Image.file(upload.image!, fit: BoxFit.fitWidth)
                     ),
                   ),
                 ],

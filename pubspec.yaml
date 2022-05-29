@@ -24,6 +24,8 @@ dependencies:
   image_picker: ^0.8.4+1
   material_tag_editor: ^0.1.2
   firebase_storage: ^10.2.16
+  image_painter: ^0.4.5
+
 
 dev_dependencies:
   flutter_test:
