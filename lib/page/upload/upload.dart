@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_painter/image_painter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:material_tag_editor/tag_editor.dart';
 import 'package:provider/provider.dart';
@@ -23,7 +24,7 @@ class _UploadPageState extends State<UploadPage> {
   final FocusNode _focusNode = FocusNode();
   final TextEditingController titleCont = TextEditingController();
   final TextEditingController tagCont = TextEditingController();
-
+  final _imageKey = GlobalKey<ImagePainterState>();
   late Question targetQuestion;
 
   static const double canvasPadding = 20.0;
@@ -53,6 +54,7 @@ class _UploadPageState extends State<UploadPage> {
 
     return Scaffold(
       body: SingleChildScrollView(
+        physics: const NeverScrollableScrollPhysics(),
         child: Container(
           padding: const EdgeInsets.all(30.0),
           child: Column(
@@ -139,11 +141,11 @@ class _UploadPageState extends State<UploadPage> {
               ),
               Stack(
                 children: [
-                  Container(
-                    color: Palette.bgColor,
-                    width: screenSize.width * .90,
-                    height: 700.0,
-                  ),
+                  // Container(
+                  //   color: Palette.bgColor,
+                  //   width: screenSize.width * .90,
+                  //   height: 700.0,
+                  // ),
                   Positioned.fill(
                     child: Align(
                       alignment: Alignment.center,
@@ -156,11 +158,22 @@ class _UploadPageState extends State<UploadPage> {
                   Padding(
                     padding: const EdgeInsets.all(canvasPadding),
                     child: SizedBox(
-                      width: screenSize.width * .40,
+                      width: screenSize.width * .9,
+                      // height: screenSize.height * .5,
                       child: widget.question == null
                           ? upload.image == null
                           ? const SthepText('이미지를 선택하세요')
-                          : Image.file(upload.image!, fit: BoxFit.fitWidth)
+                          : ImagePainter.file(
+                              upload.image!,
+                              key: _imageKey,
+                              width: screenSize.width * .9,
+                              height: screenSize.width * .7,
+                              scalable: true,
+                              initialStrokeWidth: 2,
+                              initialColor: Colors.black,
+                              initialPaintMode: PaintMode.freeStyle,
+                            )
+                          // Image.file(upload.image!, fit: BoxFit.fitWidth)
                           : widget.question!.imageUrl == ''
                           ? const SthepText('이미지를 선택하세요')
                           : Image.network(widget.question!.imageUrl!, fit: BoxFit.fitWidth),
