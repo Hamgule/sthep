@@ -48,7 +48,7 @@ class _MainPageState extends State<MyPage> {
         regDate: DateTime.now(),
       ),
     );
-    print(materials.getQuestionsByUserID(user.uid!));
+    // print(materials.getQuestionsByUserID(user.uid!));
 
     return Column(
       children: [
