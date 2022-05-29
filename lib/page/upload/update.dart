@@ -10,16 +10,16 @@ import 'package:sthep/global/extensions/widgets.dart';
 import 'package:sthep/global/materials.dart';
 import 'package:sthep/model/question/question.dart';
 
-class UploadPage extends StatefulWidget {
-  const UploadPage({Key? key, this.question}) : super(key: key);
+class UpdatePage extends StatefulWidget {
+  const UpdatePage({Key? key, this.question}) : super(key: key);
 
   final Question? question;
 
   @override
-  State<UploadPage> createState() => _UploadPageState();
+  State<UpdatePage> createState() => _UpdatePageState();
 }
 
-class _UploadPageState extends State<UploadPage> {
+class _UpdatePageState extends State<UpdatePage> {
   final FocusNode _focusNode = FocusNode();
   final TextEditingController titleCont = TextEditingController();
   final TextEditingController tagCont = TextEditingController();
@@ -41,15 +41,8 @@ class _UploadPageState extends State<UploadPage> {
   Widget build(BuildContext context) {
     Materials upload = Provider.of<Materials>(context);
 
-    // Create
-    if (widget.question == null) {
-      targetQuestion = upload.newQuestion;
-    }
-    // Update
-    else {
-      targetQuestion = widget.question!;
-      titleCont.text = targetQuestion.title;
-    }
+    targetQuestion = widget.question!;
+    titleCont.text = targetQuestion.title;
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -157,13 +150,11 @@ class _UploadPageState extends State<UploadPage> {
                     padding: const EdgeInsets.all(canvasPadding),
                     child: SizedBox(
                       width: screenSize.width * .40,
-                      child: widget.question == null
-                          ? upload.image == null
+                      child: upload.image == null
+                          ? widget.question!.imageUrl == null
                           ? const SthepText('이미지를 선택하세요')
+                          : Image.network(widget.question!.imageUrl!, fit: BoxFit.fitWidth)
                           : Image.file(upload.image!, fit: BoxFit.fitWidth)
-                          : widget.question!.imageUrl == ''
-                          ? const SthepText('이미지를 선택하세요')
-                          : Image.network(widget.question!.imageUrl!, fit: BoxFit.fitWidth),
                     ),
                   ),
                 ],

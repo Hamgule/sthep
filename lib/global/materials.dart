@@ -47,6 +47,11 @@ class Materials with ChangeNotifier {
   File? image;
   bool imageUploading = false;
 
+  void updateLocalImage(File? image) {
+    image = image;
+    notifyListeners();
+  }
+
   void toggleUploadingState() {
     imageUploading = !imageUploading;
     notifyListeners();

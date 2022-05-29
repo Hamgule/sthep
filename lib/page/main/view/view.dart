@@ -85,7 +85,7 @@ class ViewPage extends StatelessWidget {
               Align(
                 alignment: Alignment.centerLeft,
                 child: SizedBox(
-                  child: question!.imageUrl == ''
+                  child: question!.imageUrl == null
                       ? Container() : Image.network(
                     question!.imageUrl!,
                     width: 500.0,

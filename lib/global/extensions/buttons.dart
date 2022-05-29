@@ -76,7 +76,8 @@ class _FABState extends State<FAB> {
     SthepUser user = Provider.of<SthepUser>(context, listen: false);
 
     void onPressed() async {
-      Map<String, dynamic>? data = await MyFirebase.readData('autoIncrement', 'question');
+      Map<String, dynamic>? data = await MyFirebase.readData(
+          'autoIncrement', 'question');
       int nextId = data!['currentId'] + 1;
 
       bool isNum(int n) => main.newPageIndex == n;
@@ -96,8 +97,7 @@ class _FABState extends State<FAB> {
       }
 
       // Upload Page
-      else if (isNum(5) || isNum(7)) {
-        print(main.newQuestion.title);
+      else if (isNum(5)) {
         if (main.newQuestion.title == '') {
           showMySnackBar(context, '제목을 입력하세요');
           return;
@@ -105,22 +105,52 @@ class _FABState extends State<FAB> {
 
         main.toggleUploadingState();
 
-        main.newQuestion.imageUrl = await MyFirebase.uploadImage(
-          'questions',
-          main.destQuestion!.idToString(),
-          main.image,
-        );
+        if (main.image != null) {
+          main.newQuestion.imageUrl = await MyFirebase.uploadImage(
+            'questions',
+            main.destQuestion!.idToString(),
+            main.image,
+          );
+        }
 
         main.toggleUploadingState();
 
         Map<String, dynamic> addData = main.newQuestion.toJson();
 
-        if (isNum(5)) {
-          addData['regDate'] = FieldValue.serverTimestamp();
+        addData['regDate'] = FieldValue.serverTimestamp();
+
+        MyFirebase.write(
+          'questions',
+          main.newQuestion.idToString(),
+          addData,
+        );
+
+        main.setPageIndex(0);
+        MyFirebase.write('autoIncrement', 'question', {'currentId': nextId});
+      }
+      else if (isNum(7)) {
+        main.newQuestion = main.destQuestion!;
+
+        if (main.newQuestion.title == '') {
+          showMySnackBar(context, '제목을 입력하세요');
+          return;
         }
-        else {
-          addData['modDate'] = FieldValue.serverTimestamp();
+
+        main.toggleUploadingState();
+
+        if (main.image != null) {
+          main.newQuestion.imageUrl = await MyFirebase.uploadImage(
+            'questions',
+            main.destQuestion!.idToString(),
+            main.image,
+          );
         }
+
+        main.toggleUploadingState();
+
+        Map<String, dynamic> addData = main.newQuestion.toJson();
+
+        addData['modDate'] = FieldValue.serverTimestamp();
 
         MyFirebase.write(
           'questions',
@@ -132,7 +162,6 @@ class _FABState extends State<FAB> {
         MyFirebase.write('autoIncrement', 'question', {'currentId': nextId});
       }
     }
-
     return FloatingActionButton(
       onPressed: onPressed,
       child: widget.child,
@@ -140,7 +169,6 @@ class _FABState extends State<FAB> {
     );
   }
 }
-
 
 // ViewPage 의 floating action button
 class ViewFAB extends StatelessWidget {
@@ -155,6 +183,7 @@ class ViewFAB extends StatelessWidget {
           onPressed: () {
             Materials main = Provider.of<Materials>(context, listen: false);
             main.setPageIndex(7);
+            main.image = null;
           },
           icon: const Icon(Icons.edit),
         ),

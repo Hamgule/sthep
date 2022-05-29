@@ -156,7 +156,7 @@ class _QuestionCardState extends State<QuestionCard> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  widget.question.imageUrl == ''
+                  widget.question.imageUrl == null
                       ? Container(
                     padding: const EdgeInsets.all(70.0),
                     height: 200.0,
