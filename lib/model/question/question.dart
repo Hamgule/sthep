@@ -8,6 +8,7 @@ class Question {
   late String title;
   late String questionerUid;
   DateTime? regDate = DateTime.now();
+  DateTime? modDate = DateTime.now();
 
   List<String> tags = [];
   List<dynamic> answers = [];
@@ -24,6 +25,7 @@ class Question {
     this.title = '',
     required this.questionerUid,
     this.regDate,
+    this.modDate,
     this.imageUrl,
     this.adoptedAnswerId,
   });
@@ -36,6 +38,7 @@ class Question {
     title = data['title'];
     tags = data['tags'].cast<String>();
     regDate = (data['regDate'] ?? Timestamp.now()).toDate();
+    modDate = (data['regDate'] ?? Timestamp.now()).toDate();
     questionerUid = data['questionerUid'];
     answers = (data['answers'] ?? []);
     adoptedAnswerId = data['adoptedAnswerId'];
@@ -57,5 +60,5 @@ class Question {
   };
 
   String idToString() => '$id'.padLeft(5, '0');
-
+  String tagsToString() => tags.join(' ');
 }

@@ -27,49 +27,47 @@ class _HomePageState extends State<HomePage> {
     Materials materials = Provider.of<Materials>(context);
 
     return Consumer<Materials>(
-      builder: (context, home, _) {
-        return Column(
-          children: [
-            const Ranking(),
-            Expanded(
-              child: MyFirebase.readContinuously(
-                path: 'questions',
-                builder: (context, snapshot) {
-                  materials.questions = [];
-                  SthepUser user = Provider.of<SthepUser>(context);
-                  
-                  snapshot.data?.docs.forEach((doc) async {
-                    var data = doc.data()! as Map<String, dynamic>;
-                    Question q = Question.fromJson(data);
+        builder: (context, home, _) {
+          return Column(
+            children: [
+              const Ranking(),
+              Expanded(
+                child: MyFirebase.readOnce(
+                    path: 'questions',
+                    builder: (context, snapshot) {
+                      materials.questions = [];
+                      SthepUser user = Provider.of<SthepUser>(context);
 
-                    if (widget.type == 'question') {
-                      if (user.uid != q.questionerUid) {
-                        return;
-                      }
-                    }
-                    else if (widget.type == 'answer') {
-                      q.answers.forEach((answer) async {
-                        var answerers = await answer.get();
-                        if (answerers.data() == null) return;
-                        if (user.uid != answerers.data()['answererUid']) return;
+                      snapshot.data?.docs.forEach((doc) async {
+                        var data = doc.data()! as Map<String, dynamic>;
+                        Question q = Question.fromJson(data);
+
+                        if (widget.type == 'question') {
+                          if (user.uid != q.questionerUid) {
+                            return;
+                          }
+                        }
+                        else if (widget.type == 'answer') {
+                          q.answers.forEach((answer) async {
+                            var answerers = await answer.get();
+                            if (answerers.data() == null) return;
+                            if (user.uid != answerers.data()['answererUid']) return;
+                          });
+                        }
+                        materials.questions.add(q);
                       });
-                    }
-                    materials.questions.add(q);
-                  },
-                );
-                return GridView.count(
-                  padding: const EdgeInsets.all(30.0),
-                  crossAxisCount: MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 3,
-                  children: materials.questions.map(
-                  (question) => QuestionCard(question: question),
-                  ).toList(),
-                );
-              }),
-            ),
-          ],
-        );
-      }
+                      return GridView.count(
+                        padding: const EdgeInsets.all(30.0),
+                        crossAxisCount: MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 3,
+                        children: materials.questions.map(
+                              (question) => QuestionCard(question: question),
+                        ).toList(),
+                      );
+                    }),
+              ),
+            ],
+          );
+        }
     );
   }
 }
-

@@ -20,13 +20,20 @@ class Materials with ChangeNotifier {
   ///
   List<Question> questions = [];
 
+  void addQuestion(Question q) async {
+    int index = questions.indexWhere((e) => e.id == q.id);
+    if (index >= 0) questions.removeAt(index);
+    index = index < 0 ? 0 : index;
+    questions.insert(index, q);
+    // questions.add(q);
+  }
+
   Question getQuestionById(int id) {
     return questions.where((e) => e.id == id).toList().first;
   }
 
   /// Home
   bool isGrid = true;
-  Question? destQuestion;
 
   void toggleGrid() {
     isGrid = !isGrid;
@@ -34,8 +41,15 @@ class Materials with ChangeNotifier {
   }
 
   late Question newQuestion;
+  Question? destQuestion;
 
   /// upload
   File? image;
+  bool imageUploading = false;
+
+  void toggleUploadingState() {
+    imageUploading = !imageUploading;
+    notifyListeners();
+  }
 
 }

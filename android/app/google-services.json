@@ -29,6 +29,13 @@
             {
               "client_id": "104900709052-7cd2hsm9k45ocuqvi7puk968nrv284qq.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "104900709052-8c5tus0vq4ojbe8vdfju5hr1sa7gp56d.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.sthep"
+              }
             }
           ]
         }
