@@ -10,16 +10,16 @@ import 'package:sthep/global/extensions/widgets.dart';
 import 'package:sthep/global/materials.dart';
 import 'package:sthep/model/question/question.dart';
 
-class UploadPage extends StatefulWidget {
-  const UploadPage({Key? key, this.question}) : super(key: key);
+class UpdatePage extends StatefulWidget {
+  const UpdatePage({Key? key, this.question}) : super(key: key);
 
   final Question? question;
 
   @override
-  State<UploadPage> createState() => _UploadPageState();
+  State<UpdatePage> createState() => _UpdatePageState();
 }
 
-class _UploadPageState extends State<UploadPage> {
+class _UpdatePageState extends State<UpdatePage> {
   final FocusNode _focusNode = FocusNode();
   final TextEditingController titleCont = TextEditingController();
   final TextEditingController tagCont = TextEditingController();
@@ -46,7 +46,6 @@ class _UploadPageState extends State<UploadPage> {
 
     return Scaffold(
       body: SingleChildScrollView(
-        physics: const NeverScrollableScrollPhysics(),
         child: Container(
           padding: const EdgeInsets.all(30.0),
           child: Column(
@@ -150,22 +149,12 @@ class _UploadPageState extends State<UploadPage> {
                   Padding(
                     padding: const EdgeInsets.all(canvasPadding),
                     child: SizedBox(
-                      width: screenSize.width * .9,
-                      // height: screenSize.height * .5,
-                      child: widget.question == null
-                          ? upload.image == null
-                          ? const SthepText('이미지를 선택하세요')
-                          : ImagePainter.file(
-                              widget.question!.imageUrl!,
-                              key: _imageKey,
-                              width: screenSize.width * .9,
-                              height: screenSize.width * .7,
-                              scalable: true,
-                              initialStrokeWidth: 2,
-                              initialColor: Colors.black,
-                              initialPaintMode: PaintMode.freeStyle,
-                            )
-                          : Image.file(upload.image!, fit: BoxFit.fitWidth)
+                        width: screenSize.width * .40,
+                        child: upload.image == null
+                            ? widget.question!.imageUrl == null
+                            ? const SthepText('이미지를 선택하세요')
+                            : Image.network(widget.question!.imageUrl!, fit: BoxFit.fitWidth)
+                            : Image.file(upload.image!, fit: BoxFit.fitWidth)
                     ),
                   ),
                 ],
