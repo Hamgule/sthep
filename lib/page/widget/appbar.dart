@@ -9,7 +9,9 @@ import 'package:sthep/model/user/user.dart';
 const double appbarHeight = 60.0;
 
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const HomeAppBar({Key? key}) : super(key: key);
+  const HomeAppBar({Key? key, this.title}) : super(key: key);
+
+  final String? title;
 
   @override
   Size get preferredSize => const Size.fromHeight(appbarHeight);
@@ -108,10 +110,23 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: Palette.appbarColor,
       foregroundColor: Palette.iconColor,
-      title: Image.asset(
-        Logo.asset,
-        fit: BoxFit.contain,
-        width: 120,
+      title: Row(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            child: Image.asset(
+              Logo.asset,
+              fit: BoxFit.contain,
+              width: 110,
+            ),
+          ),
+          if (title != null)
+          SthepText(
+            ' - $title',
+            size: 25.0,
+            color: Palette.iconColor,
+          ),
+        ],
       ),
       actions: [
         searchButton(),
@@ -122,8 +137,10 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 }
 
-class UploadAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const UploadAppBar({Key? key}) : super(key: key);
+class EditAppBar extends StatelessWidget implements PreferredSizeWidget {
+  const EditAppBar({Key? key, required this.title}) : super(key: key);
+
+  final String title;
 
   @override
   Widget build(BuildContext context) {
@@ -131,8 +148,8 @@ class UploadAppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: Palette.appbarColor,
       foregroundColor: Palette.iconColor,
       centerTitle: false,
-      title: const SthepText(
-        '질문하기',
+      title: SthepText(
+        title,
         size: 25.0,
         color: Palette.iconColor,
       ),

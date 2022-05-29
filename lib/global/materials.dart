@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:sthep/model/question/question.dart';
 
@@ -24,6 +26,7 @@ class Materials with ChangeNotifier {
 
   /// Home
   bool isGrid = true;
+  Question? destQuestion;
 
   void toggleGrid() {
     isGrid = !isGrid;
@@ -31,4 +34,8 @@ class Materials with ChangeNotifier {
   }
 
   late Question newQuestion;
+
+  /// upload
+  File? image;
+
 }

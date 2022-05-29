@@ -21,7 +21,6 @@ class _UploadPageState extends State<UploadPage> {
   final TextEditingController titleCont = TextEditingController();
   final TextEditingController tagCont = TextEditingController();
 
-  File? image;
   static const double canvasPadding = 20.0;
 
   Future<XFile?> pickImage() async {
@@ -49,9 +48,7 @@ class _UploadPageState extends State<UploadPage> {
                     decoration: const InputDecoration(
                       hintText: '제목을 입력하세요',
                     ),
-                    onChanged: (text) {
-                      upload.newQuestion.title = text;
-                    },
+                    onChanged: (text) => upload.newQuestion.title = text,
                   ),
                   const SizedBox(height: 20.0),
                   TagEditor(
@@ -105,7 +102,7 @@ class _UploadPageState extends State<UploadPage> {
                       children: [
                         IconButton(
                           icon: const Icon(
-                            Icons.add_a_photo,
+                            Icons.camera_alt_outlined,
                             size: 40.0,
                             color: Palette.iconColor,
                           ),
@@ -114,14 +111,14 @@ class _UploadPageState extends State<UploadPage> {
                         const SizedBox(width: 50),
                         IconButton(
                           icon: const Icon(
-                            Icons.photo,
+                            Icons.photo_outlined,
                             size: 40.0,
                             color: Palette.iconColor,
                           ),
                           onPressed: () async {
                             XFile? xFile = await pickImage();
                             if (xFile == null) return;
-                            setState(() => image = File(xFile.path));
+                            setState(() => upload.image = File(xFile.path));
                           },
                         ),
                       ],
@@ -147,9 +144,9 @@ class _UploadPageState extends State<UploadPage> {
                         padding: const EdgeInsets.all(canvasPadding),
                         child: SizedBox(
                           width: screenSize.width * .40,
-                          child: image == null
+                          child: upload.image == null
                               ? const SthepText('이미지가 없습니다.')
-                              : Image.file(image!, fit: BoxFit.fitWidth),
+                              : Image.file(upload.image!, fit: BoxFit.fitWidth),
                         ),
                       ),
                     ],

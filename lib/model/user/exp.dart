@@ -36,4 +36,6 @@ class Exp {
 
   double quantity(int n) => 10 + n * (n - 1) / 2;
   double get exp => value / quantity(level);
+
+  String levelToString() => 'Lv. $level';
 }

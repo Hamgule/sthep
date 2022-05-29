@@ -8,23 +8,8 @@ import 'package:sthep/global/materials.dart';
 import 'package:sthep/model/question/question.dart';
 import 'package:sthep/model/time/time.dart';
 import 'package:sthep/model/user/user.dart';
+import 'package:sthep/page/main/notification/notification_materials.dart';
 import 'package:sthep/page/widget/profile.dart';
-
-SthepUser tempUser = SthepUser(
-  uid: 'zihoo1234',
-  name: '양지후',
-  email: 'asdf@asdf.com',
-  nickname: 'zihoo',
-);
-
-Question tempQuestion = Question(
-  id: 1,
-  title: '2016년도 수능 알려주세요..',
-  imageUrl: 'assets/images/math.jpeg',
-  questionerUid: tempUser.uid!,
-);
-
-
 
 class Ranking extends StatefulWidget {
   const Ranking({Key? key}) : super(key: key);
@@ -79,40 +64,56 @@ class _RankingState extends State<Ranking> with SingleTickerProviderStateMixin {
         children: [
           Positioned(
             child: SizedBox(
-              height: 100.0,
+              height: 80.0,
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 150.0),
-                    child: SthepText(
-                      '오늘의 최다 답변자',
-                      size: 20.0,
-                      color: Palette.fontColor1,
-                    ),
+                  if (MediaQuery.of(context).orientation == Orientation.landscape)
+                  const SthepText(
+                    '오늘의 최다 답변자',
+                    size: 20.0,
+                    color: Palette.fontColor1,
                   ),
-                  Container(
-                    width: 30,
-                    height: 30,
-                    color: Colors.yellow,
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            width: 30,
+                            height: 30,
+                            color: Colors.yellow,
+                            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                          ),
+                          profile(tempUser),
+                        ],
+                      ),
+                      const SizedBox(width: 30),
+                      Row(
+                        children: [
+                          Container(
+                            width: 30,
+                            height: 30,
+                            color: Colors.grey,
+                            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                          ),
+                          profile(tempUser),
+                        ],
+                      ),
+                      const SizedBox(width: 30),
+                      Row(
+                        children: [
+                          Container(
+                            width: 30,
+                            height: 30,
+                            color: Colors.orange,
+                            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                          ),
+                          profile(tempUser),
+                        ],
+                      ),
+                    ],
                   ),
-                  profile(tempUser),
-                  const SizedBox(width: 30),
-                  Container(
-                    width: 30,
-                    height: 30,
-                    color: Colors.grey,
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  ),
-                  profile(tempUser),
-                  const SizedBox(width: 30),
-                  Container(
-                    width: 30,
-                    height: 30,
-                    color: Colors.orange,
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  ),
-                  profile(tempUser),
                 ],
               ),
             ),
@@ -136,15 +137,6 @@ class QuestionCard extends StatefulWidget {
 }
 
 class _QuestionCardState extends State<QuestionCard> {
-  AdoptState state = AdoptState.notAnswered;
-
-  void changeState() {
-    if (widget.question.adoptedAnswerId != null) {
-      state = AdoptState.adopted;
-    } else if (widget.question.answerIds.isNotEmpty) {
-      state = AdoptState.notAdopted;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -154,16 +146,21 @@ class _QuestionCardState extends State<QuestionCard> {
           elevation: 10.0,
           margin: const EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
           child: InkWell(
-            onTap: () {},
+            onTap: () {
+              Materials home = Provider.of<Materials>(context, listen: false);
+              home.setPageIndex(6);
+              home.destQuestion = widget.question;
+            },
             child: Padding(
               padding: const EdgeInsets.all(10.0),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Image.asset(
-                    'assets/images/math.jpeg',
+                children: [
+                  Image.network(
+                    widget.question.imageUrl!,
                     height: 200.0,
                   ),
+                  const SizedBox(height: 10.0),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
@@ -183,11 +180,19 @@ class _QuestionCardState extends State<QuestionCard> {
                       ),
                     ],
                   ),
-                  Row(
-                    children: <Widget>[
-                      SthepText(widget.question.title),
-                      const SizedBox(height: 50.0),
-                    ],
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10.0),
+                    child: Row(
+                      children: [
+                        SthepText(
+                          '${widget.question.id}',
+                          size: 12.0,
+                          color: Palette.fontColor2,
+                        ),
+                        const SizedBox(width: 10.0),
+                        SthepText(widget.question.title),
+                      ],
+                    ),
                   ),
                   Row(
                     children: [
@@ -204,7 +209,7 @@ class _QuestionCardState extends State<QuestionCard> {
                       ),
                       const Icon(Icons.comment_rounded, size: 20.0),
                       const SizedBox(width: 5.0),
-                      SthepText('${widget.question.answerIds.length}', size: 15.0),
+                      SthepText('${widget.question.answers.length}', size: 15.0),
                     ],
                   ),
                 ],
@@ -215,18 +220,7 @@ class _QuestionCardState extends State<QuestionCard> {
         Positioned(
           right: 30,
           top: 10,
-          child: MyFirebase.readContinuously(
-            path: 'questions',
-            id: widget.question.idToString(),
-            builder: (context, snapshot) {
-              if (snapshot.data == null) return Container();
-              var loadData = snapshot.data.data();
-              Materials materials = Provider.of<Materials>(context);
-              materials.getQuestionById(loadData['id']);
-              changeState();
-              return AdoptStateIcon(state: state);
-            },
-          ),
+          child: AdoptStateIcon(state: widget.question.state),
         ),
       ],
     );

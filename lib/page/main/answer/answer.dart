@@ -46,15 +46,7 @@ class AnswerPage extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(
                     horizontal: 8.0,
                   ),
-                  child: Row(
-                    children: [
-                      profilePhoto(user),
-                      SthepText(
-                        '${user.nickname}님의 질문',
-                        size: 17.0,
-                      ),
-                    ],
-                  ),
+                  child: profile(user),
                 ),
               ),
               SizedBox(
