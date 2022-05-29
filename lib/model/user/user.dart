@@ -45,11 +45,11 @@ class SthepUser with ChangeNotifier {
     var loadData = await MyFirebase.readData('users', uid!);
     nickname = loadData?['nickname'];
     if (loadData?['questions'] != null) {
-      loadData?['questions'].forEach((dynamic question) {
-        print(question);
-        //questions?.add(question as int);
-      }
-    );
+        loadData?['questions'].forEach((dynamic question) {
+          print(question);
+          questions?.add(question as int);
+        }
+      );
     }
 
 
@@ -85,12 +85,12 @@ class SthepUser with ChangeNotifier {
     await MyFirebase.write('users', uid!, toJson());
   }
 
-  SthepUser.fromJson(Map<String, dynamic> data) {
-    uid = data['uid'];
-    name = data['name'];
-    email = data['email'];
-    nickname = data['nickname'];
-    imageUrl = data['imageUrl'];
-    questions = (data['questions'] ?? []).cast<int>();
-  }
+  // SthepUser.fromJson(Map<String, dynamic> data) {
+  //   uid = data['uid'];
+  //   name = data['name'];
+  //   email = data['email'];
+  //   nickname = data['nickname'];
+  //   imageUrl = data['imageUrl'];
+  //   questions = (data['questions'] ?? []).cast<int>();
+  // }
 }
