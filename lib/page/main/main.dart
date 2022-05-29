@@ -1,8 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sthep/config/palette.dart';
-import 'package:sthep/firebase/firebase.dart';
+import 'package:sthep/global/extensions/buttons.dart';
 import 'package:sthep/global/extensions/widgets.dart';
 import 'package:sthep/global/materials.dart';
 import 'package:sthep/model/question/question.dart';
@@ -15,15 +14,18 @@ import 'package:sthep/page/upload/upload.dart';
 import 'package:sthep/page/widget/appbar.dart';
 import 'package:sthep/page/widget/sidebar.dart';
 
-List<PreferredSizeWidget> appbars(Question? question) => [
-  const HomeAppBar(),
-  const HomeAppBar(title: '나의 질문'),
-  const HomeAppBar(title: '나의 답변'),
-  const MainAppBar(title: '알림'),
-  const MainAppBar(title: '마이페이지'),
-  const EditAppBar(title: '질문하기'),
-  EditAppBar(title: question == null ? '' : '${question.id} 번 질문 - ${question.title}'),
-];
+List<PreferredSizeWidget> appbars(Question? question) {
+  return [
+    const HomeAppBar(),
+    const HomeAppBar(title: '나의 질문'),
+    const HomeAppBar(title: '나의 답변'),
+    const MainAppBar(title: '알림'),
+    const MainAppBar(title: '마이페이지'),
+    const BackAppBar(title: '질문하기'),
+    BackAppBar(title: question == null ? '' : '${question.id} 번 질문 - ${question.title}'),
+    BackAppBar(title: question == null ? '' : '수정하기: ${question.id} 번 질문 - ${question.title}'),
+  ];
+}
 
 List<Widget> pages(Question? question) => [
   const HomePage(),
@@ -33,20 +35,18 @@ List<Widget> pages(Question? question) => [
   const MyPage(),
   const UploadPage(),
   ViewPage(question: question),
+  UploadPage(question: question),
 ];
 
-List<bool> visualizeButton = [
-  true, true, true, false, false, true, true,
-];
-
-List<Widget> floatingIcons = [
-  const Icon(Icons.edit),
-  const Icon(Icons.edit),
-  const Icon(Icons.edit),
-  Container(),
-  Container(),
-  const Icon(Icons.upload),
-  const Icon(Icons.edit),
+List<Widget?> floatingButtons = [
+  const FAB(child: Icon(Icons.edit)),
+  const FAB(child: Icon(Icons.edit)),
+  const FAB(child: Icon(Icons.edit)),
+  null,
+  null,
+  const FAB(child: Icon(Icons.upload)),
+  const ViewFAB(),
+  const FAB(child: Icon(Icons.upload)),
 ];
 
 class MainPage extends StatefulWidget {
@@ -59,68 +59,10 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
 
   double iconSize = 38.0;
-  bool imageLoading = false;
 
   @override
   Widget build(BuildContext context) {
     screenSize = MediaQuery.of(context).size;
-    Materials main = Provider.of<Materials>(context, listen: false);
-    SthepUser user = Provider.of<SthepUser>(context, listen: false);
-
-    void floatingButtonPressed() async {
-      Map<String, dynamic>? data = await MyFirebase.readData('autoIncrement', 'question');
-      int nextId = data!['currentId'] + 1;
-
-      if (main.newPageIndex < 3) {
-        if (!user.logged) {
-          showMySnackBar(context, '로그인이 필요합니다.');
-          return;
-        }
-
-        main.setPageIndex(5);
-        main.newQuestion = Question(
-          id: nextId,
-          questionerUid: user.uid!,
-        );
-        main.image = null;
-      }
-
-      // Upload Page
-      else if (main.newPageIndex == 5) {
-        if (main.newQuestion.title == '') {
-          showMySnackBar(context, '제목을 입력하세요');
-          return;
-        }
-
-        if (main.image == null) {
-          showMySnackBar(context, '이미지를 추가하세요');
-          return;
-        }
-
-        if (main.newQuestion.imageUrl == null) {
-          setState(() => imageLoading = true);
-        }
-
-        main.newQuestion.imageUrl = await MyFirebase.uploadImage(
-          'questions',
-          main.newQuestion.idToString(),
-          main.image,
-        );
-
-        setState(() => imageLoading = false);
-
-        Map<String, dynamic> addData = main.newQuestion.toJson();
-        addData['regDate'] = FieldValue.serverTimestamp();
-        MyFirebase.write(
-          'questions',
-          main.newQuestion.idToString(),
-          addData,
-        );
-        main.setPageIndex(0);
-
-        MyFirebase.write('autoIncrement', 'question', {'currentId': nextId});
-      }
-    }
 
     return Consumer<Materials>(
       builder: (context, main, _) {
@@ -130,7 +72,7 @@ class _MainPageState extends State<MainPage> {
           body: Stack(
             children: [
               pages(main.destQuestion)[main.newPageIndex],
-              if (imageLoading)
+              if (main.imageUploading)
               Positioned.fill(
                 child: Container(
                   color: Colors.black.withOpacity(.3),
@@ -144,11 +86,7 @@ class _MainPageState extends State<MainPage> {
             ],
           ),
           bottomNavigationBar: _buildBottomBar(context),
-          floatingActionButton: visualizeButton[main.newPageIndex] ? FloatingActionButton(
-            onPressed: floatingButtonPressed,
-            child: floatingIcons[main.newPageIndex],
-            backgroundColor: Palette.hyperColor,
-          ) : null,
+          floatingActionButton: floatingButtons[main.newPageIndex],
         );
       }
     );
@@ -223,4 +161,3 @@ class _MainPageState extends State<MainPage> {
     );
   }
 }
-

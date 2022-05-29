@@ -52,6 +52,10 @@ class MyFirebase {
     await f.collection(path).doc(id).set(data);
   }
 
+  static Future remove(String path, String id) async {
+    f.collection(path).doc(id).delete();
+  }
+
   static Future<String> uploadImage(String path, String id, File? file) async {
     if (file == null) return '';
     Reference ref = s.ref('$path/$id');

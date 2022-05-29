@@ -51,6 +51,7 @@ class ViewPage extends StatelessWidget {
                           child: Row(
                             children: [
                               profilePhoto(user),
+                              const SizedBox(width: 10),
                               SthepText(
                                 '${user.nickname} 님의 질문',
                                 size: 17.0,
@@ -84,11 +85,11 @@ class ViewPage extends StatelessWidget {
               Align(
                 alignment: Alignment.centerLeft,
                 child: SizedBox(
-                  child: Image.network(
+                  child: question!.imageUrl == ''
+                      ? Container() : Image.network(
                     question!.imageUrl!,
-                    width: 500,
-                    height: 300,
-                    fit: BoxFit.fill,
+                    width: 500.0,
+                    height: 300.0,
                   ),
                 ),
               ),

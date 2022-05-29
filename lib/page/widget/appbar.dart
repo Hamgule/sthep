@@ -137,8 +137,11 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 }
 
-class EditAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const EditAppBar({Key? key, required this.title}) : super(key: key);
+class BackAppBar extends StatelessWidget implements PreferredSizeWidget {
+  const BackAppBar({
+    Key? key,
+    required this.title,
+  }) : super(key: key);
 
   final String title;
 

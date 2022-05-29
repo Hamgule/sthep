@@ -156,7 +156,14 @@ class _QuestionCardState extends State<QuestionCard> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Image.network(
+                  widget.question.imageUrl == ''
+                      ? Container(
+                    padding: const EdgeInsets.all(70.0),
+                    height: 200.0,
+                    child: Image.asset(
+                      'assets/images/logo_horizontal.png',
+                  ),
+                      ) : Image.network(
                     widget.question.imageUrl!,
                     height: 200.0,
                   ),
