@@ -10,7 +10,8 @@ import 'package:sthep/page/main/home/home.dart';
 import 'package:sthep/page/main/my/my.dart';
 import 'package:sthep/page/main/notification/notification.dart';
 import 'package:sthep/page/main/view/view.dart';
-import 'package:sthep/page/upload/upload.dart';
+import 'package:sthep/page/upload/update.dart';
+import 'package:sthep/page/upload/create.dart';
 import 'package:sthep/page/widget/appbar.dart';
 import 'package:sthep/page/widget/sidebar.dart';
 
@@ -33,9 +34,9 @@ List<Widget> pages(Question? question) => [
   const HomePage(type: 'answer'),
   const NotificationPage(),
   const MyPage(),
-  const UploadPage(),
+  const CreatePage(),
   ViewPage(question: question),
-  UploadPage(question: question),
+  UpdatePage(question: question),
 ];
 
 List<Widget?> floatingButtons = [
