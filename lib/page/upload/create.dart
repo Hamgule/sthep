@@ -35,7 +35,6 @@ class _CreatePageState extends State<CreatePage> {
     return null;
   }
 
-
   @override
   Widget build(BuildContext context) {
     Materials upload = Provider.of<Materials>(context);
@@ -122,7 +121,6 @@ class _CreatePageState extends State<CreatePage> {
                       onPressed: () async {
                         XFile? xFile = await pickImage();
                         if (xFile == null) return;
-                        // setState(() => upload.imageEdited = false);
                         setState(() => upload.image = File(xFile.path));
                       },
                     ),
