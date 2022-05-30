@@ -1,7 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:image_painter/image_painter.dart';
 import 'package:sthep/model/question/question.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
 
 late Size screenSize;
 
@@ -50,6 +53,20 @@ class Materials with ChangeNotifier {
   /// upload
   File? image;
   bool imageUploading = false;
+  bool imageEdited = false;
+  final imageKey = GlobalKey<ImagePainterState>();
+
+  Future saveImage() async {
+    final editedImage = await imageKey.currentState?.exportImage();
+    final directory = (await getApplicationDocumentsDirectory()).path;
+    await Directory('$directory/sample').create(recursive: true);
+    final fullPath =
+        '$directory/sample/${DateTime.now().millisecondsSinceEpoch}.png';
+    final imgFile = File(fullPath);
+    imgFile.writeAsBytesSync(editedImage!);
+    image = imgFile;
+  }
+
 
   void updateLocalImage(File? image) {
     image = image;

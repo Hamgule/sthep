@@ -106,9 +106,11 @@ class _FABState extends State<FAB> {
         main.toggleUploadingState();
 
         if (main.image != null) {
+          await main.saveImage();
+          print(main.image!.path);
           main.newQuestion.imageUrl = await MyFirebase.uploadImage(
             'questions',
-            main.destQuestion!.idToString(),
+            main.newQuestion.idToString(),
             main.image,
           );
         }

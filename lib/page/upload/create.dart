@@ -10,6 +10,7 @@ import 'package:sthep/config/palette.dart';
 import 'package:sthep/global/extensions/widgets.dart';
 import 'package:sthep/global/materials.dart';
 import 'package:sthep/model/question/question.dart';
+import 'package:open_file/open_file.dart';
 
 class CreatePage extends StatefulWidget {
   const CreatePage({Key? key}) : super(key: key);
@@ -22,7 +23,6 @@ class _CreatePageState extends State<CreatePage> {
   final FocusNode _focusNode = FocusNode();
   final TextEditingController titleCont = TextEditingController();
   final TextEditingController tagCont = TextEditingController();
-  final _imageKey = GlobalKey<ImagePainterState>();
   late Question targetQuestion;
   static const double canvasPadding = 20.0;
 
@@ -34,6 +34,7 @@ class _CreatePageState extends State<CreatePage> {
     }
     return null;
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -121,6 +122,7 @@ class _CreatePageState extends State<CreatePage> {
                       onPressed: () async {
                         XFile? xFile = await pickImage();
                         if (xFile == null) return;
+                        // setState(() => upload.imageEdited = false);
                         setState(() => upload.image = File(xFile.path));
                       },
                     ),
@@ -139,11 +141,11 @@ class _CreatePageState extends State<CreatePage> {
                         upload.image!,
                         width: 300,
                         height: 500,
-                        key: _imageKey,
+                        key: upload.imageKey,
                         scalable: true,
                         initialStrokeWidth: 2,
                         //textDelegate: DutchTextDelegate(),
-                        initialColor: Colors.green,
+                        initialColor: Colors.black,
                         initialPaintMode: PaintMode.freeStyle,
                       ),
                 ),
