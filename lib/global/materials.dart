@@ -66,6 +66,11 @@ class Materials with ChangeNotifier {
   List<String> searchTags = [];
   List<Question> filteredQuestions = [];
 
+  void clearFilteredQuestions() {
+    filteredQuestions = [];
+    notifyListeners();
+  }
+
   void setKeyword(String text) {
     searchKeyword = text;
     notifyListeners();

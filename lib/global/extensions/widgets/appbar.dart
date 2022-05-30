@@ -236,37 +236,36 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       iconTheme: const IconThemeData(color: Palette.iconColor),
       actions: [
-        IconButton(
-          onPressed: () {
-            Materials search = Provider.of<Materials>(context, listen: false);
-            search.filteredQuestions = [];
+        Consumer<Materials>(
+          builder: (context, search, _) {
+            return search.searchTags.isEmpty && search.searchKeyword == ''
+                ? Container() : IconButton(
+              onPressed: () {
+                Materials search = Provider.of<Materials>(context, listen: false);
+                search.clearFilteredQuestions();
 
-            search.questions.forEach((question) {
-              if (search.searchKeyword == '') {
-                for (var tag in search.searchTags) {
-                  if (!question.tags.contains(tag)) {
-                    return;
+                search.questions.forEach((question) {
+                  if (search.searchKeyword == '') {
+                    for (var tag in search.searchTags) {
+                      if (!question.tags.contains(tag)) {
+                        return;
+                      }
+                    }
+                    search.addSearchedQuestion(question);
                   }
-                }
-                search.addSearchedQuestion(question);
-              }
-              else if (question.toSearchString().contains(search.searchKeyword)) {
-                for (var tag in search.searchTags) {
-                  if (!question.tags.contains(tag)) {
-                    return;
+                  else if (question.toSearchString().contains(search.searchKeyword)) {
+                    for (var tag in search.searchTags) {
+                      if (!question.tags.contains(tag)) {
+                        return;
+                      }
+                    }
+                    search.addSearchedQuestion(question);
                   }
-                }
-                search.addSearchedQuestion(question);
-              }
-            });
-          },
-          icon: Consumer<Materials>(
-            builder: (context, search, _) {
-              return search.searchTags.isEmpty && search.searchKeyword == ''
-                  ? Container()
-                  : const Icon(Icons.search);
-            }
-          ),
+                });
+              },
+              icon: const Icon(Icons.search),
+            );
+          }
         )
       ],
     );
