@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sthep/config/palette.dart';
-import 'package:sthep/global/extensions/widgets.dart';
+import 'package:sthep/global/extensions/widgets/text.dart';
 import 'package:sthep/global/materials.dart';
 import 'package:sthep/model/logo/logo.dart';
 import 'package:sthep/model/user/user.dart';
@@ -55,11 +55,16 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
         },
       );
     }
-
     Widget searchButton() => StatefulBuilder(
       builder: (context, setState) {
         return IconButton(
-          onPressed: () => Navigator.pushNamed(context, '/Search'),
+          onPressed: () {
+            Materials search = Provider.of<Materials>(context, listen: false);
+            search.searchKeyword = '';
+            search.searchTags = [];
+            search.filteredQuestions = [];
+            Navigator.pushNamed(context, '/Search');
+          },
           icon: const Icon(Icons.search),
         );
       },
@@ -203,6 +208,66 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
             icon: const Icon(Icons.menu),
           ),
         ),
+      ],
+    );
+  }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(appbarHeight);
+}
+
+class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
+  const SearchAppBar({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      backgroundColor: Palette.appbarColor,
+      foregroundColor: Palette.iconColor,
+      centerTitle: false,
+      title: const SthepText(
+        '검색',
+        size: 25.0,
+        color: Palette.iconColor,
+      ),
+      leading: IconButton(
+        onPressed: () => Navigator.pop(context),
+        icon: const Icon(Icons.arrow_back_ios),
+      ),
+      iconTheme: const IconThemeData(color: Palette.iconColor),
+      actions: [
+        IconButton(
+          onPressed: () {
+            Materials search = Provider.of<Materials>(context, listen: false);
+            search.filteredQuestions = [];
+
+            search.questions.forEach((question) {
+              if (search.searchKeyword == '') {
+                for (var tag in search.searchTags) {
+                  if (!question.tags.contains(tag)) {
+                    return;
+                  }
+                }
+                search.addSearchedQuestion(question);
+              }
+              else if (question.toSearchString().contains(search.searchKeyword)) {
+                for (var tag in search.searchTags) {
+                  if (!question.tags.contains(tag)) {
+                    return;
+                  }
+                }
+                search.addSearchedQuestion(question);
+              }
+            });
+          },
+          icon: Consumer<Materials>(
+            builder: (context, search, _) {
+              return search.searchTags.isEmpty && search.searchKeyword == ''
+                  ? Container()
+                  : const Icon(Icons.search);
+            }
+          ),
+        )
       ],
     );
   }

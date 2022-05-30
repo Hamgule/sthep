@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sthep/firebase/firebase.dart';
-import 'package:sthep/global/extensions/buttons.dart';
-import 'package:sthep/global/extensions/widgets.dart';
 import 'package:sthep/config/palette.dart';
+import 'package:sthep/global/extensions/buttons/tag.dart';
+import 'package:sthep/global/extensions/widgets/text.dart';
+import 'package:sthep/global/materials.dart';
 import 'package:sthep/model/question/question.dart';
 import 'package:sthep/model/user/user.dart';
-import 'package:sthep/page/widget/profile.dart';
+import 'package:sthep/global/extensions/widgets/profile.dart';
 import 'package:intl/intl.dart';
 
 class ViewPage extends StatelessWidget {
@@ -69,15 +71,30 @@ class ViewPage extends StatelessWidget {
                   ),
                 ],
               ),
-              Container(
+              SizedBox(
                 height: 60.0,
                 child: Row(
                   children: [
                     for (var tag in question!.tags)
                     TagButton(
                       '#$tag',
-                      size: 15.0,
-                      onPressed: () {},
+                      size: 18.0,
+                      onPressed: () {
+                        Materials search = Provider.of<Materials>(context, listen: false);
+                        search.searchTags = [];
+                        search.addTag(tag);
+                        search.filteredQuestions = [];
+
+                        search.questions.forEach((question) {
+                          for (var tag in search.searchTags) {
+                            if (!question.tags.contains(tag)) {
+                              return;
+                            }
+                          }
+                          search.addSearchedQuestion(question);
+                        });
+                        Navigator.pushNamed(context, '/Search');
+                      },
                     )
                   ],
                 ),

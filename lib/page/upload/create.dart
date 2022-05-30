@@ -7,7 +7,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:material_tag_editor/tag_editor.dart';
 import 'package:provider/provider.dart';
 import 'package:sthep/config/palette.dart';
-import 'package:sthep/global/extensions/widgets.dart';
+import 'package:sthep/global/extensions/buttons/fab.dart';
+import 'package:sthep/global/extensions/widgets/text.dart';
 import 'package:sthep/global/materials.dart';
 import 'package:sthep/model/question/question.dart';
 
@@ -83,7 +84,7 @@ class _CreatePageState extends State<CreatePage> {
                     });
                   }
                 },
-                tagBuilder: (context, index) => _Chip(
+                tagBuilder: (context, index) => TagChip(
                   index: index,
                   label: targetQuestion.tags[index],
                   onDeleted: (index) {
@@ -133,50 +134,23 @@ class _CreatePageState extends State<CreatePage> {
                   width: screenSize.width,
                   child: upload.image == null
                       ? const SthepText('이미지를 선택하세요')
-                      :
-                  //Image.file(upload.image!, fit: BoxFit.fitWidth)
-                      ImagePainter.file(
-                        upload.image!,
-                        width: 300,
-                        height: 500,
-                        key: _imageKey,
-                        scalable: true,
-                        initialStrokeWidth: 2,
-                        //textDelegate: DutchTextDelegate(),
-                        initialColor: Colors.green,
-                        initialPaintMode: PaintMode.freeStyle,
-                      ),
+                      : ImagePainter.file(
+                    upload.image!,
+                    width: 300,
+                    height: 500,
+                    key: _imageKey,
+                    scalable: true,
+                    initialStrokeWidth: 2,
+                    //textDelegate: DutchTextDelegate(),
+                    initialColor: Colors.green,
+                    initialPaintMode: PaintMode.freeStyle,
+                  ),
                 ),
               ),
             ],
           ),
         ),
       ),
-    );
-  }
-}
-
-class _Chip extends StatelessWidget {
-  const _Chip({
-    required this.label,
-    required this.onDeleted,
-    required this.index,
-  });
-
-  final String label;
-  final ValueChanged<int> onDeleted;
-  final int index;
-
-  @override
-  Widget build(BuildContext context) {
-    return Chip(
-      labelPadding: const EdgeInsets.only(left: 8.0),
-      label: Text(label),
-      deleteIcon: const Icon(
-        Icons.close,
-        size: 18,
-      ),
-      onDeleted: () => onDeleted(index),
     );
   }
 }

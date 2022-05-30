@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sthep/global/extensions/icons.dart';
-import 'package:sthep/model/painter/painter.dart';
 
 class Question {
   /// variables
@@ -13,7 +12,6 @@ class Question {
   List<String> tags = [];
   List<dynamic> answers = [];
 
-  Painter? painter;
   String? imageUrl;
   int? adoptedAnswerId;
 
@@ -61,4 +59,6 @@ class Question {
 
   String idToString() => '$id'.padLeft(5, '0');
   String tagsToString() => tags.join(' ');
+
+  String toSearchString() => ['$id', title].join(' ');
 }

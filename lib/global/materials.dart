@@ -61,4 +61,29 @@ class Materials with ChangeNotifier {
     notifyListeners();
   }
 
+  /// search
+  String searchKeyword = '';
+  List<String> searchTags = [];
+  List<Question> filteredQuestions = [];
+
+  void setKeyword(String text) {
+    searchKeyword = text;
+    notifyListeners();
+  }
+
+  void addTag(String tag) {
+    searchTags.add(tag);
+    notifyListeners();
+  }
+
+  void removeTag(int index) {
+    searchTags.removeAt(index);
+    notifyListeners();
+  }
+
+  void addSearchedQuestion(Question question) {
+    filteredQuestions.add(question);
+    notifyListeners();
+  }
+
 }

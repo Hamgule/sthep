@@ -2,13 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sthep/global/materials.dart';
 import 'package:sthep/model/question/question.dart';
-import 'package:sthep/page/main/home/home_materials.dart';
 import 'package:sthep/page/main/my/my_materials.dart';
 import 'package:sthep/firebase/firebase.dart';
 import 'package:sthep/model/user/user.dart';
 import 'package:sthep/page/main/notification/notification_materials.dart';
-
-import 'package:sthep/page/widget/profile.dart';
 
 class MyPage extends StatefulWidget {
   const MyPage({Key? key}) : super(key: key);

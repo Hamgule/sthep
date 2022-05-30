@@ -6,7 +6,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:material_tag_editor/tag_editor.dart';
 import 'package:provider/provider.dart';
 import 'package:sthep/config/palette.dart';
-import 'package:sthep/global/extensions/widgets.dart';
+import 'package:sthep/global/extensions/buttons/fab.dart';
+import 'package:sthep/global/extensions/widgets/text.dart';
 import 'package:sthep/global/materials.dart';
 import 'package:sthep/model/question/question.dart';
 
@@ -86,7 +87,7 @@ class _UpdatePageState extends State<UpdatePage> {
                     });
                   }
                 },
-                tagBuilder: (context, index) => _Chip(
+                tagBuilder: (context, index) => TagChip(
                   index: index,
                   label: targetQuestion.tags[index],
                   onDeleted: (index) {
@@ -163,31 +164,6 @@ class _UpdatePageState extends State<UpdatePage> {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _Chip extends StatelessWidget {
-  const _Chip({
-    required this.label,
-    required this.onDeleted,
-    required this.index,
-  });
-
-  final String label;
-  final ValueChanged<int> onDeleted;
-  final int index;
-
-  @override
-  Widget build(BuildContext context) {
-    return Chip(
-      labelPadding: const EdgeInsets.only(left: 8.0),
-      label: Text(label),
-      deleteIcon: const Icon(
-        Icons.close,
-        size: 18,
-      ),
-      onDeleted: () => onDeleted(index),
     );
   }
 }
