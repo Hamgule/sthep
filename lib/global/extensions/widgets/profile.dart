@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sthep/config/palette.dart';
-import 'package:sthep/global/extensions/buttons.dart';
-import 'package:sthep/global/extensions/widgets.dart';
+import 'package:sthep/global/extensions/buttons/setting.dart';
+import 'package:sthep/global/extensions/widgets/text.dart';
 import 'package:sthep/model/user/user.dart';
 
 Widget profilePhoto(SthepUser user) => Container(
@@ -70,18 +70,20 @@ Widget myPageProfile(SthepUser user) => Container(
 Widget simpleProfile(SthepUser user) => Row(
   children: [
     Container(
-        width: 30.0,
-        height: 30.0,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          image: DecorationImage(
-            fit: BoxFit.fill,
-            image: Image.network(user.imageUrl).image,
-          ),
-        )),
+      width: 30.0,
+      height: 30.0,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        image: DecorationImage(
+          fit: BoxFit.fill,
+          image: Image.network(user.imageUrl).image,
+        ),
+      ),
+    ),
     const SizedBox(width: 15.0),
     Expanded(
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(

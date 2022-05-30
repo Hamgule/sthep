@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sthep/config/palette.dart';
-import 'package:sthep/global/extensions/buttons.dart';
-import 'package:sthep/global/extensions/widgets.dart';
+import 'package:sthep/global/extensions/buttons/setting.dart';
+import 'package:sthep/global/extensions/widgets/text.dart';
 import 'package:sthep/model/user/user.dart';
-import 'package:sthep/page/widget/profile.dart';
+import 'package:sthep/global/extensions/widgets/profile.dart';
 
 class SideBar extends StatelessWidget {
   const SideBar({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-
     return Drawer(
       child: ListView(
         children: [
@@ -29,35 +28,35 @@ class SideBar extends StatelessWidget {
                   ),
                   const SizedBox(height: 50.0),
                   Consumer<SthepUser>(
-                    builder: (context, user, _) {
-                      return user.logged ? InkWell(
-                        onTap: () {},
-                        child: Row(
-                          children: [
-                            profile(user),
-                            const Expanded(child: SizedBox()),
-                            SettingButton(onPressed: () {}),
-                          ],
-                        ),
-                      ) : InkWell(
-                        onTap: () async {
-                          // await user.sthepLogin();
-                          // await inputNickname();
-                          // user.setNickname(nicknameController.text);
-                          // user.updateDB();
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(vertical: 10.0),
-                              child: const SthepText('GOOGLE 로그인'),
-                            ),
-                          ],
-                        ),
-                      );
-                    }
+                      builder: (context, user, _) {
+                        return user.logged ? InkWell(
+                          onTap: () {},
+                          child: Row(
+                            children: [
+                              profile(user),
+                              const Expanded(child: SizedBox()),
+                              SettingButton(onPressed: () {}),
+                            ],
+                          ),
+                        ) : InkWell(
+                          onTap: () async {
+                            // await user.sthepLogin();
+                            // await inputNickname();
+                            // user.setNickname(nicknameController.text);
+                            // user.updateDB();
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(vertical: 10.0),
+                                child: const SthepText('GOOGLE 로그인'),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
                   ),
                 ],
               ),
@@ -98,3 +97,4 @@ class SideBar extends StatelessWidget {
     );
   }
 }
+

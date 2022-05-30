@@ -1,65 +1,163 @@
-/*
-   반복적으로 사용되는 기능을 위젯으로 재정의 (Widgets)
-*/
-
 import 'dart:math' as math;
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sthep/config/palette.dart';
+import 'package:sthep/firebase/firebase.dart';
+import 'package:sthep/global/extensions/widgets/snackbar.dart';
+import 'package:sthep/global/extensions/widgets/text.dart';
+import 'package:sthep/global/materials.dart';
+import 'package:sthep/model/question/question.dart';
+import 'package:sthep/model/user/user.dart';
 
-// 특정 폰트가 적용된 Text() 위젯
-class SthepText extends StatelessWidget {
-  const SthepText(
-    this.text, {
-    Key? key,
-    this.size = 20.0,
-    this.color = Palette.fontColor1,
-    this.bold = false,
-    this.italic = false,
-    this.overflow = false,
-  }) : super(key: key);
+class FAB extends StatefulWidget {
+  const FAB({Key? key, required this.child}) : super(key: key);
 
-  final String text;
-  final double size;
-  final Color color;
-  final bool bold;
-  final bool italic;
-  final bool overflow;
+  final Widget child;
+
+  @override
+  State<FAB> createState() => _FABState();
+}
+
+class _FABState extends State<FAB> {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: TextStyle(
-        fontFamily: 'Nemojin030',
-        color: color,
-        fontSize: size,
-        fontWeight: bold ? FontWeight.bold : FontWeight.normal,
-        fontStyle: italic ? FontStyle.italic : FontStyle.normal,
-      ),
-      // overflow: overflow ? TextOverflow.ellipsis : TextOverflow.visible,
-      overflow: TextOverflow.ellipsis,
+    Materials main = Provider.of<Materials>(context, listen: false);
+    SthepUser user = Provider.of<SthepUser>(context, listen: false);
+
+    void onPressed() async {
+      Map<String, dynamic>? data = await MyFirebase.readData(
+          'autoIncrement', 'question');
+      int nextId = data!['currentId'] + 1;
+
+      bool isNum(int n) => main.newPageIndex == n;
+
+      if (main.newPageIndex < 3) {
+        if (!user.logged) {
+          showMySnackBar(context, '로그인이 필요합니다.');
+          return;
+        }
+
+        main.setPageIndex(5);
+        main.newQuestion = Question(
+          id: nextId,
+          questionerUid: user.uid!,
+        );
+        main.image = null;
+      }
+
+      // Upload Page
+      else if (isNum(5)) {
+        if (main.newQuestion.title == '') {
+          showMySnackBar(context, '제목을 입력하세요');
+          return;
+        }
+
+        main.toggleUploadingState();
+
+        if (main.image != null) {
+          main.newQuestion.imageUrl = await MyFirebase.uploadImage(
+            'questions',
+            main.destQuestion!.idToString(),
+            main.image,
+          );
+        }
+
+        main.toggleUploadingState();
+
+        Map<String, dynamic> addData = main.newQuestion.toJson();
+
+        addData['regDate'] = FieldValue.serverTimestamp();
+
+        MyFirebase.write(
+          'questions',
+          main.newQuestion.idToString(),
+          addData,
+        );
+
+        main.setPageIndex(0);
+        MyFirebase.write('autoIncrement', 'question', {'currentId': nextId});
+      }
+      else if (isNum(7)) {
+        main.newQuestion = main.destQuestion!;
+
+        if (main.newQuestion.title == '') {
+          showMySnackBar(context, '제목을 입력하세요');
+          return;
+        }
+
+        main.toggleUploadingState();
+
+        if (main.image != null) {
+          main.newQuestion.imageUrl = await MyFirebase.uploadImage(
+            'questions',
+            main.destQuestion!.idToString(),
+            main.image,
+          );
+        }
+
+        main.toggleUploadingState();
+
+        Map<String, dynamic> addData = main.newQuestion.toJson();
+
+        addData['modDate'] = FieldValue.serverTimestamp();
+
+        MyFirebase.write(
+          'questions',
+          main.newQuestion.idToString(),
+          addData,
+        );
+
+        main.setPageIndex(0);
+        MyFirebase.write('autoIncrement', 'question', {'currentId': nextId});
+      }
+    }
+    return FloatingActionButton(
+      onPressed: onPressed,
+      child: widget.child,
+      backgroundColor: Palette.iconColor,
     );
   }
 }
 
-void showMySnackBar(BuildContext context, String content) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      duration: const Duration(milliseconds: 500),
-      content: Text(content),
-    ),
-  );
-}
+class ViewFAB extends StatelessWidget {
+  const ViewFAB({Key? key}) : super(key: key);
 
+  @override
+  Widget build(BuildContext context) {
+    return ExpandableFab(
+      distance: 80.0,
+      children: [
+        ActionButton(
+          onPressed: () {
+            Materials main = Provider.of<Materials>(context, listen: false);
+            main.setPageIndex(7);
+            main.image = null;
+          },
+          icon: const Icon(Icons.edit),
+        ),
+        ActionButton(
+          onPressed: () {
+            Materials main = Provider.of<Materials>(context, listen: false);
+            MyFirebase.remove('questions', main.destQuestion!.idToString());
+            main.setPageIndex(0);
+          },
+          icon: const Icon(Icons.delete),
+        ),
+      ],
+    );
+  }
+}
 
 @immutable
 class ExpandableFab extends StatefulWidget {
   const ExpandableFab({
-  Key? key,
-  this.initialOpen,
-  required this.distance,
-  required this.children,
+    Key? key,
+    this.initialOpen,
+    required this.distance,
+    required this.children,
   }) : super(key: key);
 
   final bool? initialOpen;
@@ -236,17 +334,16 @@ class _ExpandingActionButton extends StatelessWidget {
 @immutable
 class ActionButton extends StatelessWidget {
   const ActionButton({
-  Key? key,
-  this.onPressed,
-  required this.icon,
-  });
+    Key? key,
+    this.onPressed,
+    required this.icon,
+  }) : super(key: key);
 
   final VoidCallback? onPressed;
   final Widget icon;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Material(
       shape: const CircleBorder(),
       clipBehavior: Clip.antiAlias,
@@ -257,6 +354,33 @@ class ActionButton extends StatelessWidget {
         icon: icon,
         color: Colors.white,
       ),
+    );
+  }
+}
+
+class TagChip extends StatelessWidget {
+  const TagChip({
+    Key? key,
+    required this.label,
+    required this.onDeleted,
+    required this.index,
+  }) : super(key: key);
+
+  final String label;
+  final ValueChanged<int> onDeleted;
+  final int index;
+
+  @override
+  Widget build(BuildContext context) {
+    return Chip(
+      backgroundColor: Palette.hyperColor.withOpacity(.4),
+      labelPadding: const EdgeInsets.only(left: 8.0),
+      label: SthepText(label, size: 13.0),
+      deleteIcon: const Icon(
+        Icons.close,
+        size: 18,
+      ),
+      onDeleted: () => onDeleted(index),
     );
   }
 }

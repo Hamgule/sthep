@@ -46,15 +46,10 @@ class SthepUser with ChangeNotifier {
     nickname = loadData?['nickname'];
     if (loadData?['questions'] != null) {
         loadData?['questions'].forEach((dynamic question) {
-          print(question);
           questions?.add(question as int);
         }
       );
     }
-
-
-    print(questions?.length);
-
     notifyListeners();
   }
 

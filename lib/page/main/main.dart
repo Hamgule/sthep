@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sthep/config/palette.dart';
-import 'package:sthep/global/extensions/buttons.dart';
-import 'package:sthep/global/extensions/widgets.dart';
+import 'package:sthep/global/extensions/buttons/fab.dart';
+import 'package:sthep/global/extensions/widgets/sidebar.dart';
+import 'package:sthep/global/extensions/widgets/snackbar.dart';
+import 'package:sthep/global/extensions/widgets/text.dart';
 import 'package:sthep/global/materials.dart';
 import 'package:sthep/model/question/question.dart';
 import 'package:sthep/model/user/user.dart';
@@ -12,8 +14,7 @@ import 'package:sthep/page/main/notification/notification.dart';
 import 'package:sthep/page/main/view/view.dart';
 import 'package:sthep/page/upload/update.dart';
 import 'package:sthep/page/upload/create.dart';
-import 'package:sthep/page/widget/appbar.dart';
-import 'package:sthep/page/widget/sidebar.dart';
+import 'package:sthep/global/extensions/widgets/appbar.dart';
 
 List<PreferredSizeWidget> appbars(Question? question) {
   return [

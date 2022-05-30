@@ -19,11 +19,13 @@ class Sthep extends StatelessWidget {
 
   Route<dynamic>? _getRoute(RouteSettings settings) {
     String route = settings.name ?? '';
-    Object args = settings.arguments ?? Object();
+    // Object args = settings.arguments ?? Object();
+
     Map<String, Widget> pages = Routes.all;
-    Duration duration = const Duration(milliseconds: 200);
+    Duration duration = const Duration(milliseconds: 100);
 
     if (!Routes.exist(route)) route = '/?';
+
     return PageTransition(
       child: pages[route]!,
       type: PageTransitionType.fade,

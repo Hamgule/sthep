@@ -33,37 +33,52 @@ class _HomePageState extends State<HomePage> {
               const Ranking(),
               Expanded(
                 child: MyFirebase.readOnce(
-                    path: 'questions',
-                    builder: (context, snapshot) {
-                      materials.questions = [];
-                      SthepUser user = Provider.of<SthepUser>(context);
+                  path: 'questions',
+                  builder: (context, snapshot) {
+                    materials.questions = [];
+                    SthepUser user = Provider.of<SthepUser>(context);
 
-                      snapshot.data?.docs.forEach((doc) async {
-                        var data = doc.data()! as Map<String, dynamic>;
-                        Question q = Question.fromJson(data);
+                    snapshot.data?.docs.forEach((doc) async {
+                      var data = doc.data()! as Map<String, dynamic>;
+                      Question q = Question.fromJson(data);
 
-                        if (widget.type == 'question') {
-                          if (user.uid != q.questionerUid) {
-                            return;
-                          }
+                      if (widget.type == 'question') {
+                        if (user.uid != q.questionerUid) {
+                          return;
                         }
-                        else if (widget.type == 'answer') {
-                          q.answers.forEach((answer) async {
-                            var answerers = await answer.get();
-                            if (answerers.data() == null) return;
-                            if (user.uid != answerers.data()['answererUid']) return;
-                          });
-                        }
-                        materials.questions.add(q);
-                      });
-                      return GridView.count(
-                        padding: const EdgeInsets.all(30.0),
-                        crossAxisCount: MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 3,
-                        children: materials.questions.map(
-                              (question) => QuestionCard(question: question),
-                        ).toList(),
-                      );
-                    }),
+                      }
+                      else if (widget.type == 'answer') {
+                        q.answers.forEach((answer) async {
+                          var answerers = await answer.get();
+                          if (answerers.data() == null) return;
+                          if (user.uid != answerers.data()['answererUid']) return;
+                        });
+                      }
+                      materials.questions.add(q);
+                    });
+
+                    return materials.isGrid ? GridView.count(
+                      padding: const EdgeInsets.all(30.0),
+                      crossAxisCount: MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 3,
+                      children: materials.questions.map(
+                            (question) => QuestionCard(question: question),
+                      ).toList(),
+                    ) : ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 50.0),
+                      itemCount: materials.questions.length,
+                      itemExtent: 120.0,
+                      itemBuilder: (context, index) {
+                        return QuestionTile(
+                          question: materials.questions[index],
+                          onPressed: () {
+                            Materials home = Provider.of<Materials>(context, listen: false);
+                            home.setPageIndex(6);
+                            home.destQuestion = materials.questions[index];
+                          },
+                        );
+                      },
+                    );
+                  }),
               ),
             ],
           );
