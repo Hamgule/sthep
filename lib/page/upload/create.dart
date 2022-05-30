@@ -133,19 +133,17 @@ class _CreatePageState extends State<CreatePage> {
                   width: screenSize.width,
                   child: upload.image == null
                       ? const SthepText('이미지를 선택하세요')
-                      :
-                  //Image.file(upload.image!, fit: BoxFit.fitWidth)
-                      ImagePainter.file(
-                        upload.image!,
-                        width: 300,
-                        height: 500,
-                        key: upload.imageKey,
-                        scalable: true,
-                        initialStrokeWidth: 2,
-                        //textDelegate: DutchTextDelegate(),
-                        initialColor: Colors.black,
-                        initialPaintMode: PaintMode.freeStyle,
-                      ),
+                      : ImagePainter.file(
+                          upload.image!,
+                          width: 300,
+                          height: 500,
+                          key: upload.imageKey,
+                          scalable: true,
+                          initialStrokeWidth: 2,
+                          //textDelegate: DutchTextDelegate(),
+                          initialColor: Colors.black,
+                          initialPaintMode: PaintMode.freeStyle,
+                        ),
                 ),
               ),
             ],
