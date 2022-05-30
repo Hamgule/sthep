@@ -84,7 +84,7 @@ class _CreatePageState extends State<CreatePage> {
                     });
                   }
                 },
-                tagBuilder: (context, index) => _Chip(
+                tagBuilder: (context, index) => TagChip(
                   index: index,
                   label: targetQuestion.tags[index],
                   onDeleted: (index) {

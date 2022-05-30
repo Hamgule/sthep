@@ -53,19 +53,18 @@ class Materials with ChangeNotifier {
   /// upload
   File? image;
   bool imageUploading = false;
-  bool imageEdited = false;
   final imageKey = GlobalKey<ImagePainterState>();
 
   Future saveImage() async {
     final editedImage = await imageKey.currentState?.exportImage();
-    print(editedImage);
+    // print(editedImage);
     final directory = (await getApplicationDocumentsDirectory()).path;
     await Directory('$directory/sample').create(recursive: true);
     final fullPath =
         '$directory/sample/${DateTime.now().millisecondsSinceEpoch}.png';
     final imgFile = File(fullPath);
     imgFile.writeAsBytesSync(editedImage!);
-    print(imgFile.path);
+    // print(imgFile.path);
     image = imgFile;
   }
 
