@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sthep/firebase/firebase.dart';
-import 'package:sthep/global/extensions/icons.dart';
+import 'package:sthep/global/extensions/icons/icons.dart';
 import 'package:sthep/config/palette.dart';
 import 'package:sthep/global/extensions/widgets/text.dart';
 import 'package:sthep/global/materials.dart';
