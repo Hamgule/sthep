@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sthep/config/palette.dart';
+import 'package:sthep/global/extensions/widgets/snackbar.dart';
 import 'package:sthep/global/extensions/widgets/text.dart';
 import 'package:sthep/global/materials.dart';
 import 'package:sthep/model/logo/logo.dart';
@@ -93,20 +94,18 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
     Widget loginButton() {
       return IconButton(
         onPressed: () async {
-          try { await user.sthepLogin(); }
+          try {
+            await user.sthepLogin();
+            if (user.nickname == null) return;
+            showMySnackBar(context, '\'${user.nickname}\'님 로그인 되었습니다.');
+          }
           catch (e) {
             if (user.nickname == null) {
               await inputNickname();
               user.setNickname(nicknameController.text.trim());
             }
             user.updateDB();
-
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                duration: const Duration(milliseconds: 1000),
-                content: Text('\'${user.nickname}\'님 환영합니다.'),
-              ),
-            );
+            showMySnackBar(context, '\'${user.nickname}\'님 환영합니다.');
           }
         }, icon: const Icon(Icons.login),
       );

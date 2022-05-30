@@ -5,7 +5,6 @@ class Answer {
   late String answererUid;
   late int questionId;
 
-  Painter? painter;
   bool adopted = false;
 
   Answer({
@@ -19,7 +18,6 @@ class Answer {
   Answer.fromJson(Map<String, dynamic> data) {
     id = data['id'];
     answererUid = data['answererUid'];
-    questionId = data['questionId'];
     adopted = data['adopted'];
   }
 }

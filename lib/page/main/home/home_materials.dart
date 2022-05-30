@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sthep/firebase/firebase.dart';
-import 'package:sthep/global/extensions/icons.dart';
+import 'package:sthep/global/extensions/icons/icons.dart';
 import 'package:sthep/config/palette.dart';
 import 'package:sthep/global/extensions/widgets/text.dart';
 import 'package:sthep/global/materials.dart';
@@ -210,7 +210,7 @@ class QuestionCard extends StatelessWidget {
                       ),
                       const Icon(Icons.comment_rounded, size: 20.0),
                       const SizedBox(width: 5.0),
-                      SthepText('${question.answers.length}', size: 15.0),
+                      SthepText('${question.answerIds.length}', size: 15.0),
                     ],
                   ),
                 ],
@@ -245,12 +245,7 @@ class QuestionTile extends StatelessWidget {
       title: Card(
         elevation: 8.0,
         child: InkWell(
-          onTap: () {
-            Materials home = Provider.of<Materials>(context, listen: false);
-            Navigator.pop(context);
-            home.setPageIndex(6);
-            home.destQuestion = question;
-          },
+          onTap: onPressed,
           child: Row(
             children: [
               Expanded(
@@ -327,7 +322,7 @@ class QuestionTile extends StatelessWidget {
                   children: [
                     const Icon(Icons.comment_rounded, size: 20.0),
                     const SizedBox(width: 5.0),
-                    SthepText('${question.answers.length}', size: 15.0),
+                    SthepText('${question.answerIds.length}', size: 15.0),
                   ],
                 ),
               ),

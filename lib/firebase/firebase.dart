@@ -62,4 +62,8 @@ class MyFirebase {
     TaskSnapshot task = await ref.putFile(file);
     return await task.ref.getDownloadURL();
   }
+
+  static Future removeImage(String path, String id) async {
+    await s.ref('$path/$id').delete();
+  }
 }

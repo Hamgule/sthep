@@ -142,6 +142,7 @@ class ViewFAB extends StatelessWidget {
           onPressed: () {
             Materials main = Provider.of<Materials>(context, listen: false);
             MyFirebase.remove('questions', main.destQuestion!.idToString());
+            MyFirebase.removeImage('questions', main.destQuestion!.idToString());
             main.setPageIndex(0);
           },
           icon: const Icon(Icons.delete),

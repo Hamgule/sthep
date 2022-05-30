@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sthep/global/extensions/icons.dart';
+import 'package:sthep/global/extensions/icons/icons.dart';
+import 'package:sthep/model/question/answer.dart';
 
 class Question {
   /// variables
@@ -10,7 +11,8 @@ class Question {
   DateTime? modDate = DateTime.now();
 
   List<String> tags = [];
-  List<dynamic> answers = [];
+  List<String> answererUids = [];
+  List<int> answerIds = [];
 
   String? imageUrl;
   int? adoptedAnswerId;
@@ -38,11 +40,12 @@ class Question {
     regDate = (data['regDate'] ?? Timestamp.now()).toDate();
     modDate = (data['regDate'] ?? Timestamp.now()).toDate();
     questionerUid = data['questionerUid'];
-    answers = (data['answers'] ?? []);
     adoptedAnswerId = data['adoptedAnswerId'];
     imageUrl = data['imageUrl'];
+    answerIds = (data['answerIds'] ?? []).cast<int>();
+    answererUids = (data['answererUids'] ?? []).cast<String>();
 
-    if (answers.isNotEmpty) state = AdoptState.notAdopted;
+    if (answerIds.isNotEmpty) state = AdoptState.notAdopted;
     if (adoptedAnswerId != null) state = AdoptState.adopted;
   }
 
@@ -52,9 +55,10 @@ class Question {
     'tags': tags,
     'regDate': regDate,
     'questionerUid': questionerUid,
-    'answers': answers,
     'adoptedAnswerId': adoptedAnswerId,
     'imageUrl': imageUrl,
+    'answerIds': answerIds,
+    'answererUids': answererUids,
   };
 
   String idToString() => '$id'.padLeft(5, '0');
