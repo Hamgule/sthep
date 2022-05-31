@@ -65,7 +65,7 @@ class ViewPage extends StatelessWidget {
                     ],
                   ),
                   SthepText(
-                    DateFormat('yyyy-MM-dd hh:mm:ss').format(question!.regDate!),
+                    DateFormat('yyyy-MM-dd HH:mm:ss').format(question!.regDate!),
                     size: 15.0,
                     color: Palette.fontColor2,
                   ),

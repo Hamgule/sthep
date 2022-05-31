@@ -39,20 +39,25 @@ class _HomePageState extends State<HomePage> {
                     SthepUser user = Provider.of<SthepUser>(context);
 
                     snapshot.data?.docs.forEach((doc) async {
-                      var data = doc.data()! as Map<String, dynamic>;
-                      Question q = Question.fromJson(data);
+                      var questionData = doc.data()! as Map<String, dynamic>;
+                      Question q = Question.fromJson(questionData);
 
                       if (widget.type == 'question') {
                         if (user.uid != q.questionerUid) {
                           return;
                         }
                       }
+
                       else if (widget.type == 'answer') {
-                        q.answers.forEach((answer) async {
-                          var answerers = await answer.get();
-                          if (answerers.data() == null) return;
-                          if (user.uid != answerers.data()['answererUid']) return;
+                        bool answered = false;
+                        q.answererUids.forEach((answererUid) {
+                          if (user.uid == answererUid) {
+                            print(user.uid);
+                            print(answererUid);
+                            answered = true; return;
+                          }
                         });
+                        if (!answered) return;
                       }
                       materials.questions.add(q);
                     });
