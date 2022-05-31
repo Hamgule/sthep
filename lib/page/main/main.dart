@@ -41,14 +41,14 @@ List<Widget> pages(Question? question) => [
 ];
 
 List<Widget?> floatingButtons = [
-  const FAB(child: Icon(Icons.edit)),
-  const FAB(child: Icon(Icons.edit)),
-  const FAB(child: Icon(Icons.edit)),
+  const HomeFAB(),
+  const HomeFAB(),
+  const HomeFAB(),
   null,
   null,
-  const FAB(child: Icon(Icons.upload)),
+  const CreateFAB(),
   const ViewFAB(),
-  const FAB(child: Icon(Icons.upload)),
+  const UpdateFAB(),
 ];
 
 class MainPage extends StatefulWidget {
