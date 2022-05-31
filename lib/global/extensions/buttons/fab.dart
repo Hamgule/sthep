@@ -59,15 +59,15 @@ class CreateFAB extends StatelessWidget {
       }
 
       main.toggleUploadingState();
-
       if (main.image != null) {
+        await main.saveImage();
+
         main.newQuestion.imageUrl = await MyFirebase.uploadImage(
           'questions',
           main.newQuestion.idToString(),
           main.image,
         );
       }
-
       main.toggleUploadingState();
 
       Map<String, dynamic> addData = main.newQuestion.toJson();
@@ -153,13 +153,22 @@ class UpdateFAB extends StatelessWidget {
 
       main.toggleUploadingState();
 
-      if (main.image != null) {
+      if (main.image == null) {
+        await main.saveImage();
+
         main.newQuestion.imageUrl = await MyFirebase.uploadImage(
           'questions',
-          main.destQuestion!.idToString(),
+          main.newQuestion.idToString(),
           main.image,
         );
       }
+      // if (main.image != null) {
+      //   main.newQuestion.imageUrl = await MyFirebase.uploadImage(
+      //     'questions',
+      //     main.destQuestion!.idToString(),
+      //     main.image,
+      //   );
+      // }
 
       main.toggleUploadingState();
 
