@@ -11,16 +11,8 @@ import 'package:sthep/global/materials.dart';
 import 'package:sthep/model/question/question.dart';
 import 'package:sthep/model/user/user.dart';
 
-class FAB extends StatefulWidget {
-  const FAB({Key? key, required this.child}) : super(key: key);
-
-  final Widget child;
-
-  @override
-  State<FAB> createState() => _FABState();
-}
-
-class _FABState extends State<FAB> {
+class HomeFAB extends StatelessWidget {
+  const HomeFAB({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -32,93 +24,67 @@ class _FABState extends State<FAB> {
           'autoIncrement', 'question');
       int nextId = data!['currentId'] + 1;
 
-      bool isNum(int n) => main.newPageIndex == n;
-
-      if (main.newPageIndex < 3) {
-        if (!user.logged) {
-          showMySnackBar(context, '로그인이 필요합니다.');
-          return;
-        }
-
-        main.setPageIndex(5);
-        main.newQuestion = Question(
-          id: nextId,
-          questionerUid: user.uid!,
-        );
-        main.image = null;
+      if (!user.logged) {
+        showMySnackBar(context, '로그인이 필요합니다.');
+        return;
       }
 
-      // Upload Page
-      else if (isNum(5)) {
-        if (main.newQuestion.title == '') {
-          showMySnackBar(context, '제목을 입력하세요');
-          return;
-        }
-
-        main.toggleUploadingState();
-
-        if (main.image != null) {
-          main.newQuestion.imageUrl = await MyFirebase.uploadImage(
-            'questions',
-            main.newQuestion.idToString(),
-            main.image,
-          );
-        }
-
-        main.toggleUploadingState();
-
-        Map<String, dynamic> addData = main.newQuestion.toJson();
-
-        addData['regDate'] = FieldValue.serverTimestamp();
-
-        MyFirebase.write(
-          'questions',
-          main.newQuestion.idToString(),
-          addData,
-        );
-
-        main.setPageIndex(0);
-        MyFirebase.write('autoIncrement', 'question', {'currentId': nextId});
-      }
-      else if (isNum(7)) {
-        main.newQuestion = main.destQuestion!;
-
-        if (main.newQuestion.title == '') {
-          showMySnackBar(context, '제목을 입력하세요');
-          return;
-        }
-
-        main.toggleUploadingState();
-
-        if (main.image != null) {
-          main.newQuestion.imageUrl = await MyFirebase.uploadImage(
-            'questions',
-            main.destQuestion!.idToString(),
-            main.image,
-          );
-        }
-
-        main.toggleUploadingState();
-
-        Map<String, dynamic> addData = main.newQuestion.toJson();
-
-        addData['modDate'] = FieldValue.serverTimestamp();
-
-        MyFirebase.write(
-          'questions',
-          main.newQuestion.idToString(),
-          addData,
-        );
-
-        main.setPageIndex(0);
-        MyFirebase.write('autoIncrement', 'question', {'currentId': nextId});
-      }
+      main.setPageIndex(5);
+      main.newQuestion = Question(
+        id: nextId,
+        questionerUid: user.uid!,
+      );
+      main.image = null;
     }
-    return FloatingActionButton(
-      onPressed: onPressed,
-      child: widget.child,
-      backgroundColor: Palette.iconColor,
-    );
+
+    return SingleFAB(child: const Icon(Icons.edit), onPressed: onPressed);
+  }
+}
+
+class CreateFAB extends StatelessWidget {
+  const CreateFAB({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    Materials main = Provider.of<Materials>(context, listen: false);
+
+    void onPressed() async {
+      Map<String, dynamic>? data = await MyFirebase.readData(
+          'autoIncrement', 'question');
+      int nextId = data!['currentId'] + 1;
+
+      if (main.newQuestion.title == '') {
+        showMySnackBar(context, '제목을 입력하세요');
+        return;
+      }
+
+      main.toggleUploadingState();
+
+      if (main.image != null) {
+        main.newQuestion.imageUrl = await MyFirebase.uploadImage(
+          'questions',
+          main.newQuestion.idToString(),
+          main.image,
+        );
+      }
+
+      main.toggleUploadingState();
+
+      Map<String, dynamic> addData = main.newQuestion.toJson();
+
+      addData['regDate'] = FieldValue.serverTimestamp();
+
+      MyFirebase.write(
+        'questions',
+        main.newQuestion.idToString(),
+        addData,
+      );
+
+      main.setPageIndex(0);
+      MyFirebase.write('autoIncrement', 'question', {'currentId': nextId});
+    }
+
+    return SingleFAB(child: const Icon(Icons.upload), onPressed: onPressed);
   }
 }
 
@@ -127,27 +93,131 @@ class ViewFAB extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ExpandableFab(
-      distance: 80.0,
+    Materials main = Provider.of<Materials>(context, listen: false);
+    SthepUser user = Provider.of<SthepUser>(context, listen: false);
+
+    void editPressed() {
+      main.setPageIndex(7);
+      main.image = null;
+    }
+
+    void delPressed() {
+      Materials main = Provider.of<Materials>(context, listen: false);
+      MyFirebase.remove('questions', main.destQuestion!.idToString());
+      MyFirebase.removeImage('questions', main.destQuestion!.idToString());
+      main.setPageIndex(0);
+    }
+
+    if (main.destQuestion == null) {
+      SingleFAB(child: const Icon(Icons.question_mark), onPressed: () {});
+    }
+
+    return user.uid == main.destQuestion!.questionerUid
+        ? MultiFAB(
       children: [
         ActionButton(
-          onPressed: () {
-            Materials main = Provider.of<Materials>(context, listen: false);
-            main.setPageIndex(7);
-            main.image = null;
-          },
+          onPressed: editPressed,
           icon: const Icon(Icons.edit),
         ),
         ActionButton(
-          onPressed: () {
-            Materials main = Provider.of<Materials>(context, listen: false);
-            MyFirebase.remove('questions', main.destQuestion!.idToString());
-            MyFirebase.removeImage('questions', main.destQuestion!.idToString());
-            main.setPageIndex(0);
-          },
+          onPressed: delPressed,
           icon: const Icon(Icons.delete),
         ),
       ],
+    ) : SingleFAB(
+      child: const Icon(Icons.comment),
+      onPressed: () {},
+    );
+  }
+}
+
+
+class UpdateFAB extends StatelessWidget {
+  const UpdateFAB({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    Materials main = Provider.of<Materials>(context, listen: false);
+
+    void onPressed() async {
+      Map<String, dynamic>? data = await MyFirebase.readData(
+          'autoIncrement', 'question');
+      int nextId = data!['currentId'] + 1;
+
+      main.newQuestion = main.destQuestion!;
+
+      if (main.newQuestion.title == '') {
+        showMySnackBar(context, '제목을 입력하세요');
+        return;
+      }
+
+      main.toggleUploadingState();
+
+      if (main.image != null) {
+        main.newQuestion.imageUrl = await MyFirebase.uploadImage(
+          'questions',
+          main.destQuestion!.idToString(),
+          main.image,
+        );
+      }
+
+      main.toggleUploadingState();
+
+      Map<String, dynamic> addData = main.newQuestion.toJson();
+
+      addData['modDate'] = FieldValue.serverTimestamp();
+
+      MyFirebase.write(
+        'questions',
+        main.newQuestion.idToString(),
+        addData,
+      );
+
+      main.setPageIndex(0);
+      MyFirebase.write('autoIncrement', 'question', {'currentId': nextId});
+    }
+    return SingleFAB(child: const Icon(Icons.upload), onPressed: onPressed);
+  }
+}
+
+
+class SingleFAB extends StatefulWidget {
+  const SingleFAB({
+    Key? key,
+    required this.child,
+    required this.onPressed,
+  }) : super(key: key);
+
+  final Widget child;
+  final VoidCallback onPressed;
+
+  @override
+  State<SingleFAB> createState() => _SingleFABState();
+}
+
+class _SingleFABState extends State<SingleFAB> {
+
+  @override
+  Widget build(BuildContext context) {
+
+    return FloatingActionButton(
+      onPressed: widget.onPressed,
+      child: widget.child,
+      backgroundColor: Palette.iconColor,
+    );
+  }
+}
+
+class MultiFAB extends StatelessWidget {
+  const MultiFAB({Key? key, required this.children}) : super(key: key);
+
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    return ExpandableFab(
+      distance: 80.0,
+      children: children,
     );
   }
 }
