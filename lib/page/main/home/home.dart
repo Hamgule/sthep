@@ -44,8 +44,10 @@ class _HomePageState extends State<HomePage> {
 
                       if (widget.type == 'question') {
                         if (user.uid != q.questionerUid) {
+                          materials.myQuestions.add(q);
                           return;
                         }
+
                       }
 
                       else if (widget.type == 'answer') {
@@ -54,7 +56,9 @@ class _HomePageState extends State<HomePage> {
                           if (user.uid == answererUid) {
                             print(user.uid);
                             print(answererUid);
-                            answered = true; return;
+                            answered = true;
+                            materials.myAnswers.add(q);
+                            return;
                           }
                         });
                         if (!answered) return;

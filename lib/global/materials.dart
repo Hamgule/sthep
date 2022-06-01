@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_painter/image_painter.dart';
+import 'package:sthep/model/question/answer.dart';
 import 'package:sthep/model/question/question.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -21,6 +22,9 @@ class Materials with ChangeNotifier {
 
   ///
   List<Question> questions = [];
+
+  List<Question> myQuestions = [];
+  List<Question> myAnswers = [];
 
   void addQuestion(Question q) async {
     int index = questions.indexWhere((e) => e.id == q.id);
