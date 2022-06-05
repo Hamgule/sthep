@@ -23,6 +23,11 @@ class SthepUser with ChangeNotifier {
   Exp exp = Exp();
   List<int>? questions; // 나의 질문들의 id 값
 
+  void toggleLogState() {
+    logged = !logged;
+    notifyListeners();
+  }
+
   void setNickname(String nickname) async {
     this.nickname = nickname;
     notifyListeners();
@@ -31,8 +36,7 @@ class SthepUser with ChangeNotifier {
   Future sthepLogin() async {
     UserCredential userCredential;
     User? user;
-    try { userCredential = await signInWithGoogle(); }
-    catch(e) { return; }
+    userCredential = await signInWithGoogle();
 
     user = userCredential.user;
     if (user == null) return;
@@ -40,7 +44,6 @@ class SthepUser with ChangeNotifier {
     uid = user.uid;
     name = user.displayName;
     email = user.email;
-    logged = true;
 
     var loadData = await MyFirebase.readData('users', uid!);
     nickname = loadData?['nickname'];

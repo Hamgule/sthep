@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sthep/firebase/firebase.dart';
+import 'package:sthep/global/extensions/buttons/fab/fab.dart';
 import 'package:sthep/global/extensions/icons/icons.dart';
 import 'package:sthep/config/palette.dart';
 import 'package:sthep/global/extensions/widgets/text.dart';
@@ -142,8 +143,15 @@ class QuestionCard extends StatelessWidget {
           child: InkWell(
             onTap: () {
               Materials home = Provider.of<Materials>(context, listen: false);
+              SthepUser user = Provider.of<SthepUser>(context, listen: false);
               home.setPageIndex(6);
               home.destQuestion = question;
+
+              home.setViewFABState(
+                  user.uid == home.destQuestion!.questionerUid
+                      ? FABState.myQuestion
+                      : FABState.comment
+              );
             },
             child: Padding(
               padding: const EdgeInsets.all(10.0),

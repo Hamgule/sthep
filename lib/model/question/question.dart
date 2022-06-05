@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sthep/global/extensions/icons/icons.dart';
 import 'package:sthep/model/question/answer.dart';
+import 'package:sthep/model/user/user.dart';
 
 class Question {
   /// variables
@@ -11,8 +12,11 @@ class Question {
   DateTime? modDate = DateTime.now();
 
   List<String> tags = [];
-  List<String> answererUids = [];
   List<int> answerIds = [];
+  List<String> answererUids = [];
+
+  late SthepUser questioner;
+  List<Answer> answers = [];
 
   String? imageUrl;
   int? adoptedAnswerId;
@@ -38,15 +42,13 @@ class Question {
     title = data['title'];
     tags = data['tags'].cast<String>();
     regDate = (data['regDate'] ?? Timestamp.now()).toDate();
-    modDate = (data['regDate'] ?? Timestamp.now()).toDate();
+    modDate = (data['modDate'] ?? Timestamp.now()).toDate();
     questionerUid = data['questionerUid'];
     adoptedAnswerId = data['adoptedAnswerId'];
     imageUrl = data['imageUrl'];
     answerIds = (data['answerIds'] ?? []).cast<int>();
     answererUids = (data['answererUids'] ?? []).cast<String>();
-
-    if (answerIds.isNotEmpty) state = AdoptState.notAdopted;
-    if (adoptedAnswerId != null) state = AdoptState.adopted;
+    updateState();
   }
 
   Map<String, dynamic> toJson() => {
@@ -54,6 +56,7 @@ class Question {
     'title': title,
     'tags': tags,
     'regDate': regDate,
+    'modDate': modDate,
     'questionerUid': questionerUid,
     'adoptedAnswerId': adoptedAnswerId,
     'imageUrl': imageUrl,
@@ -61,8 +64,15 @@ class Question {
     'answererUids': answererUids,
   };
 
-  String idToString() => '$id'.padLeft(5, '0');
-  String tagsToString() => tags.join(' ');
+  static String idToString(int id) => '$id'.padLeft(5, '0');
 
+  void updateState() {
+    state = AdoptState.notAnswered;
+    if (answerIds.isNotEmpty) state = AdoptState.notAdopted;
+    if (adoptedAnswerId != null) state = AdoptState.adopted;
+  }
+
+  String qidToString() => idToString(id);
+  String tagsToString() => tags.join(' ');
   String toSearchString() => ['$id', title].join(' ');
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sthep/config/palette.dart';
-import 'package:sthep/global/extensions/widgets/snackbar.dart';
 import 'package:sthep/global/extensions/widgets/text.dart';
 import 'package:sthep/global/materials.dart';
 import 'package:sthep/model/logo/logo.dart';
@@ -20,96 +19,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     SthepUser user = Provider.of<SthepUser>(context);
-
-    TextEditingController nicknameController = TextEditingController();
-
-    Future inputNickname() async {
-      await showDialog(
-        context: context,
-        builder: (_) {
-          return AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(5.0),
-            ),
-            titlePadding: EdgeInsets.zero,
-            title: Container(
-              padding: const EdgeInsets.all(30.0),
-              decoration: BoxDecoration(
-                color: Palette.bgColor.withOpacity(.3),
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(5.0),
-                  topRight: Radius.circular(5.0),
-                ),
-              ),
-              child: const SthepText('닉네임을 입력하세요.'),
-            ),
-            content: TextFormField(
-              controller: nicknameController,
-            ),
-            actions: [
-              TextButton(
-                child: const Text("확인"),
-                onPressed: () => Navigator.pop(context),
-              ),
-            ],
-          );
-        },
-      );
-    }
-    Widget searchButton() => StatefulBuilder(
-      builder: (context, setState) {
-        return IconButton(
-          onPressed: () {
-            Materials search = Provider.of<Materials>(context, listen: false);
-            search.searchKeyword = '';
-            search.searchTags = [];
-            search.filteredQuestions = [];
-            Navigator.pushNamed(context, '/Search');
-          },
-          icon: const Icon(Icons.search),
-        );
-      },
-    );
-
-    Widget listGridToggleButton() {
-      return Consumer<Materials>(
-        builder: (context, home, _) => IconButton(
-          onPressed: home.toggleGrid,
-          icon: Icon(
-            home.isGrid ? Icons.list_alt : Icons.window,
-          ),
-        ),
-      );
-    }
-
-    Widget drawerButton() {
-      return StatefulBuilder(
-        builder: (context, setState) => IconButton(
-          onPressed: () => Scaffold.of(context).openEndDrawer(),
-          icon: const Icon(Icons.menu),
-        ),
-      );
-    }
-
-    Widget loginButton() {
-      return IconButton(
-        onPressed: () async {
-          try {
-            await user.sthepLogin();
-            if (user.nickname == null) return;
-            showMySnackBar(context, '\'${user.nickname}\'님 로그인 되었습니다.');
-          }
-          catch (e) {
-            if (user.nickname == null) {
-              await inputNickname();
-              user.setNickname(nicknameController.text.trim());
-            }
-            user.updateDB();
-            showMySnackBar(context, '\'${user.nickname}\'님 환영합니다.');
-          }
-        }, icon: const Icon(Icons.login),
-      );
-    }
+    Materials materials = Provider.of<Materials>(context);
 
     return AppBar(
       backgroundColor: Palette.appbarColor,
@@ -133,9 +43,9 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
         ],
       ),
       actions: [
-        searchButton(),
-        listGridToggleButton(),
-        user.logged ? drawerButton() : loginButton(),
+        materials.searchButton(context),
+        materials.listGridToggleButton(),
+        user.logged ? materials.drawerButton() : materials.loginButton(context),
       ],
     );
   }
@@ -151,14 +61,56 @@ class BackAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    SthepUser user = Provider.of<SthepUser>(context);
+    Materials materials = Provider.of<Materials>(context);
+
+    List<String> modTitles = const ['질문', '질문 수정하기', '답변하기', '답변 수정하기'];
+    String? modTitle;
+    int? qid;
+
+    if (modTitles.contains(title)) {
+      if (materials.destQuestion != null) {
+        modTitle = materials.destQuestion!.title;
+        qid = materials.destQuestion!.id;
+      }
+    }
+
     return AppBar(
       backgroundColor: Palette.appbarColor,
       foregroundColor: Palette.iconColor,
       centerTitle: false,
-      title: SthepText(
-        title,
-        size: 25.0,
-        color: Palette.iconColor,
+      title: Row(
+        children: [
+          SthepText(
+            title + (modTitle == null ? '' : ': '),
+            size: 25.0,
+            color: Palette.iconColor,
+          ),
+          const SizedBox(width: 15.0),
+          if (modTitle != null)
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Palette.bgColor.withOpacity(.3),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Row(
+              children: [
+                SthepText(
+                  '$qid',
+                  size: 15.0,
+                  color: Palette.fontColor2,
+                ),
+                const SizedBox(width: 10.0),
+                SthepText(
+                  modTitle,
+                  size: 20.0,
+                  color: Palette.iconColor,
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
       leading: Consumer<Materials>(
         builder: (context, upload, _) {
@@ -169,12 +121,11 @@ class BackAppBar extends StatelessWidget implements PreferredSizeWidget {
         }
       ),
       actions: [
-        StatefulBuilder(
-          builder: (context, setState) => IconButton(
-            onPressed: () => Scaffold.of(context).openEndDrawer(),
-            icon: const Icon(Icons.menu),
-          ),
-        ),
+        materials.searchButton(context),
+        materials.listGridToggleButton(),
+        user.logged
+            ? materials.drawerButton()
+            : materials.loginButton(context),
       ],
     );
   }

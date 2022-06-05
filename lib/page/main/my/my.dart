@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sthep/config/palette.dart';
 import 'package:sthep/global/materials.dart';
-import 'package:sthep/model/question/question.dart';
 import 'package:sthep/page/main/my/my_materials.dart';
 import 'package:sthep/firebase/firebase.dart';
 import 'package:sthep/model/user/user.dart';
@@ -101,9 +100,7 @@ class _MainPageState extends State<MyPage> {
 
     animate();
 
-    Materials materials = Provider.of<Materials>(context);
     SthepUser user = Provider.of<SthepUser>(context, listen: false);
-    // print(materials.getQuestionsByUserID(user.uid!));
 
     return SingleChildScrollView(
       child: Column(
@@ -138,8 +135,8 @@ class _MainPageState extends State<MyPage> {
                     eventLoader: _getEventsForDay,
                     startingDayOfWeek: StartingDayOfWeek.monday,
                     calendarStyle : CalendarStyle(
-                        defaultTextStyle: TextStyle(color: Colors.grey,),
-                        weekendTextStyle: TextStyle(color: Colors.grey),
+                        defaultTextStyle: const TextStyle(color: Colors.grey),
+                        weekendTextStyle: const TextStyle(color: Colors.grey),
                         outsideDaysVisible: false,
                         todayDecoration: const BoxDecoration(
                             color: Palette.fontColor2,

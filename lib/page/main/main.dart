@@ -1,54 +1,65 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sthep/config/palette.dart';
-import 'package:sthep/global/extensions/buttons/fab.dart';
+import 'package:sthep/global/extensions/buttons/fab/answer/create.dart';
+import 'package:sthep/global/extensions/buttons/fab/answer/update.dart';
+import 'package:sthep/global/extensions/buttons/fab/home.dart';
+import 'package:sthep/global/extensions/buttons/fab/question/create.dart';
+import 'package:sthep/global/extensions/buttons/fab/question/update.dart';
+import 'package:sthep/global/extensions/buttons/fab/view.dart';
+import 'package:sthep/global/extensions/widgets/progress_indicator.dart';
 import 'package:sthep/global/extensions/widgets/sidebar.dart';
 import 'package:sthep/global/extensions/widgets/snackbar.dart';
 import 'package:sthep/global/extensions/widgets/text.dart';
 import 'package:sthep/global/materials.dart';
-import 'package:sthep/model/question/question.dart';
 import 'package:sthep/model/user/user.dart';
 import 'package:sthep/page/main/home/home.dart';
 import 'package:sthep/page/main/my/my.dart';
 import 'package:sthep/page/main/notification/notification.dart';
 import 'package:sthep/page/main/view/view.dart';
-import 'package:sthep/page/upload/update.dart';
-import 'package:sthep/page/upload/create.dart';
+import 'package:sthep/page/upload/answer_create.dart';
+import 'package:sthep/page/upload/answer_update.dart';
+import 'package:sthep/page/upload/question_update.dart';
+import 'package:sthep/page/upload/question_create.dart';
 import 'package:sthep/global/extensions/widgets/appbar.dart';
 
-List<PreferredSizeWidget> appbars(Question? question) {
-  return [
-    const HomeAppBar(),
-    const HomeAppBar(title: '나의 질문'),
-    const HomeAppBar(title: '나의 답변'),
-    const MainAppBar(title: '알림'),
-    const MainAppBar(title: '마이페이지'),
-    const BackAppBar(title: '질문하기'),
-    BackAppBar(title: question == null ? '' : '${question.id} 번 질문 - ${question.title}'),
-    BackAppBar(title: question == null ? '' : '수정하기: ${question.id} 번 질문 - ${question.title}'),
-  ];
-}
+List<PreferredSizeWidget> appbars = [
+  const HomeAppBar(),
+  const HomeAppBar(title: '나의 질문'),
+  const HomeAppBar(title: '나의 답변'),
+  const MainAppBar(title: '알림'),
+  const MainAppBar(title: '마이페이지'),
+  const BackAppBar(title: '질문하기'),
+  const BackAppBar(title: '질문'),
+  const BackAppBar(title: '질문 수정하기'),
+  const BackAppBar(title: '답변하기'),
+  const BackAppBar(title: '답변 수정하기'),
+];
 
-List<Widget> pages(Question? question) => [
+List<Widget> pages = [
   const HomePage(),
   const HomePage(type: 'question'),
   const HomePage(type: 'answer'),
   const NotificationPage(),
   const MyPage(),
   const CreatePage(),
-  ViewPage(question: question),
-  UpdatePage(question: question),
+  const ViewPage(),
+  const UpdatePage(),
+  const AnswerCreatePage(),
+  const AnswerUpdatePage(),
 ];
 
-List<Widget?> floatingButtons = [
+List<Widget?> floatingButtons() => [
   const HomeFAB(),
   const HomeFAB(),
   const HomeFAB(),
   null,
   null,
-  const CreateFAB(),
-  const ViewFAB(),
-  const UpdateFAB(),
+  const QuestionCreateFAB(),
+  ViewFAB(), // NO CONSTANT
+  const QuestionUpdateFAB(),
+  const AnswerCreateFAB(),
+  const AnswerUpdateFAB(),
 ];
 
 class MainPage extends StatefulWidget {
@@ -59,7 +70,6 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-
   double iconSize = 38.0;
 
   @override
@@ -69,26 +79,24 @@ class _MainPageState extends State<MainPage> {
     return Consumer<Materials>(
       builder: (context, main, _) {
         return Scaffold(
-          appBar: appbars(main.destQuestion)[main.newPageIndex],
+          appBar: appbars[main.newPageIndex],
           endDrawer: const SideBar(),
           body: Stack(
             children: [
-              pages(main.destQuestion)[main.newPageIndex],
-              if (main.imageUploading)
+              pages[main.newPageIndex],
+              if (main.loading)
               Positioned.fill(
                 child: Container(
                   color: Colors.black.withOpacity(.3),
                   child: const Center(
-                    child: CircularProgressIndicator(
-                      color: Palette.bgColor,
-                    ),
+                    child: SthepProgressIndicator(),
                   ),
                 ),
               ),
             ],
           ),
           bottomNavigationBar: _buildBottomBar(context),
-          floatingActionButton: floatingButtons[main.newPageIndex],
+          floatingActionButton: floatingButtons()[main.newPageIndex],
         );
       }
     );

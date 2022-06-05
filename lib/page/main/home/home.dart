@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sthep/firebase/firebase.dart';
 import 'package:sthep/global/materials.dart';
+import 'package:sthep/model/question/answer.dart';
 import 'package:sthep/model/question/question.dart';
 import 'package:sthep/model/user/user.dart';
 import 'package:sthep/page/main/home/home_materials.dart';
@@ -19,79 +20,86 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  List<Question> visQuestions = [];
 
   @override
   Widget build(BuildContext context) {
-
     screenSize = MediaQuery.of(context).size;
+
     Materials materials = Provider.of<Materials>(context);
+    SthepUser user = Provider.of<SthepUser>(context);
 
-    return Consumer<Materials>(
-        builder: (context, home, _) {
-          return Column(
-            children: [
-              const Ranking(),
-              Expanded(
-                child: MyFirebase.readOnce(
-                  path: 'questions',
-                  builder: (context, snapshot) {
-                    materials.questions = [];
-                    SthepUser user = Provider.of<SthepUser>(context);
+    void getQuestions() async {
+      materials.questions = [];
+      var loadData = await MyFirebase.readCollection('questions');
+      materials.questions.addAll(loadData.map((data) => Question.fromJson(data)).toList());
+      materials.toggleIsChanged();
+    }
 
-                    snapshot.data?.docs.forEach((doc) async {
-                      var questionData = doc.data()! as Map<String, dynamic>;
-                      Question q = Question.fromJson(questionData);
+    Future<SthepUser> getUser(String uid) async {
+      var loadData = await MyFirebase.readData('users', uid);
+      if (loadData == null) return SthepUser();
+      return SthepUser.fromJson(loadData);
+    }
 
-                      if (widget.type == 'question') {
-                        if (user.uid != q.questionerUid) {
-                          materials.myQuestions.add(q);
-                          return;
-                        }
+    if (materials.questions.isEmpty || materials.isChanged) getQuestions();
+    materials.myQuestions = [];
+    materials.myAnsweredQuestion = [];
 
-                      }
+    materials.questions.forEach((question) {
+      if (user.uid == question.questionerUid) {
+        materials.myQuestions.add(question);
+      }
 
-                      else if (widget.type == 'answer') {
-                        bool answered = false;
-                        q.answererUids.forEach((answererUid) {
-                          if (user.uid == answererUid) {
-                            print(user.uid);
-                            print(answererUid);
-                            answered = true;
-                            materials.myAnswers.add(q);
-                            return;
-                          }
-                        });
-                        if (!answered) return;
-                      }
-                      materials.questions.add(q);
-                    });
+      if (question.answererUids.contains(user.uid)) {
+        materials.myAnsweredQuestion.add(question);
+      }
+    });
 
-                    return materials.isGrid ? GridView.count(
-                      padding: const EdgeInsets.all(30.0),
-                      crossAxisCount: MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 3,
-                      children: materials.questions.map(
-                            (question) => QuestionCard(question: question),
-                      ).toList(),
-                    ) : ListView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 50.0),
-                      itemCount: materials.questions.length,
-                      itemExtent: 120.0,
-                      itemBuilder: (context, index) {
-                        return QuestionTile(
-                          question: materials.questions[index],
-                          onPressed: () {
-                            Materials home = Provider.of<Materials>(context, listen: false);
-                            home.setPageIndex(6);
-                            home.destQuestion = materials.questions[index];
-                          },
-                        );
-                      },
-                    );
-                  }),
-              ),
-            ],
-          );
-        }
+    materials.questions.forEach((question) async {
+      question.questioner = await getUser(question.questionerUid);
+      question.answers = [];
+
+      question.answerIds.forEach((answerId) async {
+        var data = await MyFirebase.readData('answers', Question.idToString(answerId));
+        if (data == null) return;
+        Answer tempAnswer = Answer.fromJson(data);
+        tempAnswer.answerer = await getUser(tempAnswer.answererUid);
+        question.answers.add(tempAnswer);
+      });
+    });
+
+    visQuestions = [];
+    if (materials.newPageIndex == 0) {
+      visQuestions.addAll(materials.questions);
+    }
+    else if (materials.newPageIndex == 1) {
+      visQuestions.addAll(materials.myQuestions);
+    }
+    else if (materials.newPageIndex == 2) {
+      visQuestions.addAll(materials.myAnsweredQuestion);
+    }
+
+    return materials.isGrid ? GridView.count(
+      padding: const EdgeInsets.all(30.0),
+      crossAxisCount: MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 3,
+      children: visQuestions.map(
+            (question) => QuestionCard(question: question),
+      ).toList(),
+    ) : ListView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: 50.0),
+      itemCount: visQuestions.length,
+      itemExtent: 120.0,
+      itemBuilder: (context, index) {
+        return QuestionTile(
+          question: visQuestions[index],
+          onPressed: () {
+            Materials home = Provider.of<Materials>(context, listen: false);
+            home.setPageIndex(6);
+            home.setDestQuestion(visQuestions[index]);
+          },
+        );
+      },
     );
   }
 }

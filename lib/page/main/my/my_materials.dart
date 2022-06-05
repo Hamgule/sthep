@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:sthep/config/palette.dart';
-import 'package:sthep/global/extensions/buttons/tag.dart';
 import 'package:sthep/global/extensions/widgets/text.dart';
 import 'package:sthep/global/materials.dart';
 import 'package:sthep/model/question/question.dart';

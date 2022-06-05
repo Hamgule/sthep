@@ -2,13 +2,126 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_painter/image_painter.dart';
+import 'package:provider/provider.dart';
+import 'package:sthep/config/palette.dart';
+import 'package:sthep/global/extensions/buttons/fab/fab.dart';
+import 'package:sthep/global/extensions/widgets/snackbar.dart';
+import 'package:sthep/global/extensions/widgets/text.dart';
 import 'package:sthep/model/question/answer.dart';
 import 'package:sthep/model/question/question.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:sthep/model/user/user.dart';
 
 late Size screenSize;
 
 class Materials with ChangeNotifier {
+
+  /// appbar
+  TextEditingController nicknameController = TextEditingController();
+  String? nicknameInput;
+
+  Future inputNickname(BuildContext context) async {
+    await showDialog(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5.0),
+          ),
+          titlePadding: EdgeInsets.zero,
+          title: Container(
+            padding: const EdgeInsets.all(30.0),
+            decoration: BoxDecoration(
+              color: Palette.bgColor.withOpacity(.3),
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(5.0),
+                topRight: Radius.circular(5.0),
+              ),
+            ),
+            child: const SthepText('닉네임을 입력하세요.'),
+          ),
+          content: TextFormField(
+            controller: nicknameController,
+          ),
+          actions: [
+            TextButton(
+              child: const Text("확인"),
+              onPressed: () {
+                nicknameInput = nicknameController.text;
+                notifyListeners();
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+  Widget searchButton(BuildContext context) => StatefulBuilder(
+    builder: (context, setState) {
+      return IconButton(
+        onPressed: () {
+          searchKeyword = '';
+          searchTags = [];
+          filteredQuestions = [];
+          Navigator.pushNamed(context, '/Search');
+        },
+        icon: const Icon(Icons.search),
+      );
+    },
+  );
+
+  Widget listGridToggleButton() {
+    return IconButton(
+      onPressed: toggleGrid,
+      icon: Icon(
+        isGrid ? Icons.list_alt : Icons.window,
+      ),
+    );
+  }
+
+  Widget drawerButton() {
+    return StatefulBuilder(
+      builder: (context, setState) => IconButton(
+        onPressed: () => Scaffold.of(context).openEndDrawer(),
+        icon: const Icon(Icons.menu),
+      ),
+    );
+  }
+
+  Widget loginButton(BuildContext context) {
+    Materials main = Provider.of<Materials>(context);
+    SthepUser user = Provider.of<SthepUser>(context);
+
+    return IconButton(
+      onPressed: () async {
+        try { await user.sthepLogin(); }
+        catch (e) { return; }
+
+        if (user.nickname == null) {
+          while (true) {
+            await inputNickname(context);
+            if (nicknameInput == null) {
+              showMySnackBar(context, '로그인에 실패했습니다. 다시 로그인 해주세요.', type: 'error');
+              return;
+            }
+            if (nicknameInput != '') break;
+            showMySnackBar(context, '올바른 닉네임을 입력하세요.', type: 'error');
+          }
+
+          user.toggleLogState();
+          user.setNickname(nicknameInput!);
+          user.updateDB();
+          showMySnackBar(context, '\'${user.nickname}\'님 환영합니다.', type: 'success');
+          return;
+        }
+
+        user.toggleLogState();
+        showMySnackBar(context, '\'${user.nickname}\'님 로그인 되었습니다.', type: 'success');
+        main.setPageIndex(0);
+      }, icon: const Icon(Icons.login),
+    );
+  }
 
   /// main
   int pageIndex = 0;
@@ -20,11 +133,10 @@ class Materials with ChangeNotifier {
     notifyListeners();
   }
 
-  ///
+  /// global
   List<Question> questions = [];
-
   List<Question> myQuestions = [];
-  List<Question> myAnswers = [];
+  List<Question> myAnsweredQuestion = [];
 
   void addQuestion(Question q) async {
     int index = questions.indexWhere((e) => e.id == q.id);
@@ -42,7 +154,7 @@ class Materials with ChangeNotifier {
     return questions.where((e) => e.questionerUid == uid).toList();
   }
 
-  /// Home
+  /// home
   bool isGrid = true;
 
   void toggleGrid() {
@@ -51,34 +163,37 @@ class Materials with ChangeNotifier {
   }
 
   late Question newQuestion;
+  late Answer newAnswer;
   Question? destQuestion;
+  Answer? destAnswer;
+
+  void setDestQuestion(Question question) {
+    destQuestion = question;
+    notifyListeners();
+  }
 
   /// upload
   File? image;
-  bool imageUploading = false;
+  bool loading = false;
   final imageKey = GlobalKey<ImagePainterState>();
 
   Future saveImage() async {
     final editedImage = await imageKey.currentState?.exportImage();
-    // print(editedImage);
     final directory = (await getApplicationDocumentsDirectory()).path;
     await Directory('$directory/sample').create(recursive: true);
-    final fullPath =
-        '$directory/sample/${DateTime.now().millisecondsSinceEpoch}.png';
+    final fullPath = '$directory/sample/${DateTime.now().millisecondsSinceEpoch}.png';
     final imgFile = File(fullPath);
     imgFile.writeAsBytesSync(editedImage!);
-    // print(imgFile.path);
     image = imgFile;
   }
-
 
   void updateLocalImage(File? image) {
     image = image;
     notifyListeners();
   }
 
-  void toggleUploadingState() {
-    imageUploading = !imageUploading;
+  void toggleLoading() {
+    loading = !loading;
     notifyListeners();
   }
 
@@ -109,6 +224,20 @@ class Materials with ChangeNotifier {
 
   void addSearchedQuestion(Question question) {
     filteredQuestions.add(question);
+    notifyListeners();
+  }
+
+  /// view
+  bool isChanged = false;
+  FABState viewFABState = FABState.myQuestion;
+
+  void toggleIsChanged() {
+    isChanged = !isChanged;
+    notifyListeners();
+  }
+
+  void setViewFABState(FABState state) {
+    viewFABState = state;
     notifyListeners();
   }
 

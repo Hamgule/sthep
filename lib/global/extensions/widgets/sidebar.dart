@@ -13,42 +13,8 @@ class SideBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Materials main = Provider.of<Materials>(context);
     SthepUser user = Provider.of<SthepUser>(context);
-    TextEditingController nicknameController = TextEditingController();
-
-    Future inputNickname() async {
-      await showDialog(
-        context: context,
-        builder: (_) {
-          return AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(5.0),
-            ),
-            titlePadding: EdgeInsets.zero,
-            title: Container(
-              padding: const EdgeInsets.all(30.0),
-              decoration: BoxDecoration(
-                color: Palette.bgColor.withOpacity(.3),
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(5.0),
-                  topRight: Radius.circular(5.0),
-                ),
-              ),
-              child: const SthepText('닉네임을 입력하세요.'),
-            ),
-            content: TextFormField(
-              controller: nicknameController,
-            ),
-            actions: [
-              TextButton(
-                child: const Text("확인"),
-                onPressed: () => Navigator.pop(context),
-              ),
-            ],
-          );
-        },
-      );
-    }
 
     return Drawer(
       child: ListView(
@@ -68,7 +34,6 @@ class SideBar extends StatelessWidget {
                   const SizedBox(height: 50.0),
                   user.logged ? InkWell(
                     onTap: () {
-                      Materials main = Provider.of<Materials>(context, listen: false);
                       main.setPageIndex(4);
                       Navigator.pop(context);
                     },
@@ -81,21 +46,30 @@ class SideBar extends StatelessWidget {
                     ),
                   ) : InkWell(
                     onTap: () async {
-                      try {
-                        await user.sthepLogin();
-                        if (user.nickname == null) return;
-                        showMySnackBar(context, '\'${user.nickname}\'님 로그인 되었습니다.');
-                        Navigator.pop(context);
-                      }
-                      catch (e) {
-                        if (user.nickname == null) {
-                          await inputNickname();
-                          user.setNickname(nicknameController.text.trim());
+                      try { await user.sthepLogin(); }
+                      catch (e) { return; }
+
+                      if (user.nickname == null) {
+                        while (true) {
+                          Navigator.pop(context);
+                          await main.inputNickname(context);
+                          if (main.nicknameInput == null) {
+                            showMySnackBar(context, '로그인에 실패했습니다. 다시 로그인 해주세요.', type: 'error');
+                            return;
+                          }
+                          if (main.nicknameInput != '') break;
+                          showMySnackBar(context, '올바른 닉네임을 입력하세요.', type: 'error');
                         }
+
+                        user.setNickname(main.nicknameInput!);
                         user.updateDB();
                         showMySnackBar(context, '\'${user.nickname}\'님 환영합니다.');
-                        Navigator.pop(context);
                       }
+                      else {
+                        showMySnackBar(context, '\'${user.nickname}\'님 로그인 되었습니다.');
+                        main.setPageIndex(0);
+                      }
+                      user.toggleLogState();
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,

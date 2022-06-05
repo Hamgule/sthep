@@ -1,17 +1,21 @@
-import 'package:sthep/model/painter/painter.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sthep/model/question/question.dart';
+import 'package:sthep/model/user/user.dart';
 
 class Answer {
   late int id;
   late String answererUid;
   late int questionId;
 
+  DateTime? regDate = DateTime.now();
+  DateTime? modDate = DateTime.now();
+  String? imageUrl;
+
   bool adopted = false;
 
-  Answer({
-    required this.id,
-    required this.answererUid,
-    required this.questionId,
-  });
+  late SthepUser answerer;
+
+  Answer();
 
   void adopt() => adopted = true;
 
@@ -19,5 +23,19 @@ class Answer {
     id = data['id'];
     answererUid = data['answererUid'];
     adopted = data['adopted'];
+    regDate = (data['regDate'] ?? Timestamp.now()).toDate();
+    modDate = (data['regDate'] ?? Timestamp.now()).toDate();
+    imageUrl = data['imageUrl'];
   }
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'answererUid': answererUid,
+    'adopted': adopted,
+    'regDate': regDate,
+    'modDate': modDate,
+    'imageUrl': imageUrl,
+  };
+
+  String aidToString() => Question.idToString(id);
 }

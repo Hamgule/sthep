@@ -28,6 +28,8 @@ dependencies:
   open_file: ^3.2.1
   path_provider: ^2.0.10
   table_calendar: ^3.0.6
+  smooth_page_indicator: ^1.0.0+2
+  progress_indicators: ^1.0.0
 
 dev_dependencies:
   flutter_test:
