@@ -24,7 +24,7 @@ class Answer {
     answererUid = data['answererUid'];
     adopted = data['adopted'];
     regDate = (data['regDate'] ?? Timestamp.now()).toDate();
-    modDate = (data['regDate'] ?? Timestamp.now()).toDate();
+    modDate = (data['modDate'] ?? Timestamp.now()).toDate();
     imageUrl = data['imageUrl'];
   }
 

@@ -5,6 +5,7 @@ import 'package:image_painter/image_painter.dart';
 import 'package:provider/provider.dart';
 import 'package:sthep/config/palette.dart';
 import 'package:sthep/global/extensions/buttons/fab/fab.dart';
+import 'package:sthep/global/extensions/widgets/dialog.dart';
 import 'package:sthep/global/extensions/widgets/snackbar.dart';
 import 'package:sthep/global/extensions/widgets/text.dart';
 import 'package:sthep/model/question/answer.dart';
@@ -21,40 +22,8 @@ class Materials with ChangeNotifier {
   String? nicknameInput;
 
   Future inputNickname(BuildContext context) async {
-    await showDialog(
-      context: context,
-      builder: (_) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(5.0),
-          ),
-          titlePadding: EdgeInsets.zero,
-          title: Container(
-            padding: const EdgeInsets.all(30.0),
-            decoration: BoxDecoration(
-              color: Palette.bgColor.withOpacity(.3),
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(5.0),
-                topRight: Radius.circular(5.0),
-              ),
-            ),
-            child: const SthepText('닉네임을 입력하세요.'),
-          ),
-          content: TextFormField(
-            controller: nicknameController,
-          ),
-          actions: [
-            TextButton(
-              child: const Text("확인"),
-              onPressed: () {
-                nicknameInput = nicknameController.text;
-                notifyListeners();
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        );
-      },
+    nicknameInput = await showMyInputDialog(
+      context, title: '닉네임을 입력하세요.',
     );
   }
   Widget searchButton(BuildContext context) => StatefulBuilder(
