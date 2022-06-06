@@ -29,7 +29,7 @@ class AnswerCreateFAB extends StatelessWidget {
 
       if (main.image == null) {
         await main.saveImage();
-
+        main.newAnswer.id = nextId;
         main.newAnswer.imageUrl = await MyFirebase.uploadImage(
           'answer',
           main.newAnswer.aidToString(),
@@ -40,8 +40,10 @@ class AnswerCreateFAB extends StatelessWidget {
       }
 
       main.toggleLoading();
-
+      main.newAnswer.id = nextId;
+      main.newAnswer.answerer = user;
       main.newAnswer.answererUid = user.uid!;
+
       Map<String, dynamic> addData = main.newAnswer.toJson();
 
       addData['regDate'] = FieldValue.serverTimestamp();
@@ -49,7 +51,7 @@ class AnswerCreateFAB extends StatelessWidget {
 
       MyFirebase.write(
         'answers',
-        Question.idToString(nextId),
+        main.newAnswer.aidToString(),
         addData,
       );
 
