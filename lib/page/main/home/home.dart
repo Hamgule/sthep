@@ -9,6 +9,7 @@ import 'package:sthep/global/extensions/widgets/text.dart';
 import 'package:sthep/global/materials.dart';
 import 'package:sthep/model/question/answer.dart';
 import 'package:sthep/model/question/question.dart';
+import 'package:sthep/model/user/activity.dart';
 import 'package:sthep/model/user/user.dart';
 import 'package:sthep/page/main/home/home_materials.dart';
 
@@ -267,6 +268,14 @@ class _HomePageState extends State<HomePage> {
       if (question.answererUids.contains(user.uid)) {
         materials.myAnsweredQuestion.add(question);
       }
+
+      materials.myQuestions.forEach((question) {
+        //user.myActivities[Question.regDate] = MyActivity(type: ActivityType.question, id: question.id) as List<MyActivity>;
+      });
+
+      materials.myAnsweredQuestion.forEach((answer) {
+       // user.myActivities.add(MyActivity(type: ActivityType.answer, id: answer.id));
+      });
     });
 
     materials.questions.forEach((question) async {

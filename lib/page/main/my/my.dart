@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sthep/config/palette.dart';
@@ -5,7 +7,7 @@ import 'package:sthep/global/materials.dart';
 import 'package:sthep/page/main/my/my_materials.dart';
 import 'package:sthep/firebase/firebase.dart';
 import 'package:sthep/model/user/user.dart';
-import 'package:sthep/page/main/my/utils.dart';
+import 'package:sthep/model/user/activity.dart';
 import 'package:sthep/page/main/notification/notification_materials.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -20,14 +22,19 @@ class MyPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MyPage> {
-  late final ValueNotifier<List<Event>> _selectedEvents;
+  late final ValueNotifier<List<MyActivity>> _selectedEvents;
   CalendarFormat _calendarFormat = CalendarFormat.month;
   RangeSelectionMode _rangeSelectionMode = RangeSelectionMode
-      .toggledOff; // Can be toggled on/off by longpressing a date
+      .toggledOff;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
   DateTime? _rangeStart;
   DateTime? _rangeEnd;
+
+
+
+
+
 
   @override
   void initState() {
@@ -47,13 +54,11 @@ class _MainPageState extends State<MyPage> {
     super.dispose();
   }
 
-  List<Event> _getEventsForDay(DateTime day) {
-
-    return kEvents[day] ?? [];
+  List<MyActivity> _getEventsForDay(DateTime day) {
+    return myActivities[day] ?? [];
   }
 
-  List<Event> _getEventsForRange(DateTime start, DateTime end) {
-    // Implementation example
+  List<MyActivity> _getEventsForRange(DateTime start, DateTime end) {
     final days = daysInRange(start, end);
 
     return [
@@ -101,7 +106,11 @@ class _MainPageState extends State<MyPage> {
     animate();
 
     SthepUser user = Provider.of<SthepUser>(context, listen: false);
-
+    Materials materials = Provider.of<Materials>(context);
+    // myActivitiesMap = LinkedHashMap<DateTime, List<MyActivity>>(
+    //   equals: isSameDay,
+    //   hashCode: getHashCode,
+    // )..addAll(user.myActivities);
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -123,7 +132,7 @@ class _MainPageState extends State<MyPage> {
                 width: screenSize.width * .5,
                 child: Padding(
                   padding: const EdgeInsets.only(left: 100.0),
-                  child: TableCalendar<Event>(
+                  child: TableCalendar<MyActivity>(
                     firstDay: kFirstDay,
                     lastDay: kLastDay,
                     focusedDay: _focusedDay,
