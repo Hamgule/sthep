@@ -1,5 +1,3 @@
-import 'dart:collection';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sthep/config/palette.dart';
@@ -30,11 +28,6 @@ class _MainPageState extends State<MyPage> {
   DateTime? _selectedDay;
   DateTime? _rangeStart;
   DateTime? _rangeEnd;
-
-
-
-
-
 
   @override
   void initState() {
@@ -101,11 +94,12 @@ class _MainPageState extends State<MyPage> {
 
   @override
   Widget build(BuildContext context) {
-    tempUser.exp.setExp(102.0);
+    SthepUser user = Provider.of<SthepUser>(context);
+
+    user.exp.setExp(102.0);
 
     animate();
 
-    SthepUser user = Provider.of<SthepUser>(context, listen: false);
     Materials materials = Provider.of<Materials>(context);
     // myActivitiesMap = LinkedHashMap<DateTime, List<MyActivity>>(
     //   equals: isSameDay,

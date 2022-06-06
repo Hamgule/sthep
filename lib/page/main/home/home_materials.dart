@@ -11,119 +11,119 @@ import 'package:sthep/model/time/time.dart';
 import 'package:sthep/model/user/user.dart';
 import 'package:sthep/page/main/notification/notification_materials.dart';
 import 'package:sthep/global/extensions/widgets/profile.dart';
-
-class Ranking extends StatefulWidget {
-  const Ranking({Key? key}) : super(key: key);
-
-  @override
-  State<Ranking> createState() => _RankingState();
-}
-
-class _RankingState extends State<Ranking> with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation _animation;
-
-  // animation control variables
-  bool animate = false;
-  int aniVelocity = 15000;
-
-  @override
-  void initState() {
-    _controller = AnimationController(
-      duration: Duration(milliseconds: aniVelocity), vsync: this,
-    );
-    _controller.forward();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    _animation = CurvedAnimation(parent: _controller, curve: Curves.linear);
-    _animation.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        _controller.repeat();
-      }
-    });
-
-    _animation.addListener(() => setState(() {}));
-
-    late final Animation<Offset> _offsetAnimation = Tween<Offset>(
-      begin: Offset(animate ? 1.0 : 0.0, 0.0),
-      end: Offset(animate ? -1.0 : 0.0, 0.0),
-    ).animate(_animation as Animation<double>);
-
-
-    return SlideTransition(
-      position: _offsetAnimation,
-      child: Stack(
-        children: [
-          Positioned(
-            child: SizedBox(
-              height: 80.0,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  if (MediaQuery.of(context).orientation == Orientation.landscape)
-                  const SthepText(
-                    '오늘의 최다 답변자',
-                    size: 20.0,
-                    color: Palette.fontColor1,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            width: 30,
-                            height: 30,
-                            color: Colors.yellow,
-                            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                          ),
-                          profile(tempUser),
-                        ],
-                      ),
-                      const SizedBox(width: 30),
-                      Row(
-                        children: [
-                          Container(
-                            width: 30,
-                            height: 30,
-                            color: Colors.grey,
-                            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                          ),
-                          profile(tempUser),
-                        ],
-                      ),
-                      const SizedBox(width: 30),
-                      Row(
-                        children: [
-                          Container(
-                            width: 30,
-                            height: 30,
-                            color: Colors.orange,
-                            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                          ),
-                          profile(tempUser),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
+//
+// class Ranking extends StatefulWidget {
+//   const Ranking({Key? key}) : super(key: key);
+//
+//   @override
+//   State<Ranking> createState() => _RankingState();
+// }
+//
+// class _RankingState extends State<Ranking> with SingleTickerProviderStateMixin {
+//   late AnimationController _controller;
+//   late Animation _animation;
+//
+//   // animation control variables
+//   bool animate = false;
+//   int aniVelocity = 15000;
+//
+//   @override
+//   void initState() {
+//     _controller = AnimationController(
+//       duration: Duration(milliseconds: aniVelocity), vsync: this,
+//     );
+//     _controller.forward();
+//     super.initState();
+//   }
+//
+//   @override
+//   void dispose() {
+//     _controller.dispose();
+//     super.dispose();
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     _animation = CurvedAnimation(parent: _controller, curve: Curves.linear);
+//     _animation.addStatusListener((status) {
+//       if (status == AnimationStatus.completed) {
+//         _controller.repeat();
+//       }
+//     });
+//
+//     _animation.addListener(() => setState(() {}));
+//
+//     late final Animation<Offset> _offsetAnimation = Tween<Offset>(
+//       begin: Offset(animate ? 1.0 : 0.0, 0.0),
+//       end: Offset(animate ? -1.0 : 0.0, 0.0),
+//     ).animate(_animation as Animation<double>);
+//
+//
+//     return SlideTransition(
+//       position: _offsetAnimation,
+//       child: Stack(
+//         children: [
+//           Positioned(
+//             child: SizedBox(
+//               height: 80.0,
+//               child: Row(
+//                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//                 children: [
+//                   if (MediaQuery.of(context).orientation == Orientation.landscape)
+//                   const SthepText(
+//                     '오늘의 최다 답변자',
+//                     size: 20.0,
+//                     color: Palette.fontColor1,
+//                   ),
+//                   Row(
+//                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                     children: [
+//                       Row(
+//                         children: [
+//                           Container(
+//                             width: 30,
+//                             height: 30,
+//                             color: Colors.yellow,
+//                             padding: const EdgeInsets.symmetric(horizontal: 10.0),
+//                           ),
+//                           profile(tempUser),
+//                         ],
+//                       ),
+//                       const SizedBox(width: 30),
+//                       Row(
+//                         children: [
+//                           Container(
+//                             width: 30,
+//                             height: 30,
+//                             color: Colors.grey,
+//                             padding: const EdgeInsets.symmetric(horizontal: 10.0),
+//                           ),
+//                           profile(tempUser),
+//                         ],
+//                       ),
+//                       const SizedBox(width: 30),
+//                       Row(
+//                         children: [
+//                           Container(
+//                             width: 30,
+//                             height: 30,
+//                             color: Colors.orange,
+//                             padding: const EdgeInsets.symmetric(horizontal: 10.0),
+//                           ),
+//                           profile(tempUser),
+//                         ],
+//                       ),
+//                     ],
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
 
 class QuestionCard extends StatelessWidget {
   const QuestionCard({

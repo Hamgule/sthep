@@ -193,8 +193,8 @@ class _HomePageState extends State<HomePage> {
                               ),
                               child: Container(
                                 alignment: Alignment.centerLeft,
-                                padding: EdgeInsets.only(left: 10.0),
-                                child: SthepText('해당 자료가 없습니다'),
+                                padding: const EdgeInsets.only(left: 10.0),
+                                child: const SthepText('해당 자료가 없습니다'),
                               ),
                             ),
                           ],

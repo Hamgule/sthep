@@ -72,15 +72,10 @@ class _ViewFABState extends State<ViewFAB> {
         showMySnackBar(context, '채택된 답변은 삭제할 수 없습니다.', type: 'error');
         return;
       }
+      main.toggleLoading();
 
       MyFirebase.remove('answers', main.destAnswer!.aidToString());
 
-      main.toggleLoading();
-
-      // if (main.destAnswer!.imageUrl != null) {
-      //   await MyFirebase.removeImage(
-      //       'answers', main.destAnswer!.aidToString());
-      // }
       main.toggleLoading();
       main.toggleIsChanged();
 
@@ -102,6 +97,16 @@ class _ViewFABState extends State<ViewFAB> {
       main.setViewFABState(FABState.comment);
 
       showMySnackBar(context, '질문을 삭제했습니다.', type: 'success');
+
+      MyFirebase.f.collection('users')
+          .doc(main.destQuestion!.questionerUid)
+          .collection('notifications').add({
+        'type': 'answerUpdated',
+        'questionId': main.destQuestion!.id,
+        'questionTitle': main.destQuestion!.title,
+      });
+
+
     }
 
     void adoptPressed() async {
@@ -116,7 +121,18 @@ class _ViewFABState extends State<ViewFAB> {
       }
 
       bool adopted = await showMyYesNoDialog(context, title: '정말 채택하시겠습니까?');
-      if (adopted) main.adopt();
+      if (adopted) {
+        main.adopt();
+
+        MyFirebase.f.collection('users')
+            .doc(main.destAnswer!.answererUid)
+            .collection('notifications').add({
+          'type': 'adopted',
+          'questionId': main.destQuestion!.id,
+          'questionTitle': main.destQuestion!.title,
+        });
+      }
+
       showMySnackBar(
         context,
         (adopted ? '채택' : '취소') + '되었습니다.',
@@ -180,7 +196,7 @@ class _ViewFABState extends State<ViewFAB> {
 
     else if (main.viewFABState == FABState.adopt) {
       return SingleFAB(
-        child: const Icon(Icons.thumb_up),
+        child: const Icon(Icons.check),
         onPressed: adoptPressed,
       );
     }

@@ -1,29 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sthep/config/palette.dart';
 import 'package:sthep/global/extensions/widgets/text.dart';
+import 'package:sthep/model/question/notification.dart';
 import 'package:sthep/model/question/question.dart';
 import 'package:sthep/model/user/user.dart';
 
-SthepUser tempUser = SthepUser(
-  uid: 'zihoo1234',
-  name: '양지후',
-  email: 'asdf@asdf.com',
-  nickname: 'zihoo',
-);
+class NotificationTile extends StatelessWidget {
+  const NotificationTile({Key? key, required this.notification}) : super(key: key);
 
-Question tempQuestion = Question(
-  id: 1,
-  title: '2016년도 수능 알려주세요..',
-  imageUrl: 'assets/images/math.jpeg',
-  questionerUid: tempUser.uid!,
-);
-
-
-class Notifications extends StatelessWidget {
-  const Notifications({Key? key}) : super(key: key);
+  final MyNotification notification;
 
   @override
   Widget build(BuildContext context) {
+    SthepUser user = Provider.of<SthepUser>(context);
+
     return InkWell(
       onTap: () {},
       child: Container(
@@ -32,7 +23,6 @@ class Notifications extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 25.0),
           child: Row(
             children: [
-              //알림
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 30.0),
                 child: Container(
@@ -64,14 +54,14 @@ class Notifications extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: SthepText(
-                          '#${tempQuestion.id}', size: 15.0,
+                          '${notification.questionId}', size: 17.0,
                           color: Colors.grey.withOpacity(0.7),
                         ),
                       ),
                       Align(
                         alignment: Alignment.centerLeft,
                         child: SthepText(
-                          tempQuestion.title,
+                          notification.questionTitle!,
                           color: Colors.grey,
                         ),
                       ),

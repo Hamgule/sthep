@@ -49,6 +49,14 @@ class AnswerUpdateFAB extends StatelessWidget {
       main.setPageIndex(6);
 
       showMySnackBar(context, '답변을 수정했습니다.', type: 'success');
+
+      MyFirebase.f.collection('users')
+          .doc(main.destQuestion!.questionerUid)
+          .collection('notifications').add({
+        'type': 'answerUpdated',
+        'questionId': main.destQuestion!.id,
+        'questionTitle': main.destQuestion!.title,
+      });
     }
 
     return SingleFAB(child: const Icon(Icons.upload), onPressed: onPressed);
