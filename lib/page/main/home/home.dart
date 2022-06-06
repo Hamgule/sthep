@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:sthep/config/palette.dart';
 import 'package:sthep/firebase/firebase.dart';
 import 'package:sthep/global/materials.dart';
 import 'package:sthep/model/question/answer.dart';
@@ -21,6 +23,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<Question> visQuestions = [];
+
+  RefreshController refreshController = RefreshController(initialRefresh: false);
 
   @override
   Widget build(BuildContext context) {
@@ -80,26 +84,49 @@ class _HomePageState extends State<HomePage> {
       visQuestions.addAll(materials.myAnsweredQuestion);
     }
 
-    return materials.isGrid ? GridView.count(
-      padding: const EdgeInsets.all(30.0),
-      crossAxisCount: MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 3,
-      children: visQuestions.map(
-            (question) => QuestionCard(question: question),
-      ).toList(),
-    ) : ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 50.0),
-      itemCount: visQuestions.length,
-      itemExtent: 120.0,
-      itemBuilder: (context, index) {
-        return QuestionTile(
-          question: visQuestions[index],
-          onPressed: () {
-            Materials home = Provider.of<Materials>(context, listen: false);
-            home.setPageIndex(6);
-            home.setDestQuestion(visQuestions[index]);
-          },
-        );
-      },
+    void onRefresh() async {
+      var loadData = await MyFirebase.readCollection('questions');
+      materials.questions = [];
+      materials.questions.addAll(loadData.map((data) => Question.fromJson(data)).toList());
+      setState(() {});
+      await Future.delayed(const Duration(milliseconds: 1000));
+      refreshController.refreshCompleted();
+    }
+
+    void onLoading() async {
+      refreshController.loadComplete();
+    }
+
+    return SmartRefresher(
+      header: const MaterialClassicHeader(
+        color: Colors.white,
+        backgroundColor: Palette.iconColor,
+      ),
+      enablePullDown: true,
+      controller: refreshController,
+      onRefresh: onRefresh,
+      onLoading: onLoading,
+      child: materials.isGrid ? GridView.count(
+        padding: const EdgeInsets.all(30.0),
+        crossAxisCount: MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 3,
+        children: visQuestions.map(
+              (question) => QuestionCard(question: question),
+        ).toList(),
+      ) : ListView.builder(
+        padding: const EdgeInsets.symmetric(horizontal: 50.0),
+        itemCount: visQuestions.length,
+        itemExtent: 120.0,
+        itemBuilder: (context, index) {
+          return QuestionTile(
+            question: visQuestions[index],
+            onPressed: () {
+              Materials home = Provider.of<Materials>(context, listen: false);
+              home.setPageIndex(6);
+              home.setDestQuestion(visQuestions[index]);
+            },
+          );
+        },
+      ),
     );
   }
 }

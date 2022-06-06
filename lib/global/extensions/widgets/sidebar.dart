@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sthep/config/palette.dart';
+import 'package:sthep/firebase/firebase.dart';
 import 'package:sthep/global/extensions/buttons/setting.dart';
+import 'package:sthep/global/extensions/widgets/dialog.dart';
 import 'package:sthep/global/extensions/widgets/snackbar.dart';
 import 'package:sthep/global/extensions/widgets/text.dart';
 import 'package:sthep/global/materials.dart';
@@ -15,6 +17,78 @@ class SideBar extends StatelessWidget {
   Widget build(BuildContext context) {
     Materials main = Provider.of<Materials>(context);
     SthepUser user = Provider.of<SthepUser>(context);
+
+    void myPagePressed() {
+      main.setPageIndex(4);
+      Navigator.pop(context);
+    }
+
+    void settingPressed() {}
+
+    void loginPressed() async {
+      try { await user.sthepLogin(); }
+      catch (e) { return; }
+
+      if (user.nickname == null) {
+        while (true) {
+          Navigator.pop(context);
+          await main.inputNickname(context);
+          if (main.nicknameInput == null) {
+            showMySnackBar(context, '로그인에 실패했습니다. 다시 로그인 해주세요.', type: 'error');
+            return;
+          }
+          if (main.nicknameInput != '') break;
+          showMySnackBar(context, '올바른 닉네임을 입력하세요.', type: 'error');
+        }
+
+        user.setNickname(main.nicknameInput!);
+        user.updateDB();
+        showMySnackBar(context, '\'${user.nickname}\'님 환영합니다.');
+      }
+      else {
+        showMySnackBar(context, '\'${user.nickname}\'님 로그인 되었습니다.');
+        main.setPageIndex(0);
+      }
+      user.toggleLogState();
+    }
+
+    void logoutPressed() {
+      user.sthepLogout();
+      Navigator.pop(context);
+      main.setPageIndex(0);
+      showMySnackBar(context, '로그아웃 되었습니다.', type: 'success');
+    }
+
+    void withdrawPressed() async {
+      if (user.uid == null) return;
+
+      bool withdrew = await showMyYesNoDialog(context, title: '정말 탈퇴하시겠습니까?');
+      Navigator.pop(context);
+      if (!withdrew) {
+        showMySnackBar(context, '취소하였습니다.');
+        return;
+      }
+
+      MyFirebase.remove('users', user.uid!);
+      main.setPageIndex(0);
+      showMySnackBar(context, '\'${user.nickname}\'님이 탈퇴되었습니다.', type: 'success');
+      user.sthepLogout();
+    }
+
+    void notificationPressed() {
+      Navigator.pop(context);
+      main.setPageIndex(3);
+    }
+
+    void myQuestionPressed() {
+      Navigator.pop(context);
+      main.setPageIndex(1);
+    }
+
+    void myAnswerPressed() {
+      Navigator.pop(context);
+      main.setPageIndex(2);
+    }
 
     return Drawer(
       child: ListView(
@@ -33,44 +107,16 @@ class SideBar extends StatelessWidget {
                   ),
                   const SizedBox(height: 50.0),
                   user.logged ? InkWell(
-                    onTap: () {
-                      main.setPageIndex(4);
-                      Navigator.pop(context);
-                    },
+                    onTap: myPagePressed,
                     child: Row(
                       children: [
                         profile(user),
                         const Expanded(child: SizedBox()),
-                        SettingButton(onPressed: () {}),
+                        SettingButton(onPressed: settingPressed),
                       ],
                     ),
                   ) : InkWell(
-                    onTap: () async {
-                      try { await user.sthepLogin(); }
-                      catch (e) { return; }
-
-                      if (user.nickname == null) {
-                        while (true) {
-                          Navigator.pop(context);
-                          await main.inputNickname(context);
-                          if (main.nicknameInput == null) {
-                            showMySnackBar(context, '로그인에 실패했습니다. 다시 로그인 해주세요.', type: 'error');
-                            return;
-                          }
-                          if (main.nicknameInput != '') break;
-                          showMySnackBar(context, '올바른 닉네임을 입력하세요.', type: 'error');
-                        }
-
-                        user.setNickname(main.nicknameInput!);
-                        user.updateDB();
-                        showMySnackBar(context, '\'${user.nickname}\'님 환영합니다.');
-                      }
-                      else {
-                        showMySnackBar(context, '\'${user.nickname}\'님 로그인 되었습니다.');
-                        main.setPageIndex(0);
-                      }
-                      user.toggleLogState();
-                    },
+                    onTap: loginPressed,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -92,33 +138,61 @@ class SideBar extends StatelessWidget {
 
           if (user.logged)
           Column(
-            children: const [
-              ListTile(
+            children: [
+              const ListTile(
                 title: SthepText('계정'),
               ),
-              Divider(
+              const Divider(
                 height: 1.0,
                 indent: 20.0,
                 thickness: 1.5,
                 endIndent: 20.0,
               ),
-              ListTile(title: SthepText('로그아웃', size: 14.0, color: Palette.fontColor2)),
-              ListTile(title: SthepText('회원 탈퇴', size: 14.0, color: Palette.fontColor2)),
-              ListTile(title: SthepText('내 활동', size: 14.0, color: Palette.fontColor2)),
-              ListTile(
-                title: SthepText('마이페이지'),
-              ),
-              Divider(
+              SidebarTile(title: '로그아웃', onPressed: logoutPressed),
+              SidebarTile(title: '회원 탈퇴', onPressed: withdrawPressed),
+              SidebarTile(title: '알림', onPressed: notificationPressed),
+              SidebarTile(title: '마이페이지', onPressed: myPagePressed),
+              const Divider(
                 height: 1.0,
                 indent: 20.0,
                 thickness: 1.5,
                 endIndent: 20.0,
               ),
-              ListTile(title: SthepText('내 질문', size: 14.0, color: Palette.fontColor2)),
-              ListTile(title: SthepText('내 답변', size: 14.0, color: Palette.fontColor2)),
+              SidebarTile(title: '내 질문', onPressed: myQuestionPressed),
+              SidebarTile(title: '내 답변', onPressed: myAnswerPressed),
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+class SidebarTile extends StatelessWidget {
+  const SidebarTile({
+    Key? key,
+    required this.title,
+    required this.onPressed,
+  }) : super(key: key);
+
+  final String title;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      onPressed: onPressed,
+      style: TextButton.styleFrom(
+        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+        splashFactory: InkSplash.splashFactory,
+        // overlayColor: MaterialStateProperty.all(Palette.bgColor.withOpacity(.1)),
+      ),
+      child: ListTile(
+        title: SthepText(
+          title,
+          size: 14.0,
+          color: Palette.fontColor2,
+        ),
       ),
     );
   }

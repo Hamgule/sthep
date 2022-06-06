@@ -17,7 +17,7 @@ void showMySnackBar(
     SnackBar(
       backgroundColor: colors[type],
       dismissDirection: DismissDirection.vertical,
-      duration: const Duration(milliseconds: 1000),
+      duration: const Duration(milliseconds: 2000),
       content: SthepText(content, size: 13.0, color: Colors.white),
     ),
   );
