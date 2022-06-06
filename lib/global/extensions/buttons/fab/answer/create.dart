@@ -5,6 +5,7 @@ import 'package:sthep/firebase/firebase.dart';
 import 'package:sthep/global/extensions/buttons/fab/fab.dart';
 import 'package:sthep/global/extensions/widgets/snackbar.dart';
 import 'package:sthep/global/materials.dart';
+import 'package:sthep/model/question/question.dart';
 import 'package:sthep/model/user/user.dart';
 
 class AnswerCreateFAB extends StatelessWidget {
@@ -64,13 +65,28 @@ class AnswerCreateFAB extends StatelessWidget {
         main.destQuestion!.toJson(),
       );
 
-      MyFirebase.f.collection('users')
-          .doc(main.destQuestion!.questionerUid)
-          .collection('notifications').add({
+      SthepUser questioner = main.destQuestion!.questioner;
+
+      questioner.notificationCount++;
+
+      Map<String, dynamic> notificationData = {
+        'id': questioner.notificationCount,
+        'checked': false,
         'type': 'answered',
         'questionId': main.destQuestion!.id,
         'questionTitle': main.destQuestion!.title,
-      });
+        'notice': '새로운 답변이 달렸습니다.',
+      };
+
+      notificationData['loggedDate'] = FieldValue.serverTimestamp();
+
+      MyFirebase.f.collection('users')
+          .doc(questioner.uid)
+          .collection('notifications')
+          .doc(Question.idToString(questioner.notificationCount))
+          .set(notificationData);
+
+      MyFirebase.write('users', questioner.uid!, questioner.toJson());
     }
 
     return SingleFAB(child: const Icon(Icons.upload), onPressed: onPressed);

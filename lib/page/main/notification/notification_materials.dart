@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sthep/config/palette.dart';
+import 'package:sthep/firebase/firebase.dart';
+import 'package:sthep/global/extensions/widgets/snackbar.dart';
 import 'package:sthep/global/extensions/widgets/text.dart';
+import 'package:sthep/global/materials.dart';
 import 'package:sthep/model/question/notification.dart';
 import 'package:sthep/model/question/question.dart';
+import 'package:sthep/model/time/time.dart';
 import 'package:sthep/model/user/user.dart';
 
 class NotificationTile extends StatelessWidget {
@@ -13,90 +17,143 @@ class NotificationTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Materials main = Provider.of<Materials>(context);
     SthepUser user = Provider.of<SthepUser>(context);
 
-    return InkWell(
-      onTap: () {},
-      child: Container(
-        color: Palette.hyperColor.withOpacity(0.2),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 25.0),
-          child: Row(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                child: Container(
-                  width: 12,
-                  height: 12,
+    return Dismissible(
+      key: Key(Question.idToString(notification.id!)),
+      direction: DismissDirection.endToStart,
+      background: Container(
+        color: Colors.red,
+        alignment: Alignment.centerLeft,
+        child: const Align(
+          alignment: Alignment.centerRight,
+          child: Padding(
+            padding: EdgeInsets.all(30.0),
+            child: SthepText('삭제', color: Colors.white),
+          ),
+        ),
+      ),
+      onDismissed: (direction) {
+        if (direction == DismissDirection.endToStart) {
+          notification.check();
+          user.notifications.remove(notification);
+
+          MyFirebase.f.collection('users')
+              .doc(user.uid)
+              .collection('notifications')
+              .doc(Question.idToString(notification.id!))
+              .delete();
+        }
+      },
+      child: InkWell(
+        onTap: () {
+          try {
+            main.destQuestion = main.getQuestionById(notification.questionId!);
+          }
+          catch (e) {
+            showMySnackBar(context, '비정상적인 접근입니다.', type: 'error');
+            return;
+          }
+          main.setPageIndex(6);
+          notification.check();
+          user.updateNotChecked();
+
+          MyFirebase.f.collection('users')
+              .doc(user.uid)
+              .collection('notifications')
+              .doc(Question.idToString(notification.id!))
+              .set(notification.toJson());
+        },
+        child: Container(
+          color: notification.checked
+              ? Colors.transparent
+              : Palette.bgColor.withOpacity(.2),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 25.0),
+            child: Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                  child: notification.checked ? Container() : Container(
+                    width: 12,
+                    height: 12,
+                    decoration: const BoxDecoration(
+                      color: Palette.bgColor,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                ),
+                Container(
+                  width: 50,
+                  height: 50,
                   decoration: const BoxDecoration(
-                    color: Palette.notAdopted,
+                    color: Palette.iconColor,
                     shape: BoxShape.circle,
                   ),
-                ),
-              ),
-              Container(
-                width: 50,
-                height: 50,
-                decoration: BoxDecoration(
-                  color: const Color(0xff5F68B7).withOpacity(0.5),
-                  shape: BoxShape.circle,
-                ),
-                child: const Align(
-                    child: SthepText('Q', color: Colors.white),
-                    alignment: Alignment.center),
-              ),
-              SizedBox(
-                width: 300,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 30),
-                  child: Column(
-                    children: [
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: SthepText(
-                          '${notification.questionId}', size: 17.0,
-                          color: Colors.grey.withOpacity(0.7),
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: SthepText(
-                          notification.questionTitle!,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ],
+                  child: Align(
+                    child: notification.type == 'adopted'
+                        ? const Icon(Icons.check, color: Colors.white)
+                        : const SthepText(
+                       'A',
+                      color: Colors.white,
+                    ),
+                    alignment: Alignment.center,
                   ),
                 ),
-              ),
-              const SizedBox(
-                width: 600,
-                height: 50,
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10.0),
-                  child: Align(
-                      child: SthepText(
-                        '새로운 답변이 달렸습니다.',
-                        size: 25.0,
-                      ),
-                      alignment: Alignment.centerLeft),
+                SizedBox(
+                  width: 300,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 30),
+                    child: Column(
+                      children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: SthepText(
+                            '${notification.questionId}', size: 17.0,
+                            color: Palette.fontColor2,
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: SthepText(
+                            notification.questionTitle!,
+                            color: Palette.iconColor,
+                            overflow: true,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
-              const SizedBox(
-                width: 100,
-                height: 50,
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 30.0),
-                  child: Align(
-                      child: SthepText(
-                        '5분전',
-                        size: 15.0,
-                        color: Palette.hyperColor,
-                      ),
-                      alignment: Alignment.centerLeft),
+                Expanded(
+                  child: SizedBox(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      child: Align(
+                          child: SthepText(
+                            notification.notice!,
+                            size: 25.0,
+                            color: Palette.fontColor1,
+                          ),
+                          alignment: Alignment.centerLeft),
+                    ),
+                  ),
                 ),
-              ),
-            ],
+                SizedBox(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                    child: Align(
+                        child: SthepText(
+                          Time(t: notification.loggedDate!).toString(),
+                          size: 15.0,
+                          color: Palette.fontColor2,
+                        ),
+                        alignment: Alignment.centerLeft),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

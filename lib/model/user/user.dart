@@ -21,6 +21,8 @@ class SthepUser with ChangeNotifier {
   List<int> questionIds = [];
 
   List<MyNotification> notifications = [];
+  int notificationCount = 0;
+  int notChecked = 0;
 
   Exp exp = Exp();
 
@@ -34,6 +36,19 @@ class SthepUser with ChangeNotifier {
 
   void setNickname(String nickname) async {
     this.nickname = nickname;
+    notifyListeners();
+  }
+
+  Future getNotifications() async {
+    var loadMyNotifications = await MyFirebase.readSubCollection('users', uid!, 'notifications');
+
+    notifications = [];
+    notifications.addAll(
+      loadMyNotifications.map((data)
+      => MyNotification.fromJson(data)).toList().cast<MyNotification>(),
+    );
+
+    updateNotChecked();
     notifyListeners();
   }
 
@@ -52,11 +67,7 @@ class SthepUser with ChangeNotifier {
     var loadUser = await MyFirebase.readData('users', uid!);
     nickname = loadUser?['nickname'];
 
-    print(uid!);
-    var loadMyNotifications = await MyFirebase.readSubCollection('users', uid!, 'notifications');
-    notifications.addAll(loadMyNotifications.map((data) => MyNotification.fromJson(data)).toList());
-
-
+    await getNotifications();
 
     notifyListeners();
   }
@@ -73,6 +84,7 @@ class SthepUser with ChangeNotifier {
     nickname = data['nickname'];
     email = data['email'];
     questionIds = (data['questionIds'] ?? []).cast<int>();
+    notificationCount = data['notificationCount'];
   }
 
   Map<String, dynamic> toJson() => {
@@ -82,10 +94,18 @@ class SthepUser with ChangeNotifier {
     'nickname': nickname,
     'imageUrl': imageUrl,
     'questionIds': questionIds,
+    'notificationCount': notificationCount,
   };
 
   void updateDB() async {
     await MyFirebase.write('users', uid!, toJson());
+  }
+
+  void updateNotChecked() {
+    notChecked = notifications.where((notification)
+    => !notification.checked).toList().length;
+
+    notifyListeners();
   }
 
 }
