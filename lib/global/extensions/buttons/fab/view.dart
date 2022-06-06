@@ -1,10 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sthep/firebase/firebase.dart';
 import 'package:sthep/global/extensions/buttons/fab/fab.dart';
+import 'package:sthep/global/extensions/icons/icons.dart';
 import 'package:sthep/global/extensions/widgets/dialog.dart';
 import 'package:sthep/global/extensions/widgets/snackbar.dart';
 import 'package:sthep/global/materials.dart';
+import 'package:sthep/model/question/question.dart';
 import 'package:sthep/model/user/user.dart';
 
 class ViewFAB extends StatefulWidget {
@@ -34,8 +37,8 @@ class _ViewFABState extends State<ViewFAB> {
     }
 
     void questionDelPressed() async {
-      if (main.destQuestion!.state == FABState.adopt) {
-        showMySnackBar(context, '채택완료된 질문은 삭제할 수 없습니다.', type: 'error');
+      if (main.destQuestion!.state != AdoptState.notAnswered) {
+        showMySnackBar(context, '답변된 질문은 삭제할 수 없습니다.', type: 'error');
         return;
       }
 
@@ -98,15 +101,28 @@ class _ViewFABState extends State<ViewFAB> {
 
       showMySnackBar(context, '질문을 삭제했습니다.', type: 'success');
 
-      MyFirebase.f.collection('users')
-          .doc(main.destQuestion!.questionerUid)
-          .collection('notifications').add({
-        'type': 'answerUpdated',
+      SthepUser questioner = main.destQuestion!.questioner;
+
+      questioner.notificationCount++;
+
+      Map<String, dynamic> notificationData = {
+        'id': user.notificationCount,
+        'checked': false,
+        'type': 'answerDeleted',
         'questionId': main.destQuestion!.id,
         'questionTitle': main.destQuestion!.title,
-      });
+        'notice': '답변이 삭제되었습니다.',
+      };
 
+      notificationData['loggedDate'] = FieldValue.serverTimestamp();
 
+      MyFirebase.f.collection('users')
+          .doc(questioner.uid)
+          .collection('notifications')
+          .doc(Question.idToString(questioner.notificationCount))
+          .set(notificationData);
+
+      MyFirebase.write('users', questioner.uid!, questioner.toJson());
     }
 
     void adoptPressed() async {
@@ -124,13 +140,28 @@ class _ViewFABState extends State<ViewFAB> {
       if (adopted) {
         main.adopt();
 
-        MyFirebase.f.collection('users')
-            .doc(main.destAnswer!.answererUid)
-            .collection('notifications').add({
+        SthepUser answerer = main.destAnswer!.answerer;
+
+        answerer.notificationCount++;
+
+        Map<String, dynamic> notificationData = {
+          'id': answerer.notificationCount,
+          'checked': false,
           'type': 'adopted',
           'questionId': main.destQuestion!.id,
           'questionTitle': main.destQuestion!.title,
-        });
+          'notice': '답변이 채택되었습니다.',
+        };
+
+        notificationData['loggedDate'] = FieldValue.serverTimestamp();
+
+        MyFirebase.f.collection('users')
+            .doc(answerer.uid)
+            .collection('notifications')
+            .doc(Question.idToString(answerer.notificationCount))
+            .set(notificationData);
+
+        MyFirebase.write('users', answerer.uid!, answerer.toJson());
       }
 
       showMySnackBar(

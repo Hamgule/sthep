@@ -8,6 +8,7 @@ import 'package:sthep/firebase/firebase.dart';
 import 'package:sthep/global/extensions/widgets/text.dart';
 import 'package:sthep/global/materials.dart';
 import 'package:sthep/model/question/answer.dart';
+import 'package:sthep/model/question/notification.dart';
 import 'package:sthep/model/question/question.dart';
 import 'package:sthep/model/user/activity.dart';
 import 'package:sthep/model/user/user.dart';
@@ -41,7 +42,7 @@ class _HomePageState extends State<HomePage> {
     List<double> randomWidthsInList = [];
 
     for (int i = 0; i < 3; i++){
-      randomWidthsInCard.add(math.Random().nextInt(200) + 100);
+      randomWidthsInCard.add(math.Random().nextInt(180) + 100);
       randomWidthsInList.add(math.Random().nextInt(8) * 20 + 60);
     }
 
@@ -246,6 +247,7 @@ class _HomePageState extends State<HomePage> {
     void getQuestions() async {
       materials.questions = [];
       var loadData = await MyFirebase.readCollection('questions');
+      if (loadData.isEmpty) return;
       materials.questions.addAll(loadData.map((data) => Question.fromJson(data)).toList());
       materials.toggleIsChanged();
     }
@@ -253,6 +255,7 @@ class _HomePageState extends State<HomePage> {
     Future<SthepUser> getUser(String uid) async {
       var loadData = await MyFirebase.readData('users', uid);
       if (loadData == null) return SthepUser();
+
       return SthepUser.fromJson(loadData);
     }
 
@@ -309,10 +312,13 @@ class _HomePageState extends State<HomePage> {
     }
 
     void onRefresh() async {
+
       var loadData = await MyFirebase.readCollection('questions');
       materials.questions = [];
       materials.questions.addAll(loadData.map((data) => Question.fromJson(data)).toList());
+
       setState(() {});
+
       await Future.delayed(const Duration(milliseconds: 1000));
       refreshController.refreshCompleted();
     }

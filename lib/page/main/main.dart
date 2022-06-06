@@ -138,7 +138,7 @@ class _MainPageState extends State<MainPage> {
           unselectedItemColor: Palette.iconColor.withOpacity(.3),
           items: [
             BottomNavigationBarItem(
-              icon: Icon(Icons.home, size: iconSize,),
+              icon: Icon(Icons.home, size: iconSize),
               label: 'Home',
             ),
             BottomNavigationBarItem(
@@ -156,7 +156,29 @@ class _MainPageState extends State<MainPage> {
               label: 'Answer',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.notifications, size: iconSize),
+              icon: Stack(
+                children: [
+                  Icon(Icons.notifications, size: iconSize),
+                  if (user.notChecked > 0)
+                  Positioned(
+                    right: 0.0,
+                    child: Container(
+                      width: 20.0,
+                      height: 20.0,
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(50.0),
+                      ),
+                      child: Center(
+                        child: Text(
+                          '${user.notChecked}',
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
               label: 'Notifications',
             ),
             BottomNavigationBarItem(
