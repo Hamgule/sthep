@@ -283,12 +283,7 @@ class _HomePageState extends State<HomePage> {
         user.activities[answer.regDate as DateTime] =  myActivities;
       });
     });
-    user.activities.forEach((date, activity) {
-      print(date);
-      activity.forEach((element) {
-        print(element);
-      });
-    });
+
     materials.questions.forEach((question) async {
       question.questioner = await getUser(question.questionerUid);
       question.answers = [];

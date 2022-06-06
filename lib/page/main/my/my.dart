@@ -184,22 +184,6 @@ class _MainPageState extends State<MyPage> {
               ),
             ],
           ),
-          // IntrinsicHeight(
-          //   child: Row(
-          //     mainAxisAlignment: MainAxisAlignment.center,
-          //     children: [
-          //
-          //       // myThreeActivities(
-          //       //     materials.questions.getRange(0, 3).toList(), '나의 질문'),
-          //       // SizedBox(
-          //       //   width: 70.0,
-          //       //   height: screenSize.width * .10,
-          //       // ),
-          //       // myThreeActivities(
-          //       //     materials.questions.getRange(0, 3).toList(), '나의 답변'),
-          //     ],
-          //   ),
-          // ),
         ],
       ),
     );

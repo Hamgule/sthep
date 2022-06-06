@@ -20,10 +20,6 @@ class SthepUser with ChangeNotifier {
   String imageUrl = defaultImageUrl;
   List<int> questionIds = [];
   Map<DateTime, List<MyActivity>> activities = {};
-  //List<MyActivity> myActivities = [];
-  // Map<DateTime?, List<MyActivity>> myActivities = {
-  //   DateTime(2022, 5, 3) : [MyActivity(type: ActivityType.question, id: 1)],
-  // };
 
   List<MyNotification> notifications = [];
 
