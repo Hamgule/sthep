@@ -6,7 +6,6 @@ class Answer {
   late int id;
   late String answererUid;
   late int questionId;
-
   DateTime? regDate = DateTime.now();
   DateTime? modDate = DateTime.now();
   String? imageUrl;
@@ -24,7 +23,7 @@ class Answer {
     answererUid = data['answererUid'];
     adopted = data['adopted'];
     regDate = (data['regDate'] ?? Timestamp.now()).toDate();
-    modDate = (data['regDate'] ?? Timestamp.now()).toDate();
+    modDate = (data['modDate'] ?? Timestamp.now()).toDate();
     imageUrl = data['imageUrl'];
   }
 

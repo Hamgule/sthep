@@ -27,7 +27,7 @@ class AnswerCreateFAB extends StatelessWidget {
 
       main.toggleLoading();
 
-      if (main.image != null) {
+      if (main.image == null) {
         await main.saveImage();
 
         main.newAnswer.imageUrl = await MyFirebase.uploadImage(
