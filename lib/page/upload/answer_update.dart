@@ -34,7 +34,7 @@ class _AnswerUpdatePageState extends State<AnswerUpdatePage> {
     Materials upload = Provider.of<Materials>(context);
 
     upload.newAnswer = Answer();
-    upload.newAnswer.imageUrl = upload.destQuestion!.imageUrl;
+    upload.newAnswer.imageUrl = upload.destAnswer!.imageUrl;
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -46,10 +46,7 @@ class _AnswerUpdatePageState extends State<AnswerUpdatePage> {
                 padding: const EdgeInsets.all(canvasPadding),
                 child: SizedBox(
                   width: screenSize.width,
-                  child: upload.image == null
-                      ? upload.newAnswer.imageUrl == null
-                      ? const SthepText('이미지를 선택하세요')
-                      : ImagePainter.network(
+                  child:ImagePainter.network(
                     upload.newAnswer.imageUrl!,
                     width: 300,
                     height: 500,
@@ -57,9 +54,9 @@ class _AnswerUpdatePageState extends State<AnswerUpdatePage> {
                     scalable: true,
                     initialStrokeWidth: 2,
                     //textDelegate: DutchTextDelegate(),
-                    initialColor: Colors.black,
+                    initialColor: Colors.redAccent,
                     initialPaintMode: PaintMode.freeStyle,
-                  ) : Image.file(upload.image!, fit: BoxFit.fitWidth)
+                  ),
                 ),
               ),
             ],

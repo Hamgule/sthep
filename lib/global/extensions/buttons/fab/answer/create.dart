@@ -22,27 +22,22 @@ class AnswerCreateFAB extends StatelessWidget {
       );
       int nextId = data!['currentId'] + 1;
 
-      main.newAnswer.answerer = user;
-      main.newAnswer.id = nextId;
-
       main.toggleLoading();
 
-      if (main.image == null) {
-        await main.saveImage();
-        main.newAnswer.id = nextId;
-        main.newAnswer.imageUrl = await MyFirebase.uploadImage(
-          'answer',
-          main.newAnswer.aidToString(),
-          main.image,
-        );
+      await main.saveImage();
 
-        showMySnackBar(context, '답변을 추가했습니다.', type: 'success');
-      }
-
-      main.toggleLoading();
       main.newAnswer.id = nextId;
       main.newAnswer.answerer = user;
       main.newAnswer.answererUid = user.uid!;
+      main.newAnswer.imageUrl = await MyFirebase.uploadImage(
+        'answer',
+        main.newAnswer.aidToString(),
+        main.image,
+      );
+
+      showMySnackBar(context, '답변을 추가했습니다.', type: 'success');
+
+      main.toggleLoading();
 
       Map<String, dynamic> addData = main.newAnswer.toJson();
 

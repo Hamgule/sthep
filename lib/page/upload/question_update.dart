@@ -27,6 +27,8 @@ class _UpdatePageState extends State<UpdatePage> {
 
   late Question targetQuestion;
 
+  late bool isPicked = false;
+
   Future<XFile?> pickImage() async {
     try {
       return await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -150,6 +152,8 @@ class _UpdatePageState extends State<UpdatePage> {
                         onPressed: () async {
                           XFile? xFile = await pickImage();
                           if (xFile == null) return;
+                          setState(() => isPicked = true);
+                          setState(() => upload.imageKey = GlobalKey<ImagePainterState>());
                           setState(() => upload.image = File(xFile.path));
                         },
                       ),
@@ -158,20 +162,27 @@ class _UpdatePageState extends State<UpdatePage> {
                   SizedBox(
                     width: screenSize.width * .8,
                     height: screenSize.height * .6,
-                    child: upload.image == null
-                        ? upload.destQuestion!.imageUrl == null
-                        ? const SthepText('이미지를 선택하세요')
-                        : ImagePainter.network(
+                    child: isPicked
+                        ? ImagePainter.file(
+                      upload.image!,
+                      key: upload.imageKey,
+                      scalable: true,
+                      initialStrokeWidth: 2,
+                      // textDelegate: DutchTextDelegate(),
+                      initialColor: Colors.redAccent,
+                      initialPaintMode: PaintMode.freeStyle,
+                    )
+                    :
+                    ImagePainter.network(
                       upload.destQuestion!.imageUrl!,
                       key: upload.imageKey,
                       scalable: true,
                       initialStrokeWidth: 2,
                       // textDelegate: DutchTextDelegate(),
-                      initialColor: Colors.black,
+                      initialColor: Colors.redAccent,
                       initialPaintMode: PaintMode.freeStyle,
-                    ) : Image.file(
-                      upload.image!, fit: BoxFit.fitWidth,
-                    ),
+                    )
+                    ,
                   ),
                 ],
               ),

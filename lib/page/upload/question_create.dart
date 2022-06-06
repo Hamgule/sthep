@@ -147,6 +147,7 @@ class _CreatePageState extends State<CreatePage> {
                         onPressed: () async {
                           XFile? xFile = await pickImage();
                           if (xFile == null) return;
+                          setState(() => upload.imageKey = GlobalKey<ImagePainterState>());
                           setState(() => upload.image = File(xFile.path));
                         },
                       ),
@@ -156,8 +157,17 @@ class _CreatePageState extends State<CreatePage> {
                     width: screenSize.width * .8,
                     height: screenSize.height * .6,
                     child: upload.image == null
-                        ? const SthepText('이미지를 선택하세요')
-                        : ImagePainter.file(
+                        ? ImagePainter.network(
+                      "https://firebasestorage.googleapis.com/v0/b/sthep-7ea14.appspot.com/o/questions%2Fdefault.png?alt=media&token=c3f7e6b6-7c80-4dbb-859a-3e3d7adac434",
+                      width: 300,
+                      height: 500,
+                      key: upload.imageKey,
+                      scalable: true,
+                      initialStrokeWidth: 2,
+                      //textDelegate: DutchTextDelegate(),
+                      initialColor: Colors.black,
+                      initialPaintMode: PaintMode.freeStyle,
+                    ) : ImagePainter.file(
                       upload.image!,
                       width: 300,
                       height: 500,

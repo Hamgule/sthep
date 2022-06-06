@@ -144,7 +144,7 @@ class Materials with ChangeNotifier {
   /// upload
   File? image;
   bool loading = false;
-  final imageKey = GlobalKey<ImagePainterState>();
+  GlobalKey<ImagePainterState> imageKey = GlobalKey<ImagePainterState>();
 
   Future saveImage() async {
     final editedImage = await imageKey.currentState?.exportImage();

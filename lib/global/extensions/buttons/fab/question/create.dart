@@ -24,15 +24,14 @@ class QuestionCreateFAB extends StatelessWidget {
 
       main.toggleLoading();
 
-      if (main.image != null) {
-        await main.saveImage();
+      await main.saveImage();
 
-        main.newQuestion.imageUrl = await MyFirebase.uploadImage(
-          'questions',
-          main.newQuestion.qidToString(),
-          main.image,
-        );
-      }
+      main.newQuestion.imageUrl = await MyFirebase.uploadImage(
+        'questions',
+        main.newQuestion.qidToString(),
+        main.image,
+      );
+
       main.toggleLoading();
 
       Map<String, dynamic> addData = main.newQuestion.toJson();

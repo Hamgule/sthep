@@ -16,21 +16,16 @@ class AnswerUpdateFAB extends StatelessWidget {
     SthepUser user = Provider.of<SthepUser>(context, listen: false);
 
     void onPressed() async {
+
+      main.toggleLoading();
+
+      await main.saveImage();
       main.newAnswer = main.destAnswer!;
-
-      main.toggleLoading();
-
-      if (main.image != null) {
-        await main.saveImage();
-
-        main.newAnswer.imageUrl = await MyFirebase.uploadImage(
-          'answer',
-          main.newAnswer.aidToString(),
-          main.image,
-        );
-      }
-
-      main.toggleLoading();
+      main.newAnswer.imageUrl = await MyFirebase.uploadImage(
+        'answer',
+        main.newAnswer.aidToString(),
+        main.image,
+      );
 
       main.newAnswer.answererUid = user.uid!;
       Map<String, dynamic> updateData = main.newAnswer.toJson();
@@ -38,18 +33,20 @@ class AnswerUpdateFAB extends StatelessWidget {
       updateData['modDate'] = FieldValue.serverTimestamp();
       main.newAnswer.modDate = DateTime.now();
 
+      main.toggleLoading();
+
       MyFirebase.write(
         'answers',
         main.newAnswer.aidToString(),
         updateData,
       );
 
-      main.toggleIsChanged();
-      main.setPageIndex(6);
-
       main.destQuestion!.answers.forEach((answer) {
         if (answer.id == main.newAnswer.id) answer = main.newAnswer;
       });
+
+      main.toggleIsChanged();
+      main.setPageIndex(6);
 
       showMySnackBar(context, '답변을 수정했습니다.', type: 'success');
     }

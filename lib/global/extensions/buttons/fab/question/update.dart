@@ -24,15 +24,15 @@ class QuestionUpdateFAB extends StatelessWidget {
 
       main.toggleLoading();
 
-      if (main.image == null) {
-        await main.saveImage();
 
-        main.newQuestion.imageUrl = await MyFirebase.uploadImage(
-          'questions',
-          main.newQuestion.qidToString(),
-          main.image,
-        );
-      }
+      await main.saveImage();
+
+      main.newQuestion.imageUrl = await MyFirebase.uploadImage(
+        'questions',
+        main.newQuestion.qidToString(),
+        main.image,
+      );
+
 
       main.toggleLoading();
 

@@ -57,7 +57,7 @@ class _AnswerCreatePageState extends State<AnswerCreatePage> {
                     scalable: true,
                     initialStrokeWidth: 2,
                     //textDelegate: DutchTextDelegate(),
-                    initialColor: Colors.black,
+                    initialColor: Colors.lightGreen,
                     initialPaintMode: PaintMode.freeStyle,
                   ) : Image.file(upload.image!, fit: BoxFit.fitWidth)
                 ),
