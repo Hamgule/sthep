@@ -210,4 +210,9 @@ class Materials with ChangeNotifier {
     notifyListeners();
   }
 
+  void adopt() {
+    destAnswer!.adopted = true;
+    notifyListeners();
+  }
+
 }

@@ -34,7 +34,7 @@ class _ViewPageState extends State<ViewPage> {
 
     List<Widget> sliderPages = [
       Container(
-        color: Palette.bgColor.withOpacity(.2),
+        // color: Palette.bgColor.withOpacity(.2),
         padding: const EdgeInsets.all(30.0),
         child: Column(
           children: [
@@ -132,8 +132,8 @@ class _ViewPageState extends State<ViewPage> {
 
       sliderPages.add(
         Container(
+          color: (answer.adopted ? Palette.adopted : Palette.notAdopted).withOpacity(.2),
           padding: const EdgeInsets.all(30.0),
-          margin: const EdgeInsets.symmetric(horizontal: 20.0),
           child: Column(
             children: [
               Row(

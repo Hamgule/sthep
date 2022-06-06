@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sthep/firebase/firebase.dart';
 import 'package:sthep/global/extensions/buttons/fab/fab.dart';
+import 'package:sthep/global/extensions/widgets/dialog.dart';
 import 'package:sthep/global/extensions/widgets/snackbar.dart';
 import 'package:sthep/global/materials.dart';
 import 'package:sthep/model/user/user.dart';
@@ -22,12 +23,22 @@ class _ViewFABState extends State<ViewFAB> {
   Widget build(BuildContext context) {
 
     void questionEditPressed() {
+      if (main.destQuestion!.state == FABState.adopt) {
+        showMySnackBar(context, '채택완료된 질문은 수정할 수 없습니다.', type: 'error');
+        return;
+      }
+
       main.setPageIndex(7);
       main.toggleIsChanged();
       main.image = null;
     }
 
     void questionDelPressed() async {
+      if (main.destQuestion!.state == FABState.adopt) {
+        showMySnackBar(context, '채택완료된 질문은 삭제할 수 없습니다.', type: 'error');
+        return;
+      }
+
       MyFirebase.remove('questions', main.destQuestion!.qidToString());
 
       main.toggleLoading();
@@ -45,12 +56,23 @@ class _ViewFABState extends State<ViewFAB> {
     }
 
     void answerEditPressed() {
+      if (main.destAnswer!.adopted) {
+        showMySnackBar(context, '채택된 답변은 수정할 수 없습니다.', type: 'error');
+        return;
+      }
+
       main.setPageIndex(9);
       main.toggleIsChanged();
     }
 
     void answerDelPressed() async {
       if (main.destAnswer == null) return;
+
+      if (main.destAnswer!.adopted) {
+        showMySnackBar(context, '채택된 답변은 삭제할 수 없습니다.', type: 'error');
+        return;
+      }
+
       MyFirebase.remove('answers', main.destAnswer!.aidToString());
 
       main.toggleLoading();
@@ -82,6 +104,61 @@ class _ViewFABState extends State<ViewFAB> {
       showMySnackBar(context, '질문을 삭제했습니다.', type: 'success');
     }
 
+    void adoptPressed() async {
+      if (main.destAnswer!.adopted) {
+        showMySnackBar(context, '이미 채택하였습니다.', type: 'error');
+        return;
+      }
+
+      if (main.destQuestion!.state == FABState.adopt) {
+        showMySnackBar(context, '이미 채택된 질문입니다.', type: 'error');
+        return;
+      }
+
+      bool adopted = await showMyYesNoDialog(context, title: '정말 채택하시겠습니까?');
+      if (adopted) main.adopt();
+      showMySnackBar(
+        context,
+        (adopted ? '채택' : '취소') + '되었습니다.',
+        type: adopted ? 'success' : 'info',
+      );
+
+      main.destQuestion!.adoptedAnswerId = main.destAnswer!.id;
+      main.destQuestion!.updateState();
+
+      MyFirebase.write(
+        'questions',
+        main.destQuestion!.qidToString(),
+        main.destQuestion!.toJson(),
+      );
+
+      MyFirebase.write(
+        'answers',
+        main.destAnswer!.aidToString(),
+        main.destAnswer!.toJson(),
+      );
+    }
+
+    void commentPressed() {
+      if (!user.logged) {
+        showMySnackBar(context, '로그인이 필요합니다.');
+        return;
+      }
+
+      if (main.destQuestion!.state == FABState.adopt) {
+        showMySnackBar(context, '이미 마감된 질문입니다.', type: 'error');
+        return;
+      }
+
+      if (main.destQuestion!.answererUids.contains(user.uid)) {
+        showMySnackBar(context, '이미 답변을 달았습니다.', type: 'error');
+        return;
+      }
+
+      main.setPageIndex(8);
+      main.image = null;
+    }
+
     if (main.destQuestion == null) {
       SingleFAB(child: const Icon(Icons.question_mark), onPressed: () {});
     }
@@ -104,27 +181,14 @@ class _ViewFABState extends State<ViewFAB> {
     else if (main.viewFABState == FABState.adopt) {
       return SingleFAB(
         child: const Icon(Icons.thumb_up),
-        onPressed: () {},
+        onPressed: adoptPressed,
       );
     }
 
     else if (main.viewFABState == FABState.comment) {
       return SingleFAB(
         child: const Icon(Icons.comment),
-        onPressed: () {
-          if (!user.logged) {
-            showMySnackBar(context, '로그인이 필요합니다.');
-            return;
-          }
-
-          if (main.destQuestion!.answererUids.contains(user.uid)) {
-            showMySnackBar(context, '이미 답변을 달았습니다.', type: 'error');
-            return;
-          }
-
-          main.setPageIndex(8);
-          main.image = null;
-        },
+        onPressed: commentPressed,
       );
     }
 
