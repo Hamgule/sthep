@@ -4,12 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sthep/config/palette.dart';
 import 'package:sthep/global/materials.dart';
+import 'package:sthep/model/user/chart.dart';
 import 'package:sthep/page/main/my/my_materials.dart';
 import 'package:sthep/firebase/firebase.dart';
 import 'package:sthep/model/user/user.dart';
 import 'package:sthep/model/user/activity.dart';
 import 'package:sthep/page/main/notification/notification_materials.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:fl_chart/fl_chart.dart';
+
+import '../../../global/extensions/widgets/text.dart';
+
 
 class MyPage extends StatefulWidget {
   const MyPage({Key? key}) : super(key: key);
@@ -131,59 +136,80 @@ class _MainPageState extends State<MyPage> {
             children: [
               SizedBox(
                 width: screenSize.width * .5,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 100.0),
-                  child: TableCalendar<MyActivity>(
-                    firstDay: kFirstDay,
-                    lastDay: kLastDay,
-                    focusedDay: _focusedDay,
-                    selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-                    rangeStartDay: _rangeStart,
-                    rangeEndDay: _rangeEnd,
-                    calendarFormat: _calendarFormat,
-                    rangeSelectionMode: _rangeSelectionMode,
-                    eventLoader: _getEventsForDay,
-                    startingDayOfWeek: StartingDayOfWeek.monday,
-                    calendarStyle : CalendarStyle(
-                        defaultTextStyle: const TextStyle(color: Colors.grey),
-                        weekendTextStyle: const TextStyle(color: Colors.grey),
-                        outsideDaysVisible: false,
-                        todayDecoration: const BoxDecoration(
-                            color: Palette.fontColor2,
-                            shape: BoxShape.circle,
-                        ),
-                        todayTextStyle: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                        ),
-                        markerDecoration: BoxDecoration(
-                          color: Palette.hyperColor.withOpacity(0.5),
-                          shape: BoxShape.circle,
+                height: 400,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 100.0),
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(left: 20.0),
+                            child: const Align(
+                                alignment: Alignment.centerLeft,
+                                child: SthepText("나의 활동 기록")),
+                          ),
+                          TableCalendar<MyActivity>(
+                            firstDay: kFirstDay,
+                            lastDay: kLastDay,
+                            focusedDay: _focusedDay,
+                            selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+                            rangeStartDay: _rangeStart,
+                            rangeEndDay: _rangeEnd,
+                            calendarFormat: _calendarFormat,
+                            rangeSelectionMode: _rangeSelectionMode,
+                            eventLoader: _getEventsForDay,
+                            startingDayOfWeek: StartingDayOfWeek.monday,
+                            calendarStyle : CalendarStyle(
+                                defaultTextStyle: const TextStyle(color: Colors.grey),
+                                weekendTextStyle: const TextStyle(color: Colors.grey),
+                                outsideDaysVisible: false,
+                                todayDecoration: const BoxDecoration(
+                                    color: Palette.fontColor2,
+                                    shape: BoxShape.circle,
+                                ),
+                                todayTextStyle: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                ),
+                                markerDecoration: BoxDecoration(
+                                  color: Palette.hyperColor.withOpacity(0.5),
+                                  shape: BoxShape.circle,
 
-                        ),
-                        markerSizeScale: 0.9,
-                        markerMargin: EdgeInsets.zero,
-                        markersAlignment: Alignment.center,
-                        markersAutoAligned: false,
-                        markersMaxCount: 1,
+                                ),
+                                markerSizeScale: 0.9,
+                                markerMargin: EdgeInsets.zero,
+                                markersAlignment: Alignment.center,
+                                markersAutoAligned: false,
+                                markersMaxCount: 1,
+                            ),
+                            onDaySelected: _onDaySelected,
+                            onRangeSelected: _onRangeSelected,
+                            onFormatChanged: (format) {
+                              if (_calendarFormat != format) {
+                                setState(() {
+                                  _calendarFormat = format;
+                                });
+                              }
+                            },
+                            onPageChanged: (focusedDay) {
+                              _focusedDay = focusedDay;
+                            },
+                          ),
+                        ],
+                      ),
                     ),
-                    onDaySelected: _onDaySelected,
-                    onRangeSelected: _onRangeSelected,
-                    onFormatChanged: (format) {
-                      if (_calendarFormat != format) {
-                        setState(() {
-                          _calendarFormat = format;
-                        });
-                      }
-                    },
-                    onPageChanged: (focusedDay) {
-                      _focusedDay = focusedDay;
-                    },
-                  ),
+                  ],
                 ),
               ),
+              SizedBox(
+                width: screenSize.width * .5,
+                child: const MyPieChart(),
+              ),
             ],
+
           ),
+
         ],
       ),
     );
