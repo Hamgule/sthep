@@ -11,20 +11,20 @@ class MyActivity {
 
 }
 
-final myActivities = LinkedHashMap<DateTime, List<MyActivity>>(
-  equals: isSameDay,
-  hashCode: getHashCode,
-)..addAll(activities);
-
-
-Map<DateTime, List<MyActivity>> activities = {
-  DateTime(2022, 5, 3) : [MyActivity(type: ActivityType.question, id: 1)],
-  DateTime(2022, 5, 5) : [MyActivity(type: ActivityType.question, id: 2)],
-};
-
-int getHashCode(DateTime key) {
-  return key.day * 1000000 + key.month * 10000 + key.year;
-}
+// final myActivities = LinkedHashMap<DateTime, List<MyActivity>>(
+//   equals: isSameDay,
+//   hashCode: getHashCode,
+// )..addAll(activities);
+//
+//
+// // Map<DateTime, List<MyActivity>> activities = {
+// //   DateTime(2022, 5, 3) : [MyActivity(type: ActivityType.question, id: 1)],
+// //   DateTime(2022, 5, 5) : [MyActivity(type: ActivityType.question, id: 2)],
+// // };
+//
+// int getHashCode(DateTime key) {
+//   return key.day * 1000000 + key.month * 10000 + key.year;
+// }
 
 List<DateTime> daysInRange(DateTime first, DateTime last) {
   final dayCount = last.difference(first).inDays + 1;

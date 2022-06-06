@@ -260,6 +260,7 @@ class _HomePageState extends State<HomePage> {
     materials.myQuestions = [];
     materials.myAnsweredQuestion = [];
 
+
     materials.questions.forEach((question) {
       if (user.uid == question.questionerUid) {
         materials.myQuestions.add(question);
@@ -270,14 +271,24 @@ class _HomePageState extends State<HomePage> {
       }
 
       materials.myQuestions.forEach((question) {
-        //user.myActivities[Question.regDate] = MyActivity(type: ActivityType.question, id: question.id) as List<MyActivity>;
+        List<MyActivity> myActivities = [];
+        myActivities.add(MyActivity(type: ActivityType.question, id: question.id));
+        user.activities[question.regDate as DateTime] = myActivities;
       });
+
 
       materials.myAnsweredQuestion.forEach((answer) {
-       // user.myActivities.add(MyActivity(type: ActivityType.answer, id: answer.id));
+        List<MyActivity> myActivities = [];
+        myActivities.add(MyActivity(type: ActivityType.answer, id: answer.id));
+        user.activities[answer.regDate as DateTime] =  myActivities;
       });
     });
-
+    user.activities.forEach((date, activity) {
+      print(date);
+      activity.forEach((element) {
+        print(element);
+      });
+    });
     materials.questions.forEach((question) async {
       question.questioner = await getUser(question.questionerUid);
       question.answers = [];

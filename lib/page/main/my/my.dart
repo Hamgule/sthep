@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sthep/config/palette.dart';
@@ -35,7 +37,8 @@ class _MainPageState extends State<MyPage> {
     super.initState();
 
     _selectedDay = _focusedDay;
-    _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
+    List<MyActivity> temp = [];
+    _selectedEvents = ValueNotifier(temp);
   }
 
   Future animate() async => await Future.delayed(
@@ -47,51 +50,10 @@ class _MainPageState extends State<MyPage> {
     super.dispose();
   }
 
-  List<MyActivity> _getEventsForDay(DateTime day) {
-    return myActivities[day] ?? [];
+
+  int getHashCode(DateTime key) {
+    return key.day * 1000000 + key.month * 10000 + key.year;
   }
-
-  List<MyActivity> _getEventsForRange(DateTime start, DateTime end) {
-    final days = daysInRange(start, end);
-
-    return [
-      for (final d in days) ..._getEventsForDay(d),
-    ];
-  }
-
-  void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
-    if (!isSameDay(_selectedDay, selectedDay)) {
-      setState(() {
-        _selectedDay = selectedDay;
-        _focusedDay = focusedDay;
-        _rangeStart = null; // Important to clean those
-        _rangeEnd = null;
-        _rangeSelectionMode = RangeSelectionMode.toggledOff;
-      });
-
-      _selectedEvents.value = _getEventsForDay(selectedDay);
-    }
-  }
-
-  void _onRangeSelected(DateTime? start, DateTime? end, DateTime focusedDay) {
-    setState(() {
-      _selectedDay = null;
-      _focusedDay = focusedDay;
-      _rangeStart = start;
-      _rangeEnd = end;
-      _rangeSelectionMode = RangeSelectionMode.toggledOn;
-    });
-
-    // `start` or `end` could be null
-    if (start != null && end != null) {
-      _selectedEvents.value = _getEventsForRange(start, end);
-    } else if (start != null) {
-      _selectedEvents.value = _getEventsForDay(start);
-    } else if (end != null) {
-      _selectedEvents.value = _getEventsForDay(end);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     SthepUser user = Provider.of<SthepUser>(context);
@@ -100,11 +62,56 @@ class _MainPageState extends State<MyPage> {
 
     animate();
 
-    Materials materials = Provider.of<Materials>(context);
-    // myActivitiesMap = LinkedHashMap<DateTime, List<MyActivity>>(
-    //   equals: isSameDay,
-    //   hashCode: getHashCode,
-    // )..addAll(user.myActivities);
+    LinkedHashMap<DateTime, List<MyActivity>> myActivities = LinkedHashMap<DateTime, List<MyActivity>>(
+      equals: isSameDay,
+      hashCode: getHashCode,
+    )..addAll(user.activities);
+
+    List<MyActivity> _getEventsForDay(DateTime day) {
+      return myActivities[day] ?? [];
+    }
+
+    List<MyActivity> _getEventsForRange(DateTime start, DateTime end) {
+      final days = daysInRange(start, end);
+
+      return [
+        for (final d in days) ..._getEventsForDay(d),
+      ];
+    }
+
+    void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
+      if (!isSameDay(_selectedDay, selectedDay)) {
+        setState(() {
+          _selectedDay = selectedDay;
+          _focusedDay = focusedDay;
+          _rangeStart = null;
+          _rangeEnd = null;
+          _rangeSelectionMode = RangeSelectionMode.toggledOff;
+        });
+
+        _selectedEvents.value = _getEventsForDay(selectedDay);
+      }
+    }
+
+    void _onRangeSelected(DateTime? start, DateTime? end, DateTime focusedDay) {
+      setState(() {
+        _selectedDay = null;
+        _focusedDay = focusedDay;
+        _rangeStart = start;
+        _rangeEnd = end;
+        _rangeSelectionMode = RangeSelectionMode.toggledOn;
+      });
+
+      // `start` or `end` could be null
+      if (start != null && end != null) {
+        _selectedEvents.value = _getEventsForRange(start, end);
+      } else if (start != null) {
+        _selectedEvents.value = _getEventsForDay(start);
+      } else if (end != null) {
+        _selectedEvents.value = _getEventsForDay(end);
+      }
+    }
+
     return SingleChildScrollView(
       child: Column(
         children: [
