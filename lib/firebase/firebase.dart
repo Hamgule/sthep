@@ -18,6 +18,11 @@ class MyFirebase {
     return snapshot.data();
   }
 
+  static Future<List<Map<String, dynamic>>> readSubCollection(String firstPath, String id, String secondPath) async {
+    var snapshot = await f.collection(firstPath).doc(id).collection(secondPath).get();
+    return snapshot.docs.map((doc) => doc.data()).toList();
+  }
+
   static Widget readOnce({
     required String path,
     String? id,

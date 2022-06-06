@@ -5,7 +5,6 @@ import 'package:sthep/firebase/firebase.dart';
 import 'package:sthep/global/extensions/buttons/fab/fab.dart';
 import 'package:sthep/global/extensions/widgets/snackbar.dart';
 import 'package:sthep/global/materials.dart';
-import 'package:sthep/model/question/question.dart';
 import 'package:sthep/model/user/user.dart';
 
 class AnswerCreateFAB extends StatelessWidget {
@@ -64,6 +63,14 @@ class AnswerCreateFAB extends StatelessWidget {
         main.destQuestion!.qidToString(),
         main.destQuestion!.toJson(),
       );
+
+      MyFirebase.f.collection('users')
+          .doc(main.destQuestion!.questionerUid)
+          .collection('notifications').add({
+        'type': 'answered',
+        'questionId': main.destQuestion!.id,
+        'questionTitle': main.destQuestion!.title,
+      });
     }
 
     return SingleFAB(child: const Icon(Icons.upload), onPressed: onPressed);

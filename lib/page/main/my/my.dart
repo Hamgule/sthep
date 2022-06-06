@@ -96,11 +96,11 @@ class _MainPageState extends State<MyPage> {
 
   @override
   Widget build(BuildContext context) {
-    tempUser.exp.setExp(102.0);
+    SthepUser user = Provider.of<SthepUser>(context);
+
+    user.exp.setExp(102.0);
 
     animate();
-
-    SthepUser user = Provider.of<SthepUser>(context, listen: false);
 
     return SingleChildScrollView(
       child: Column(

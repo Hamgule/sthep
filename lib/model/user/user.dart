@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sthep/firebase/firebase.dart';
 import 'package:sthep/login/google.dart';
+import 'package:sthep/model/question/notification.dart';
 import 'package:sthep/model/user/exp.dart';
 
 class SthepUser with ChangeNotifier {
@@ -10,18 +11,21 @@ class SthepUser with ChangeNotifier {
   static const String defaultImageUrl = 'https://firebasestorage.googleapis.com/v0/b/sthep-7ea14.appspot.com/o/profiles%2Fguest.png?alt=media&token=476faf46-6d28-4996-ba04-ee8247c4280e';
 
   /// variables
+  bool logged = false;
+
   String? uid;
   String? name;
   String? email;
   String? nickname;
   String imageUrl = defaultImageUrl;
-  bool logged = false;
   List<int> questionIds = [];
+
+  List<MyNotification> notifications = [];
+
+  Exp exp = Exp();
 
   SthepUser({this.uid, this.name, this.email, this.nickname});
 
-  Exp exp = Exp();
-  List<int>? questions; // 나의 질문들의 id 값
 
   void toggleLogState() {
     logged = !logged;
@@ -45,14 +49,15 @@ class SthepUser with ChangeNotifier {
     name = user.displayName;
     email = user.email;
 
-    var loadData = await MyFirebase.readData('users', uid!);
-    nickname = loadData?['nickname'];
-    if (loadData?['questions'] != null) {
-        loadData?['questions'].forEach((dynamic question) {
-          questions?.add(question as int);
-        }
-      );
-    }
+    var loadUser = await MyFirebase.readData('users', uid!);
+    nickname = loadUser?['nickname'];
+
+    print(uid!);
+    var loadMyNotifications = await MyFirebase.readSubCollection('users', uid!, 'notifications');
+    notifications.addAll(loadMyNotifications.map((data) => MyNotification.fromJson(data)).toList());
+
+
+
     notifyListeners();
   }
 
@@ -62,7 +67,7 @@ class SthepUser with ChangeNotifier {
     notifyListeners();
   }
 
-  SthepUser.fromJson(Map <String, dynamic> data) {
+  SthepUser.fromJson(Map<String, dynamic> data) {
     uid = data['uid'];
     name = data['name'];
     nickname = data['nickname'];
@@ -83,12 +88,4 @@ class SthepUser with ChangeNotifier {
     await MyFirebase.write('users', uid!, toJson());
   }
 
-  // SthepUser.fromJson(Map<String, dynamic> data) {
-  //   uid = data['uid'];
-  //   name = data['name'];
-  //   email = data['email'];
-  //   nickname = data['nickname'];
-  //   imageUrl = data['imageUrl'];
-  //   questions = (data['questions'] ?? []).cast<int>();
-  // }
 }

@@ -3,12 +3,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_painter/image_painter.dart';
 import 'package:provider/provider.dart';
-import 'package:sthep/config/palette.dart';
 import 'package:sthep/global/extensions/buttons/fab/fab.dart';
 import 'package:sthep/global/extensions/widgets/dialog.dart';
 import 'package:sthep/global/extensions/widgets/snackbar.dart';
-import 'package:sthep/global/extensions/widgets/text.dart';
 import 'package:sthep/model/question/answer.dart';
+import 'package:sthep/model/question/notification.dart';
 import 'package:sthep/model/question/question.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sthep/model/user/user.dart';
@@ -214,5 +213,4 @@ class Materials with ChangeNotifier {
     destAnswer!.adopted = true;
     notifyListeners();
   }
-
 }
