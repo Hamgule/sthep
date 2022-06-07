@@ -25,10 +25,16 @@ class SthepUser with ChangeNotifier {
   int notificationCount = 0;
   int notChecked = 0;
 
+  double adoptQCount = 0;
+  double notAdoptQCount = 0;
+  double adoptedACount = 0;
+  double notAdoptedACount = 0;
+
   Exp exp = Exp();
 
   SthepUser({this.uid, this.name, this.email, this.nickname});
 
+  double sumCount() => adoptQCount + notAdoptQCount + adoptedACount + notAdoptedACount;
 
   void toggleLogState() {
     logged = !logged;

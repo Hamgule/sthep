@@ -13,6 +13,7 @@ import 'package:sthep/model/question/question.dart';
 import 'package:sthep/model/user/activity.dart';
 import 'package:sthep/model/user/user.dart';
 import 'package:sthep/page/main/home/home_materials.dart';
+import 'package:sthep/global/extensions/icons/icons.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -273,18 +274,28 @@ class _HomePageState extends State<HomePage> {
         materials.myAnsweredQuestion.add(question);
       }
 
+      user.adoptQCount = 0;
+      user.adoptedACount = 0;
+
       materials.myQuestions.forEach((question) {
         List<MyActivity> myActivities = [];
         myActivities.add(MyActivity(type: ActivityType.question, id: question.id));
         user.activities[question.regDate as DateTime] = myActivities;
+        if (question.state == AdoptState.adopted) user.adoptQCount++;
       });
+      user.notAdoptQCount = materials.myQuestions.length - user.adoptQCount;
 
-
-      materials.myAnsweredQuestion.forEach((answer) {
+      materials.myAnsweredQuestion.forEach((question) {
         List<MyActivity> myActivities = [];
-        myActivities.add(MyActivity(type: ActivityType.answer, id: answer.id));
-        user.activities[answer.regDate as DateTime] =  myActivities;
+        myActivities.add(MyActivity(type: ActivityType.answer, id: question.id));
+        user.activities[question.regDate as DateTime] = myActivities;
+        var adoptedQuestion = question.answers.where((answer) => answer.adopted);
+        if (adoptedQuestion.isEmpty) return;
+        if (adoptedQuestion.first.answererUid == user.uid) {
+          user.adoptedACount++;
+        }
       });
+      user.notAdoptedACount = materials.myAnsweredQuestion.length - user.adoptedACount;
     });
 
     materials.questions.forEach((question) async {

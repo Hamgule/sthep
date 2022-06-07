@@ -2,18 +2,16 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sthep/config/palette.dart';
-import 'package:sthep/global/materials.dart';
-import 'package:sthep/model/user/chart.dart';
-import 'package:sthep/page/main/my/my_materials.dart';
 import 'package:sthep/firebase/firebase.dart';
+import 'package:sthep/config/palette.dart';
+import 'package:sthep/page/main/my/my_materials.dart';
+import 'package:sthep/global/materials.dart';
+import 'package:sthep/global/extensions/widgets/text.dart';
 import 'package:sthep/model/user/user.dart';
 import 'package:sthep/model/user/activity.dart';
-import 'package:sthep/page/main/notification/notification_materials.dart';
+import 'package:sthep/model/user/indicator.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:fl_chart/fl_chart.dart';
-
-import '../../../global/extensions/widgets/text.dart';
 
 
 class MyPage extends StatefulWidget {
@@ -61,6 +59,8 @@ class _MainPageState extends State<MyPage> {
   }
   @override
   Widget build(BuildContext context) {
+
+    Materials materials = Provider.of<Materials>(context);
     SthepUser user = Provider.of<SthepUser>(context);
 
     user.exp.setExp(102.0);
@@ -116,40 +116,113 @@ class _MainPageState extends State<MyPage> {
         _selectedEvents.value = _getEventsForDay(end);
       }
     }
+    int touchedIndex = -1;
 
+    List<PieChartSectionData> showingSections() {
+
+
+      return List.generate(4, (i) {
+        final isTouched = i == touchedIndex;
+        final fontSize = isTouched ? 25.0 : 16.0;
+        final radius = isTouched ? 60.0 : 50.0;
+        switch (i) {
+          case 0:
+            return PieChartSectionData(
+              color: const Color.fromRGBO(219, 138, 138, 1),
+              value: user.notAdoptQCount,
+              title: '${user.notAdoptQCount.toInt()}\n(${100 * user.notAdoptQCount ~/ user.sumCount()}%)',
+              radius: radius,
+              titleStyle: TextStyle(
+                fontSize: fontSize,
+                fontWeight: FontWeight.bold,
+                color: Palette.iconColor,
+              ),
+            );
+          case 1:
+            return PieChartSectionData(
+              color: const Color.fromRGBO(234, 178, 112, 1),
+              value: user.adoptQCount,
+              title: '${user.adoptQCount.toInt()}\n(${100 * user.adoptQCount ~/ user.sumCount()}%)',
+              radius: radius,
+              titleStyle: const TextStyle(
+                fontSize: 15.0,
+                fontWeight: FontWeight.bold,
+                color: Palette.iconColor,
+              ),
+            );
+          case 2:
+            return PieChartSectionData(
+              color: const Color.fromRGBO(181, 191, 133, 1),
+              value: user.adoptedACount,
+              title: '${user.adoptedACount.toInt()}\n(${100 * user.adoptedACount ~/ user.sumCount()}%)',
+
+              radius: radius,
+              titleStyle: const TextStyle(
+                fontSize: 15.0,
+                fontWeight: FontWeight.bold,
+                color: Palette.iconColor,
+              ),
+            );
+          case 3:
+            return PieChartSectionData(
+              color: const Color.fromRGBO(122, 184, 191, 1),
+              value: user.notAdoptedACount,
+              title: '${user.notAdoptedACount.toInt()}\n(${100 * user.notAdoptedACount ~/ user.sumCount()}%)',
+              radius: radius,
+              titleStyle: const TextStyle(
+                fontSize: 15.0,
+                fontWeight: FontWeight.bold,
+                color: Palette.iconColor,
+              ),
+            );
+          default:
+            throw Error();
+        }
+      });
+    }
     return SingleChildScrollView(
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(50.0),
-            child: MyFirebase.readOnce(
-              path: 'users',
-              id: user.uid,
-              builder: (context, snapshot) {
-                if (snapshot.data == null) return Container();
-                var loadData = snapshot.data.data();
-                return myInfoArea(SthepUser.fromJson(loadData));
-              },
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: screenSize.width * .1),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 50),
+              child: MyFirebase.readOnce(
+                path: 'users',
+                id: user.uid,
+                builder: (context, snapshot) {
+                  if (snapshot.data == null) return Container();
+                  var loadData = snapshot.data.data();
+                  return myInfoArea(SthepUser.fromJson(loadData));
+                },
+              ),
             ),
-          ),
-          Row(
-            children: [
-              SizedBox(
-                width: screenSize.width * .5,
-                height: 400,
+            Padding(
+              padding: const EdgeInsets.only(top: 50),
+              child: SizedBox(
+                width: screenSize.width * .8,
                 child: Column(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 100.0),
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(left: 20.0),
-                            child: const Align(
-                                alignment: Alignment.centerLeft,
-                                child: SthepText("나의 활동 기록")),
-                          ),
-                          TableCalendar<MyActivity>(
+                    Row(
+                      children:[
+                        SizedBox(
+                          width: screenSize.width * .4,
+                          height: 50,
+                          child: const SthepText("나의 활동 기록"),
+                        ),
+                        SizedBox(
+                          width: screenSize.width * .4,
+                          height: 50,
+                          child: const SthepText("나의 활동 현황"),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: screenSize.width * .4,
+                          height: 500,
+                          child: TableCalendar<MyActivity>(
                             firstDay: kFirstDay,
                             lastDay: kLastDay,
                             focusedDay: _focusedDay,
@@ -161,27 +234,26 @@ class _MainPageState extends State<MyPage> {
                             eventLoader: _getEventsForDay,
                             startingDayOfWeek: StartingDayOfWeek.monday,
                             calendarStyle : CalendarStyle(
-                                defaultTextStyle: const TextStyle(color: Colors.grey),
-                                weekendTextStyle: const TextStyle(color: Colors.grey),
-                                outsideDaysVisible: false,
-                                todayDecoration: const BoxDecoration(
-                                    color: Palette.fontColor2,
-                                    shape: BoxShape.circle,
-                                ),
-                                todayTextStyle: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                ),
-                                markerDecoration: BoxDecoration(
-                                  color: Palette.hyperColor.withOpacity(0.5),
-                                  shape: BoxShape.circle,
-
-                                ),
-                                markerSizeScale: 0.9,
-                                markerMargin: EdgeInsets.zero,
-                                markersAlignment: Alignment.center,
-                                markersAutoAligned: false,
-                                markersMaxCount: 1,
+                              defaultTextStyle: const TextStyle(color: Colors.grey),
+                              weekendTextStyle: const TextStyle(color: Colors.grey),
+                              outsideDaysVisible: false,
+                              todayDecoration: const BoxDecoration(
+                                color: Palette.fontColor2,
+                                shape: BoxShape.circle,
+                              ),
+                              todayTextStyle: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                              markerDecoration: BoxDecoration(
+                                color: Palette.hyperColor.withOpacity(0.5),
+                                shape: BoxShape.circle,
+                              ),
+                              markerSizeScale: 0.9,
+                              markerMargin: EdgeInsets.zero,
+                              markersAlignment: Alignment.center,
+                              markersAutoAligned: false,
+                              markersMaxCount: 1,
                             ),
                             onDaySelected: _onDaySelected,
                             onRangeSelected: _onRangeSelected,
@@ -196,21 +268,101 @@ class _MainPageState extends State<MyPage> {
                               _focusedDay = focusedDay;
                             },
                           ),
-                        ],
-                      ),
+                        ),
+                        SizedBox(
+                          width: screenSize.width * .4,
+                          height: 500,
+                          child: Column(
+                            children: [
+                              Row(
+                                children: [
+                                  SizedBox(
+                                    width: screenSize.width * .2,
+                                    height: 300,
+                                    child: materials.myAnsweredQuestion.isEmpty && materials.myQuestions.isEmpty
+                                        ? const SthepText("활동 내역이 없습니다", color: Palette.fontColor2)
+                                        : PieChart(
+                                              PieChartData(
+                                                  pieTouchData: PieTouchData(
+                                                      touchCallback: (FlTouchEvent event, pieTouchResponse) {
+                                                        setState(() {
+                                                          if (!event.isInterestedForInteractions ||
+                                                              pieTouchResponse == null ||
+                                                              pieTouchResponse.touchedSection == null) {
+                                                            touchedIndex = -1;
+                                                            return;
+                                                          }
+                                                          touchedIndex =
+                                                              pieTouchResponse.touchedSection!.touchedSectionIndex;
+                                                        });
+                                                      }),
+                                                  borderData: FlBorderData(
+                                                    show: false,
+                                                  ),
+                                                  sectionsSpace: 0,
+                                                  centerSpaceRadius: 40,
+                                                  sections: showingSections()),
+                                            )
+                                  ),
+                                  materials.myAnsweredQuestion.isEmpty && materials.myQuestions.isEmpty
+                                      ? const SthepText(" ")
+                                      : SizedBox(
+                                        width: screenSize.width * .2,
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: const [
+                                            Indicator(
+                                              color: Color.fromRGBO(234, 178, 112, 1),
+                                              text: '답변을 채택한 질문',
+                                              isSquare: true,
+                                            ),
+                                            SizedBox(
+                                              height: 4,
+                                            ),
+                                            Indicator(
+                                              color: Color.fromRGBO(219, 138, 138, 1),
+                                              text: '답변을 채택하지 않은 질문',
+                                              isSquare: true,
+                                            ),
+                                            SizedBox(
+                                              height: 4,
+                                            ),
+                                            Indicator(
+                                              color: Color.fromRGBO(181, 191, 133, 1),
+                                              text: '채택된 답변',
+                                              isSquare: true,
+                                            ),
+                                            SizedBox(
+                                              height: 4,
+                                            ),
+                                            Indicator(
+                                              color: Color.fromRGBO(122, 184, 191, 1),
+                                              text: '채택되지 않은 답변',
+                                              isSquare: true,
+                                            ),
+                                            SizedBox(
+                                              height: 18,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 200,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ),
-              SizedBox(
-                width: screenSize.width * .5,
-                child: const MyPieChart(),
-              ),
-            ],
-
-          ),
-
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }

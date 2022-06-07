@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sthep/config/palette.dart';
 
 class Indicator extends StatelessWidget {
   final Color color;
@@ -12,8 +13,8 @@ class Indicator extends StatelessWidget {
     required this.color,
     required this.text,
     required this.isSquare,
-    this.size = 16,
-    this.textColor = const Color(0xff505050),
+    this.size = 10,
+    this.textColor = Palette.fontColor2,
   }) : super(key: key);
 
   @override
