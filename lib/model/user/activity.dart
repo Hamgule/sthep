@@ -1,6 +1,3 @@
-import 'dart:collection';
-import 'package:table_calendar/table_calendar.dart';
-
 enum ActivityType { question, answer }
 
 class MyActivity {
@@ -8,7 +5,6 @@ class MyActivity {
   int id;
 
   MyActivity({required this.type, required this.id});
-
 }
 
 List<DateTime> daysInRange(DateTime first, DateTime last) {

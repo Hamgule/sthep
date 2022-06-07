@@ -9,9 +9,7 @@ import 'package:sthep/page/main/my/my_materials.dart';
 import 'package:sthep/firebase/firebase.dart';
 import 'package:sthep/model/user/user.dart';
 import 'package:sthep/model/user/activity.dart';
-import 'package:sthep/page/main/notification/notification_materials.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:fl_chart/fl_chart.dart';
 
 import '../../../global/extensions/widgets/text.dart';
 
@@ -143,11 +141,12 @@ class _MainPageState extends State<MyPage> {
                       padding: const EdgeInsets.only(left: 100.0),
                       child: Column(
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.only(left: 20.0),
-                            child: const Align(
-                                alignment: Alignment.centerLeft,
-                                child: SthepText("나의 활동 기록")),
+                          const Padding(
+                            padding: EdgeInsets.only(left: 20.0),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: SthepText("나의 활동 기록"),
+                            ),
                           ),
                           TableCalendar<MyActivity>(
                             firstDay: kFirstDay,
@@ -161,27 +160,27 @@ class _MainPageState extends State<MyPage> {
                             eventLoader: _getEventsForDay,
                             startingDayOfWeek: StartingDayOfWeek.monday,
                             calendarStyle : CalendarStyle(
-                                defaultTextStyle: const TextStyle(color: Colors.grey),
-                                weekendTextStyle: const TextStyle(color: Colors.grey),
-                                outsideDaysVisible: false,
-                                todayDecoration: const BoxDecoration(
-                                    color: Palette.fontColor2,
-                                    shape: BoxShape.circle,
-                                ),
-                                todayTextStyle: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                ),
-                                markerDecoration: BoxDecoration(
-                                  color: Palette.hyperColor.withOpacity(0.5),
+                              defaultTextStyle: const TextStyle(color: Colors.grey),
+                              weekendTextStyle: const TextStyle(color: Colors.grey),
+                              outsideDaysVisible: false,
+                              todayDecoration: const BoxDecoration(
+                                  color: Palette.fontColor2,
                                   shape: BoxShape.circle,
+                              ),
+                              todayTextStyle: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                              ),
+                              markerDecoration: BoxDecoration(
+                                color: Palette.hyperColor.withOpacity(0.5),
+                                shape: BoxShape.circle,
 
-                                ),
-                                markerSizeScale: 0.9,
-                                markerMargin: EdgeInsets.zero,
-                                markersAlignment: Alignment.center,
-                                markersAutoAligned: false,
-                                markersMaxCount: 1,
+                              ),
+                              markerSizeScale: 0.9,
+                              markerMargin: EdgeInsets.zero,
+                              markersAlignment: Alignment.center,
+                              markersAutoAligned: false,
+                              markersMaxCount: 1,
                             ),
                             onDaySelected: _onDaySelected,
                             onRangeSelected: _onRangeSelected,

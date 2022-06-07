@@ -5,7 +5,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:sthep/global/extensions/widgets/text.dart';
 import 'package:sthep/global/materials.dart';
-import 'package:sthep/model/question/answer.dart';
 import 'package:sthep/model/question/question.dart';
 
 class AnswerCreatePage extends StatefulWidget {
@@ -31,10 +30,7 @@ class _AnswerCreatePageState extends State<AnswerCreatePage> {
 
   @override
   Widget build(BuildContext context) {
-    Materials upload = Provider.of<Materials>(context);
-
-    upload.newAnswer = Answer();
-    upload.newAnswer.imageUrl = upload.destQuestion!.imageUrl;
+    Materials materials = Provider.of<Materials>(context);
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -46,20 +42,20 @@ class _AnswerCreatePageState extends State<AnswerCreatePage> {
                 padding: const EdgeInsets.all(canvasPadding),
                 child: SizedBox(
                   width: screenSize.width,
-                  child: upload.image == null
-                      ? upload.newAnswer.imageUrl == null
+                  child: materials.image == null
+                      ? materials.newAnswer.imageUrl == null
                       ? const SthepText('이미지를 선택하세요')
                       : ImagePainter.network(
-                    upload.newAnswer.imageUrl!,
+                    materials.newAnswer.imageUrl!,
                     width: 300,
                     height: 500,
-                    key: upload.imageKey,
+                    key: materials.imageKey,
                     scalable: true,
                     initialStrokeWidth: 2,
                     //textDelegate: DutchTextDelegate(),
                     initialColor: Colors.lightGreen,
                     initialPaintMode: PaintMode.freeStyle,
-                  ) : Image.file(upload.image!, fit: BoxFit.fitWidth)
+                  ) : Image.file(materials.image!, fit: BoxFit.fitWidth)
                 ),
               ),
             ],

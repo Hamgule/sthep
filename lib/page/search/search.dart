@@ -36,7 +36,7 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    Materials search = Provider.of<Materials>(context, listen: false);
+    Materials materials = Provider.of<Materials>(context);
 
     return Scaffold(
       appBar: const SearchAppBar(),
@@ -73,8 +73,8 @@ class _SearchPageState extends State<SearchPage> {
                           Expanded(
                               child: SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
-                                child: SthepText(search.searchTags.isEmpty
-                                    ? '<미입력>' : search.searchTags.map((tag) => '#$tag').join(' '),
+                                child: SthepText(materials.searchTags.isEmpty
+                                    ? '<미입력>' : materials.searchTags.map((tag) => '#$tag').join(' '),
                                   color: Palette.hyperColor,
                                 ),
                               )
@@ -93,12 +93,12 @@ class _SearchPageState extends State<SearchPage> {
                         hintText: '검색어를 입력하세요',
                       ),
                       onChanged: (text) => setState(() {
-                        search.setKeyword(text);
+                        materials.setKeyword(text);
                       }),
                     ),
                     const SizedBox(height: 20.0),
                     TagEditor(
-                      length: search.searchTags.length,
+                      length: materials.searchTags.length,
                       controller: tagCont,
                       focusNode: _focusNode,
                       delimiters: const [',', ' '],
@@ -107,8 +107,8 @@ class _SearchPageState extends State<SearchPage> {
                       onSubmitted: (outstandingValue) {
                         if (mounted) {
                           setState(() {
-                            if (!search.searchTags.contains(outstandingValue)) {
-                              search.searchTags.add(outstandingValue);
+                            if (!materials.searchTags.contains(outstandingValue)) {
+                              materials.searchTags.add(outstandingValue);
                             }
                           });
                         }
@@ -119,18 +119,18 @@ class _SearchPageState extends State<SearchPage> {
                       onTagChanged: (tag) {
                         if (mounted) {
                           setState(() {
-                            if (!search.searchTags.contains(tag)) {
-                              search.addTag(tag);
+                            if (!materials.searchTags.contains(tag)) {
+                              materials.addTag(tag);
                             }
                           });
                         }
                       },
                       tagBuilder: (context, index) => TagChip(
                         index: index,
-                        label: search.searchTags[index],
+                        label: materials.searchTags[index],
                         onDeleted: (index) {
                           if (mounted) {
-                            setState(() => search.removeTag(index));
+                            setState(() => materials.removeTag(index));
                           }
                         },
                       ),
@@ -145,15 +145,15 @@ class _SearchPageState extends State<SearchPage> {
             Expanded(
               child: ListView.builder(
                 padding: const EdgeInsets.symmetric(vertical: 30.0),
-                itemCount: search.filteredQuestions.length,
+                itemCount: materials.filteredQuestions.length,
                 itemExtent: 120.0,
                 itemBuilder: (context, index) {
                   return QuestionTile(
-                    question: search.filteredQuestions[index],
+                    question: materials.filteredQuestions[index],
                     onPressed: () {
                       Navigator.pop(context);
-                      search.setPageIndex(6);
-                      search.setDestQuestion(search.filteredQuestions[index]);
+                      materials.gotoPage('view');
+                      materials.setDestQuestion(materials.filteredQuestions[index]);
                     },
                   );
                 },

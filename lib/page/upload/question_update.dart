@@ -9,7 +9,6 @@ import 'package:provider/provider.dart';
 import 'package:sthep/config/palette.dart';
 import 'package:sthep/global/extensions/buttons/fab/fab.dart';
 import 'package:sthep/global/extensions/widgets/snackbar.dart';
-import 'package:sthep/global/extensions/widgets/text.dart';
 import 'package:sthep/global/materials.dart';
 import 'package:sthep/model/question/question.dart';
 
@@ -40,9 +39,9 @@ class _UpdatePageState extends State<UpdatePage> {
 
   @override
   Widget build(BuildContext context) {
-    Materials upload = Provider.of<Materials>(context);
+    Materials materials = Provider.of<Materials>(context);
 
-    targetQuestion = upload.destQuestion!;
+    targetQuestion = materials.destQuestion!;
     titleCont.text = targetQuestion.title;
 
     return Scaffold(
@@ -153,8 +152,8 @@ class _UpdatePageState extends State<UpdatePage> {
                           XFile? xFile = await pickImage();
                           if (xFile == null) return;
                           setState(() => isPicked = true);
-                          setState(() => upload.imageKey = GlobalKey<ImagePainterState>());
-                          setState(() => upload.image = File(xFile.path));
+                          setState(() => materials.imageKey = GlobalKey<ImagePainterState>());
+                          setState(() => materials.image = File(xFile.path));
                         },
                       ),
                     ],
@@ -164,8 +163,8 @@ class _UpdatePageState extends State<UpdatePage> {
                     height: screenSize.height * .6,
                     child: isPicked
                         ? ImagePainter.file(
-                      upload.image!,
-                      key: upload.imageKey,
+                      materials.image!,
+                      key: materials.imageKey,
                       scalable: true,
                       initialStrokeWidth: 2,
                       // textDelegate: DutchTextDelegate(),
@@ -174,8 +173,8 @@ class _UpdatePageState extends State<UpdatePage> {
                     )
                     :
                     ImagePainter.network(
-                      upload.destQuestion!.imageUrl!,
-                      key: upload.imageKey,
+                      materials.destQuestion!.imageUrl!,
+                      key: materials.imageKey,
                       scalable: true,
                       initialStrokeWidth: 2,
                       // textDelegate: DutchTextDelegate(),

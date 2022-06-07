@@ -15,11 +15,11 @@ class SideBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Materials main = Provider.of<Materials>(context);
+    Materials materials = Provider.of<Materials>(context);
     SthepUser user = Provider.of<SthepUser>(context);
 
     void myPagePressed() {
-      main.setPageIndex(4);
+      materials.gotoPage('my');
       Navigator.pop(context);
     }
 
@@ -32,22 +32,22 @@ class SideBar extends StatelessWidget {
       if (user.nickname == null) {
         while (true) {
           Navigator.pop(context);
-          await main.inputNickname(context);
-          if (main.nicknameInput == null) {
+          await materials.inputNickname(context);
+          if (materials.nicknameInput == null) {
             showMySnackBar(context, '로그인에 실패했습니다. 다시 로그인 해주세요.', type: 'error');
             return;
           }
-          if (main.nicknameInput != '') break;
+          if (materials.nicknameInput != '') break;
           showMySnackBar(context, '올바른 닉네임을 입력하세요.', type: 'error');
         }
 
-        user.setNickname(main.nicknameInput!);
+        user.setNickname(materials.nicknameInput!);
         user.updateDB();
         showMySnackBar(context, '\'${user.nickname}\'님 환영합니다.');
       }
       else {
         showMySnackBar(context, '\'${user.nickname}\'님 로그인 되었습니다.');
-        main.setPageIndex(0);
+        materials.gotoPage('home');
       }
       user.toggleLogState();
     }
@@ -55,7 +55,7 @@ class SideBar extends StatelessWidget {
     void logoutPressed() {
       user.sthepLogout();
       Navigator.pop(context);
-      main.setPageIndex(0);
+      materials.gotoPage('home');
       showMySnackBar(context, '로그아웃 되었습니다.', type: 'success');
     }
 
@@ -70,24 +70,24 @@ class SideBar extends StatelessWidget {
       }
 
       MyFirebase.remove('users', user.uid!);
-      main.setPageIndex(0);
+      materials.gotoPage('home');
       showMySnackBar(context, '\'${user.nickname}\'님이 탈퇴되었습니다.', type: 'success');
       user.sthepLogout();
     }
 
     void notificationPressed() {
       Navigator.pop(context);
-      main.setPageIndex(3);
+      materials.gotoPage('notifications');
     }
 
     void myQuestionPressed() {
       Navigator.pop(context);
-      main.setPageIndex(1);
+      materials.gotoPage('myQuestions');
     }
 
     void myAnswerPressed() {
       Navigator.pop(context);
-      main.setPageIndex(2);
+      materials.gotoPage('myAnswers');
     }
 
     return Drawer(

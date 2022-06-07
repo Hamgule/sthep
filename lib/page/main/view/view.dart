@@ -23,12 +23,12 @@ class _ViewPageState extends State<ViewPage> {
 
   @override
   Widget build(BuildContext context) {
-    Materials view = Provider.of<Materials>(context);
+    Materials materials = Provider.of<Materials>(context);
     SthepUser user = Provider.of<SthepUser>(context);
 
     final PageController pageCont = PageController();
-    DateTime regDate = view.destQuestion!.regDate!;
-    DateTime modDate = view.destQuestion!.modDate!;
+    DateTime regDate = materials.destQuestion!.regDate!;
+    DateTime modDate = materials.destQuestion!.modDate!;
     String showDate = Time.dateFormat(modDate)
         + (Time.isConcurrent(regDate, modDate) ? '' : ' (수정됨)');
 
@@ -46,7 +46,7 @@ class _ViewPageState extends State<ViewPage> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: SthepText(
-                        view.destQuestion!.questioner.exp.levelToString(),
+                        materials.destQuestion!.questioner.exp.levelToString(),
                         size: 17.0,
                         color: Palette.fontColor2,
                       ),
@@ -58,10 +58,10 @@ class _ViewPageState extends State<ViewPage> {
                         ),
                         child: Row(
                           children: [
-                            profilePhoto(view.destQuestion!.questioner),
+                            profilePhoto(materials.destQuestion!.questioner),
                             const SizedBox(width: 10),
                             SthepText(
-                              '${view.destQuestion!.questioner.nickname} 님의 질문',
+                              '${materials.destQuestion!.questioner.nickname} 님의 질문',
                               size: 17.0,
                             ),
                           ],
@@ -69,7 +69,7 @@ class _ViewPageState extends State<ViewPage> {
                       ),
                     ),
                     const SizedBox(width: 20),
-                    AdoptStateIcon(state: view.destQuestion!.state),
+                    AdoptStateIcon(state: materials.destQuestion!.state),
                   ],
                 ),
                 SthepText(
@@ -83,22 +83,22 @@ class _ViewPageState extends State<ViewPage> {
               height: 60.0,
               child: Row(
                 children: [
-                  for (var tag in view.destQuestion!.tags)
+                  for (var tag in materials.destQuestion!.tags)
                     TagButton(
                       '#$tag',
                       size: 18.0,
                       onPressed: () {
-                        view.searchTags = [];
-                        view.addTag(tag);
-                        view.filteredQuestions = [];
+                        materials.searchTags = [];
+                        materials.addTag(tag);
+                        materials.filteredQuestions = [];
 
-                        view.questions.forEach((question) {
-                          for (var tag in view.searchTags) {
+                        materials.questions.forEach((question) {
+                          for (var tag in materials.searchTags) {
                             if (!question.tags.contains(tag)) {
                               return;
                             }
                           }
-                          view.addSearchedQuestion(question);
+                          materials.addSearchedQuestion(question);
                         });
                         Navigator.pushNamed(context, '/Search');
                       },
@@ -109,9 +109,9 @@ class _ViewPageState extends State<ViewPage> {
             Align(
               alignment: Alignment.centerLeft,
               child: SizedBox(
-                child: view.destQuestion!.imageUrl == null
+                child: materials.destQuestion!.imageUrl == null
                     ? Container() : Image.network(
-                  view.destQuestion!.imageUrl!,
+                  materials.destQuestion!.imageUrl!,
                   width: 500.0,
                   height: 300.0,
                 ),
@@ -122,9 +122,9 @@ class _ViewPageState extends State<ViewPage> {
       ),
     ];
 
-    if (view.destQuestion == null) return Container();
+    if (materials.destQuestion == null) return Container();
 
-    view.destQuestion!.answers.forEach((answer) {
+    materials.destQuestion!.answers.forEach((answer) {
       DateTime regDate = answer.regDate!;
       DateTime modDate = answer.modDate!;
       String showDate = Time.dateFormat(modDate)
@@ -179,23 +179,22 @@ class _ViewPageState extends State<ViewPage> {
                 height: 60.0,
                 child: Row(
                   children: [
-                    for (var tag in view.destQuestion!.tags)
+                    for (var tag in materials.destQuestion!.tags)
                       TagButton(
                         '#$tag',
                         size: 18.0,
                         onPressed: () {
-                          Materials search = Provider.of<Materials>(context, listen: false);
-                          search.searchTags = [];
-                          search.addTag(tag);
-                          search.filteredQuestions = [];
+                          materials.searchTags = [];
+                          materials.addTag(tag);
+                          materials.filteredQuestions = [];
 
-                          search.questions.forEach((question) {
-                            for (var tag in search.searchTags) {
+                          materials.questions.forEach((question) {
+                            for (var tag in materials.searchTags) {
                               if (!question.tags.contains(tag)) {
                                 return;
                               }
                             }
-                            search.addSearchedQuestion(question);
+                            materials.addSearchedQuestion(question);
                           });
                           Navigator.pushNamed(context, '/Search');
                         },
@@ -247,26 +246,25 @@ class _ViewPageState extends State<ViewPage> {
             },
             onPageChanged: (index) {
               if (index == 0) {
-                view.destAnswer = null;
-                view.setViewFABState(
-                    user.uid == view.destQuestion!.questionerUid
+                materials.destAnswer = null;
+                materials.setViewFABState(
+                    user.uid == materials.destQuestion!.questionerUid
                         ? FABState.myQuestion
                         : FABState.comment
                 );
                 return;
               }
-              view.destAnswer = view.destQuestion!.answers[index - 1];
-              if (user.uid == view.destQuestion!.questionerUid) {
-                view.setViewFABState(FABState.adopt);
+              materials.destAnswer = materials.destQuestion!.answers[index - 1];
+              if (user.uid == materials.destQuestion!.questionerUid) {
+                materials.setViewFABState(FABState.adopt);
               }
               else {
-                view.setViewFABState(
-                  user.uid == view.destAnswer!.answererUid
+                materials.setViewFABState(
+                  user.uid == materials.destAnswer!.answererUid
                       ? FABState.myAnswer
                       : FABState.comment,
                 );
               }
-
             },
           ),
         ],

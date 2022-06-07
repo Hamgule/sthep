@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sthep/firebase/firebase.dart';
 import 'package:sthep/login/google.dart';
+import 'package:sthep/model/question/question.dart';
 import 'package:sthep/model/user/activity.dart';
 import 'package:sthep/model/question/notification.dart';
 import 'package:sthep/model/user/exp.dart';
@@ -86,6 +88,7 @@ class SthepUser with ChangeNotifier {
     email = data['email'];
     questionIds = (data['questionIds'] ?? []).cast<int>();
     notificationCount = data['notificationCount'];
+    exp.setExp(data['exp'].toDouble());
   }
 
   Map<String, dynamic> toJson() => {
@@ -96,16 +99,37 @@ class SthepUser with ChangeNotifier {
     'imageUrl': imageUrl,
     'questionIds': questionIds,
     'notificationCount': notificationCount,
+    'exp': exp.exp,
   };
 
-  void updateDB() async {
-    await MyFirebase.write('users', uid!, toJson());
+  void updateDB() => MyFirebase.write('users', uid!, toJson());
+
+  void notify(String type, Question question) {
+    notificationCount++;
+
+    Map<String, dynamic> notificationData = {
+      'id': notificationCount,
+      'checked': false,
+      'type': type,
+      'questionId': question.id,
+      'questionTitle': question.title,
+      'notice': '답변이 삭제되었습니다.',
+    };
+
+    notificationData['loggedDate'] = FieldValue.serverTimestamp();
+
+    MyFirebase.f.collection('users')
+        .doc(uid)
+        .collection('notifications')
+        .doc(Question.idToString(notificationCount))
+        .set(notificationData);
+
+    updateDB();
   }
 
   void updateNotChecked() {
     notChecked = notifications.where((notification)
     => !notification.checked).toList().length;
-
     notifyListeners();
   }
 

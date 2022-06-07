@@ -23,6 +23,14 @@ import 'package:sthep/page/upload/question_update.dart';
 import 'package:sthep/page/upload/question_create.dart';
 import 'package:sthep/global/extensions/widgets/appbar.dart';
 
+List<String> pageNames = const [
+  'home', 'myQuestions',
+  'myAnswers', 'notifications',
+  'my', 'questionCreate',
+  'view', 'questionUpdate',
+  'answerCreate', 'answerUpdate',
+];
+
 List<PreferredSizeWidget> appbars = [
   const HomeAppBar(),
   const HomeAppBar(title: '나의 질문'),
@@ -120,7 +128,7 @@ class _MainPageState extends State<MainPage> {
   Widget _buildBottomBar(BuildContext context) {
     return Consumer<Materials>(
       builder: (context, main, _) {
-        SthepUser user = Provider.of<SthepUser>(context, listen: false);
+        SthepUser user = Provider.of<SthepUser>(context);
 
         void setIndex(int index) {
           if (user.logged || index == 0) {

@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sthep/firebase/firebase.dart';
@@ -11,45 +10,38 @@ class QuestionCreateFAB extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Materials main = Provider.of<Materials>(context, listen: false);
+    Materials materials = Provider.of<Materials>(context);
 
     void onPressed() async {
-      Map<String, dynamic>? data = await MyFirebase.readData('autoIncrement', 'question',);
-      int nextId = data!['currentId'] + 1;
-
-      if (main.newQuestion.title == '') {
+      if (materials.newQuestion.title == '') {
         showMySnackBar(context, '제목을 입력하세요');
         return;
       }
 
-      main.toggleLoading();
+      materials.toggleLoading();
 
-      await main.saveImage();
+      await materials.saveImage();
 
-      main.newQuestion.imageUrl = await MyFirebase.uploadImage(
+      materials.newQuestion.id = await materials.newQuestion.getNextId();
+      materials.newQuestion.imageUrl = await MyFirebase.uploadImage(
         'questions',
-        main.newQuestion.qidToString(),
-        main.image,
+        materials.newQuestion.qidToString(),
+        materials.image,
       );
 
-      main.toggleLoading();
+      materials.toggleLoading();
 
-      Map<String, dynamic> addData = main.newQuestion.toJson();
+      materials.newQuestion.createDB();
 
-      addData['regDate'] = FieldValue.serverTimestamp();
-      addData['modDate'] = FieldValue.serverTimestamp();
+      materials.toggleIsChanged();
 
-      MyFirebase.write(
-        'questions',
-        main.newQuestion.qidToString(),
-        addData,
+      showMySnackBar(
+        context,
+        '${materials.newQuestion.id}번 질문을 등록했습니다.',
+        type: 'success',
       );
 
-      main.toggleIsChanged();
-      main.setPageIndex(0);
-      MyFirebase.write('autoIncrement', 'question', {'currentId': nextId});
-
-      showMySnackBar(context, '${main.newQuestion.id}번 질문을 등록했습니다.', type: 'success');
+      materials.gotoPage('home');
     }
 
     return SingleFAB(child: const Icon(Icons.upload), onPressed: onPressed);

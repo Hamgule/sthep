@@ -171,6 +171,8 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    Materials materials = Provider.of<Materials>(context);
+
     return AppBar(
       backgroundColor: Palette.appbarColor,
       foregroundColor: Palette.iconColor,
@@ -186,37 +188,32 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       iconTheme: const IconThemeData(color: Palette.iconColor),
       actions: [
-        Consumer<Materials>(
-          builder: (context, search, _) {
-            return search.searchTags.isEmpty && search.searchKeyword == ''
-                ? Container() : IconButton(
-              onPressed: () {
-                Materials search = Provider.of<Materials>(context, listen: false);
-                search.clearFilteredQuestions();
+        materials.searchTags.isEmpty && materials.searchKeyword == ''
+            ? Container() : IconButton(
+          onPressed: () {
+            materials.clearFilteredQuestions();
 
-                search.questions.forEach((question) {
-                  if (search.searchKeyword == '') {
-                    for (var tag in search.searchTags) {
-                      if (!question.tags.contains(tag)) {
-                        return;
-                      }
-                    }
-                    search.addSearchedQuestion(question);
+            materials.questions.forEach((question) {
+              if (materials.searchKeyword == '') {
+                for (var tag in materials.searchTags) {
+                  if (!question.tags.contains(tag)) {
+                    return;
                   }
-                  else if (question.toSearchString().contains(search.searchKeyword)) {
-                    for (var tag in search.searchTags) {
-                      if (!question.tags.contains(tag)) {
-                        return;
-                      }
-                    }
-                    search.addSearchedQuestion(question);
+                }
+                materials.addSearchedQuestion(question);
+              }
+              else if (question.toSearchString().contains(materials.searchKeyword)) {
+                for (var tag in materials.searchTags) {
+                  if (!question.tags.contains(tag)) {
+                    return;
                   }
-                });
-              },
-              icon: const Icon(Icons.search),
-            );
-          }
-        )
+                }
+                materials.addSearchedQuestion(question);
+              }
+            });
+          },
+          icon: const Icon(Icons.search),
+        ),
       ],
     );
   }

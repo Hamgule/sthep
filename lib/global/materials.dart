@@ -7,10 +7,10 @@ import 'package:sthep/global/extensions/buttons/fab/fab.dart';
 import 'package:sthep/global/extensions/widgets/dialog.dart';
 import 'package:sthep/global/extensions/widgets/snackbar.dart';
 import 'package:sthep/model/question/answer.dart';
-import 'package:sthep/model/question/notification.dart';
 import 'package:sthep/model/question/question.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sthep/model/user/user.dart';
+import 'package:sthep/page/main/main.dart';
 
 late Size screenSize;
 
@@ -58,7 +58,6 @@ class Materials with ChangeNotifier {
   }
 
   Widget loginButton(BuildContext context) {
-    Materials main = Provider.of<Materials>(context);
     SthepUser user = Provider.of<SthepUser>(context);
 
     return IconButton(
@@ -86,7 +85,8 @@ class Materials with ChangeNotifier {
 
         user.toggleLogState();
         showMySnackBar(context, '\'${user.nickname}\'님 로그인 되었습니다.', type: 'success');
-        main.setPageIndex(0);
+        setPageIndex(0);
+
       }, icon: const Icon(Icons.login),
     );
   }
@@ -94,6 +94,10 @@ class Materials with ChangeNotifier {
   /// main
   int pageIndex = 0;
   int newPageIndex = 0;
+
+  void gotoPage(String route) {
+    setPageIndex(pageNames.indexWhere((name) => name == route));
+  }
 
   void setPageIndex(int index) {
     newPageIndex = index;
@@ -210,7 +214,9 @@ class Materials with ChangeNotifier {
   }
 
   void adopt() {
-    destAnswer!.adopted = true;
+    destAnswer!.adopt();
+    destQuestion!.adoptedAnswerId = destAnswer!.id;
+    destQuestion!.updateState();
     notifyListeners();
   }
 }
