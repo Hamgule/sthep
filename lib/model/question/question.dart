@@ -5,6 +5,8 @@ import 'package:sthep/model/question/answer.dart';
 import 'package:sthep/model/user/user.dart';
 
 class Question {
+  static const defaultBlankPaper = 'https://firebasestorage.googleapis.com/v0/b/sthep-7ea14.appspot.com/o/questions%2Fdefault.png?alt=media&token=c3f7e6b6-7c80-4dbb-859a-3e3d7adac434';
+
   /// variables
   int? id;
   late String title;

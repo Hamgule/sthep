@@ -157,7 +157,7 @@ class _CreatePageState extends State<CreatePage> {
                     height: screenSize.height * .6,
                     child: materials.image == null
                         ? ImagePainter.network(
-                      "https://firebasestorage.googleapis.com/v0/b/sthep-7ea14.appspot.com/o/questions%2Fdefault.png?alt=media&token=c3f7e6b6-7c80-4dbb-859a-3e3d7adac434",
+                      Question.defaultBlankPaper,
                       width: 300,
                       height: 500,
                       key: materials.imageKey,

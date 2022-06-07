@@ -36,23 +36,23 @@ class NotificationTile extends StatelessWidget {
       ),
       onDismissed: (direction) {
         if (direction == DismissDirection.endToStart) {
-          notification.check();
-          user.notifications.remove(notification);
 
           MyFirebase.f.collection('users')
               .doc(user.uid)
               .collection('notifications')
               .doc(Question.idToString(notification.id!))
               .delete();
+
+          user.notifications.remove(notification);
+          user.updateNotChecked();
         }
       },
       child: InkWell(
         onTap: () {
-          try {
-            materials.destQuestion = materials.getQuestionById(notification.questionId!);
-          }
+          try { materials.destQuestion = materials.getQuestionById(notification.questionId!); }
           catch (e) {
             showMySnackBar(context, '비정상적인 접근입니다.', type: 'error');
+            user.updateNotChecked();
             return;
           }
           materials.gotoPage('view');

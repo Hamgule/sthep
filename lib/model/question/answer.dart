@@ -53,7 +53,7 @@ class Answer {
     json['regDate'] = FieldValue.serverTimestamp();
     json['modDate'] = FieldValue.serverTimestamp();
 
-    MyFirebase.write('questions', aidToString(), json);
+    MyFirebase.write('answers', aidToString(), json);
     MyFirebase.write('autoIncrement', 'answer', {'currentId': id});
   }
 

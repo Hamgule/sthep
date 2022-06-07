@@ -11,7 +11,7 @@ import 'package:sthep/model/user/exp.dart';
 class SthepUser with ChangeNotifier {
   /// static values
   // static const String defaultImageUrl = 'https://t1.daumcdn.net/cfile/tistory/245D1A3357256A6F2A';
-  static const String defaultImageUrl = 'https://firebasestorage.googleapis.com/v0/b/sthep-7ea14.appspot.com/o/profiles%2Fguest.png?alt=media&token=476faf46-6d28-4996-ba04-ee8247c4280e';
+  static const String defaultProfile = 'https://firebasestorage.googleapis.com/v0/b/sthep-7ea14.appspot.com/o/profiles%2Fguest.png?alt=media&token=476faf46-6d28-4996-ba04-ee8247c4280e';
 
   /// variables
   bool logged = false;
@@ -19,7 +19,7 @@ class SthepUser with ChangeNotifier {
   String? name;
   String? email;
   String? nickname;
-  String imageUrl = defaultImageUrl;
+  String imageUrl = defaultProfile;
   List<int> questionIds = [];
   Map<DateTime, List<MyActivity>> activities = {};
 

@@ -20,7 +20,7 @@ class AnswerUpdateFAB extends StatelessWidget {
       await materials.saveImage();
 
       materials.newAnswer.imageUrl = await MyFirebase.uploadImage(
-        'questions',
+        'answers',
         materials.newAnswer.aidToString(),
         materials.image,
       );
