@@ -15,6 +15,7 @@ import 'package:sthep/model/user/user.dart';
 import 'package:sthep/page/main/home/home_materials.dart';
 import 'package:sthep/global/extensions/icons/icons.dart';
 
+
 class HomePage extends StatefulWidget {
   const HomePage({
     Key? key,
@@ -247,17 +248,17 @@ class _HomePageState extends State<HomePage> {
 
     void getQuestions() async {
       materials.questions = [];
-      var loadData = await MyFirebase.readCollection('questions');
-      if (loadData.isEmpty) return;
-      materials.questions.addAll(loadData.map((data) => Question.fromJson(data)).toList());
+      var jsonList = await MyFirebase.readCollection('questions');
+      if (jsonList.isEmpty) return;
+      materials.questions.addAll(jsonList.map((json) => Question.fromJson(json)).toList().reversed);
       materials.toggleIsChanged();
     }
 
     Future<SthepUser> getUser(String uid) async {
-      var loadData = await MyFirebase.readData('users', uid);
-      if (loadData == null) return SthepUser();
+      var json = await MyFirebase.readData('users', uid);
+      if (json == null) return SthepUser();
 
-      return SthepUser.fromJson(loadData);
+      return SthepUser.fromJson(json);
     }
 
     if (materials.questions.isEmpty || materials.isChanged) getQuestions();
@@ -279,7 +280,7 @@ class _HomePageState extends State<HomePage> {
 
       materials.myQuestions.forEach((question) {
         List<MyActivity> myActivities = [];
-        myActivities.add(MyActivity(type: ActivityType.question, id: question.id));
+        myActivities.add(MyActivity(type: ActivityType.question, id: question.id!));
         user.activities[question.regDate as DateTime] = myActivities;
         if (question.state == AdoptState.adopted) user.adoptQCount++;
       });
@@ -287,8 +288,8 @@ class _HomePageState extends State<HomePage> {
 
       materials.myAnsweredQuestion.forEach((question) {
         List<MyActivity> myActivities = [];
-        myActivities.add(MyActivity(type: ActivityType.answer, id: question.id));
-        user.activities[question.regDate as DateTime] = myActivities;
+        myActivities.add(MyActivity(type: ActivityType.answer, id: question.id!));
+        user.activities[question.regDate as DateTime] =  myActivities;
         var adoptedQuestion = question.answers.where((answer) => answer.adopted);
         if (adoptedQuestion.isEmpty) return;
         if (adoptedQuestion.first.answererUid == user.uid) {
@@ -326,7 +327,7 @@ class _HomePageState extends State<HomePage> {
 
       var loadData = await MyFirebase.readCollection('questions');
       materials.questions = [];
-      materials.questions.addAll(loadData.map((data) => Question.fromJson(data)).toList());
+      materials.questions.addAll(loadData.map((data) => Question.fromJson(data)).toList().reversed);
 
       setState(() {});
 
@@ -355,9 +356,8 @@ class _HomePageState extends State<HomePage> {
           return QuestionTile(
             question: visQuestions[index],
             onPressed: () {
-              Materials home = Provider.of<Materials>(context, listen: false);
-              home.setPageIndex(6);
-              home.setDestQuestion(visQuestions[index]);
+              materials.gotoPage('view');
+              materials.setDestQuestion(visQuestions[index]);
             },
           );
         },

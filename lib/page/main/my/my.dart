@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sthep/firebase/firebase.dart';
 import 'package:sthep/config/palette.dart';
+import 'package:sthep/global/materials.dart';
+import 'package:sthep/model/user/chart.dart';
 import 'package:sthep/page/main/my/my_materials.dart';
 import 'package:sthep/global/materials.dart';
 import 'package:sthep/global/extensions/widgets/text.dart';
@@ -234,26 +236,27 @@ class _MainPageState extends State<MyPage> {
                             eventLoader: _getEventsForDay,
                             startingDayOfWeek: StartingDayOfWeek.monday,
                             calendarStyle : CalendarStyle(
-                              defaultTextStyle: const TextStyle(color: Colors.grey),
-                              weekendTextStyle: const TextStyle(color: Colors.grey),
-                              outsideDaysVisible: false,
-                              todayDecoration: const BoxDecoration(
-                                color: Palette.fontColor2,
-                                shape: BoxShape.circle,
-                              ),
-                              todayTextStyle: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                              markerDecoration: BoxDecoration(
-                                color: Palette.hyperColor.withOpacity(0.5),
-                                shape: BoxShape.circle,
-                              ),
-                              markerSizeScale: 0.9,
-                              markerMargin: EdgeInsets.zero,
-                              markersAlignment: Alignment.center,
-                              markersAutoAligned: false,
-                              markersMaxCount: 1,
+                                defaultTextStyle: const TextStyle(color: Colors.grey),
+                                weekendTextStyle: const TextStyle(color: Colors.grey),
+                                outsideDaysVisible: false,
+                                todayDecoration: const BoxDecoration(
+                                    color: Palette.fontColor2,
+                                    shape: BoxShape.circle,
+                                ),
+                                todayTextStyle: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                ),
+                                markerDecoration: BoxDecoration(
+                                  color: Palette.hyperColor.withOpacity(0.5),
+                                  shape: BoxShape.circle,
+
+                                ),
+                                markerSizeScale: 0.9,
+                                markerMargin: EdgeInsets.zero,
+                                markersAlignment: Alignment.center,
+                                markersAutoAligned: false,
+                                markersMaxCount: 1,
                             ),
                             onDaySelected: _onDaySelected,
                             onRangeSelected: _onRangeSelected,

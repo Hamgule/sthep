@@ -3,9 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:image_painter/image_painter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:sthep/global/extensions/widgets/text.dart';
 import 'package:sthep/global/materials.dart';
-import 'package:sthep/model/question/answer.dart';
 import 'package:sthep/model/question/question.dart';
 
 class AnswerUpdatePage extends StatefulWidget {
@@ -31,10 +29,7 @@ class _AnswerUpdatePageState extends State<AnswerUpdatePage> {
 
   @override
   Widget build(BuildContext context) {
-    Materials upload = Provider.of<Materials>(context);
-
-    upload.newAnswer = Answer();
-    upload.newAnswer.imageUrl = upload.destAnswer!.imageUrl;
+    Materials materials = Provider.of<Materials>(context);
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -47,10 +42,10 @@ class _AnswerUpdatePageState extends State<AnswerUpdatePage> {
                 child: SizedBox(
                   width: screenSize.width,
                   child:ImagePainter.network(
-                    upload.newAnswer.imageUrl!,
+                    materials.newAnswer.imageUrl!,
                     width: 300,
                     height: 500,
-                    key: upload.imageKey,
+                    key: materials.imageKey,
                     scalable: true,
                     initialStrokeWidth: 2,
                     //textDelegate: DutchTextDelegate(),

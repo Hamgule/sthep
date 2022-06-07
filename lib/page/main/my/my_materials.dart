@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:sthep/config/palette.dart';
 import 'package:sthep/global/extensions/widgets/text.dart';
 import 'package:sthep/global/materials.dart';
-import 'package:sthep/model/question/question.dart';
 import 'package:sthep/model/user/exp.dart';
 import 'package:sthep/model/user/user.dart';
 import 'package:sthep/global/extensions/widgets/profile.dart';
@@ -115,7 +114,9 @@ Widget expBar(Exp exp) {
         duration: MyPage.duration,
         left: MyPage.animFin ? 0 : -expBarWidth,
         curve: Curves.fastOutSlowIn,
-        child: Container(
+        child: AnimatedContainer(
+          duration: MyPage.duration,
+          curve: Curves.fastOutSlowIn,
           width: expBarWidth,
           height: 13.0,
           decoration: BoxDecoration(

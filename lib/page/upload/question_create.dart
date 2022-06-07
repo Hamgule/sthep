@@ -9,7 +9,6 @@ import 'package:provider/provider.dart';
 import 'package:sthep/config/palette.dart';
 import 'package:sthep/global/extensions/buttons/fab/fab.dart';
 import 'package:sthep/global/extensions/widgets/snackbar.dart';
-import 'package:sthep/global/extensions/widgets/text.dart';
 import 'package:sthep/global/materials.dart';
 import 'package:sthep/model/question/question.dart';
 
@@ -37,8 +36,8 @@ class _CreatePageState extends State<CreatePage> {
 
   @override
   Widget build(BuildContext context) {
-    Materials upload = Provider.of<Materials>(context);
-    targetQuestion = upload.newQuestion;
+    Materials materials = Provider.of<Materials>(context);
+    targetQuestion = materials.newQuestion;
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -147,8 +146,8 @@ class _CreatePageState extends State<CreatePage> {
                         onPressed: () async {
                           XFile? xFile = await pickImage();
                           if (xFile == null) return;
-                          setState(() => upload.imageKey = GlobalKey<ImagePainterState>());
-                          setState(() => upload.image = File(xFile.path));
+                          setState(() => materials.imageKey = GlobalKey<ImagePainterState>());
+                          setState(() => materials.image = File(xFile.path));
                         },
                       ),
                     ],
@@ -156,22 +155,22 @@ class _CreatePageState extends State<CreatePage> {
                   SizedBox(
                     width: screenSize.width * .8,
                     height: screenSize.height * .6,
-                    child: upload.image == null
+                    child: materials.image == null
                         ? ImagePainter.network(
-                      "https://firebasestorage.googleapis.com/v0/b/sthep-7ea14.appspot.com/o/questions%2Fdefault.png?alt=media&token=c3f7e6b6-7c80-4dbb-859a-3e3d7adac434",
+                      Question.defaultBlankPaper,
                       width: 300,
                       height: 500,
-                      key: upload.imageKey,
+                      key: materials.imageKey,
                       scalable: true,
                       initialStrokeWidth: 2,
                       //textDelegate: DutchTextDelegate(),
                       initialColor: Colors.black,
                       initialPaintMode: PaintMode.freeStyle,
                     ) : ImagePainter.file(
-                      upload.image!,
+                      materials.image!,
                       width: 300,
                       height: 500,
-                      key: upload.imageKey,
+                      key: materials.imageKey,
                       scalable: true,
                       initialStrokeWidth: 2,
                       //textDelegate: DutchTextDelegate(),

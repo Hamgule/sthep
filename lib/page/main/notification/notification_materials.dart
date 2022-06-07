@@ -17,7 +17,7 @@ class NotificationTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Materials main = Provider.of<Materials>(context);
+    Materials materials = Provider.of<Materials>(context);
     SthepUser user = Provider.of<SthepUser>(context);
 
     return Dismissible(
@@ -36,26 +36,26 @@ class NotificationTile extends StatelessWidget {
       ),
       onDismissed: (direction) {
         if (direction == DismissDirection.endToStart) {
-          notification.check();
-          user.notifications.remove(notification);
 
           MyFirebase.f.collection('users')
               .doc(user.uid)
               .collection('notifications')
               .doc(Question.idToString(notification.id!))
               .delete();
+
+          user.notifications.remove(notification);
+          user.updateNotChecked();
         }
       },
       child: InkWell(
         onTap: () {
-          try {
-            main.destQuestion = main.getQuestionById(notification.questionId!);
-          }
+          try { materials.destQuestion = materials.getQuestionById(notification.questionId!); }
           catch (e) {
             showMySnackBar(context, '비정상적인 접근입니다.', type: 'error');
+            user.updateNotChecked();
             return;
           }
-          main.setPageIndex(6);
+          materials.gotoPage('view');
           notification.check();
           user.updateNotChecked();
 

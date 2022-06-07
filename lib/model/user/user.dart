@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sthep/firebase/firebase.dart';
 import 'package:sthep/login/google.dart';
+import 'package:sthep/model/question/question.dart';
 import 'package:sthep/model/user/activity.dart';
 import 'package:sthep/model/question/notification.dart';
 import 'package:sthep/model/user/exp.dart';
@@ -9,7 +11,7 @@ import 'package:sthep/model/user/exp.dart';
 class SthepUser with ChangeNotifier {
   /// static values
   // static const String defaultImageUrl = 'https://t1.daumcdn.net/cfile/tistory/245D1A3357256A6F2A';
-  static const String defaultImageUrl = 'https://firebasestorage.googleapis.com/v0/b/sthep-7ea14.appspot.com/o/profiles%2Fguest.png?alt=media&token=476faf46-6d28-4996-ba04-ee8247c4280e';
+  static const String defaultProfile = 'https://firebasestorage.googleapis.com/v0/b/sthep-7ea14.appspot.com/o/profiles%2Fguest.png?alt=media&token=476faf46-6d28-4996-ba04-ee8247c4280e';
 
   /// variables
   bool logged = false;
@@ -17,7 +19,7 @@ class SthepUser with ChangeNotifier {
   String? name;
   String? email;
   String? nickname;
-  String imageUrl = defaultImageUrl;
+  String imageUrl = defaultProfile;
   List<int> questionIds = [];
   Map<DateTime, List<MyActivity>> activities = {};
 
@@ -92,6 +94,7 @@ class SthepUser with ChangeNotifier {
     email = data['email'];
     questionIds = (data['questionIds'] ?? []).cast<int>();
     notificationCount = data['notificationCount'];
+    exp.setExp(data['exp'].toDouble());
   }
 
   Map<String, dynamic> toJson() => {
@@ -102,16 +105,37 @@ class SthepUser with ChangeNotifier {
     'imageUrl': imageUrl,
     'questionIds': questionIds,
     'notificationCount': notificationCount,
+    'exp': exp.exp,
   };
 
-  void updateDB() async {
-    await MyFirebase.write('users', uid!, toJson());
+  void updateDB() => MyFirebase.write('users', uid!, toJson());
+
+  void notify(String type, Question question) {
+    notificationCount++;
+
+    Map<String, dynamic> notificationData = {
+      'id': notificationCount,
+      'checked': false,
+      'type': type,
+      'questionId': question.id,
+      'questionTitle': question.title,
+      'notice': '답변이 삭제되었습니다.',
+    };
+
+    notificationData['loggedDate'] = FieldValue.serverTimestamp();
+
+    MyFirebase.f.collection('users')
+        .doc(uid)
+        .collection('notifications')
+        .doc(Question.idToString(notificationCount))
+        .set(notificationData);
+
+    updateDB();
   }
 
   void updateNotChecked() {
     notChecked = notifications.where((notification)
     => !notification.checked).toList().length;
-
     notifyListeners();
   }
 
