@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:sthep/config/palette.dart';
 import 'package:sthep/global/extensions/buttons/fab/fab.dart';
 import 'package:sthep/global/extensions/widgets/snackbar.dart';
+import 'package:sthep/global/extensions/widgets/text.dart';
 import 'package:sthep/global/materials.dart';
 import 'package:sthep/model/question/question.dart';
 
@@ -50,7 +51,7 @@ class _CreatePageState extends State<CreatePage> {
     scannedText = "";
     for (TextBlock block in recognisedText.blocks) {
       for (TextLine line in block.lines) {
-        scannedText = scannedText + line.text + "\n";
+        scannedText = scannedText + line.text + " , ";
       }
     }
     textScanning = false;
@@ -64,7 +65,7 @@ class _CreatePageState extends State<CreatePage> {
 
     return Scaffold(
       body: SingleChildScrollView(
-        // physics: const NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
         child: Container(
           height: screenSize.height *.8,
          // height: 1000,
@@ -178,13 +179,13 @@ class _CreatePageState extends State<CreatePage> {
                     ],
                   ),
                   SizedBox(
-                    width: screenSize.width * .8,
+                    width: scannedText.isEmpty? screenSize.width * .8 : screenSize.width * .5,
                     height: screenSize.height * .6,
                     child: materials.image == null
                         ? ImagePainter.network(
                       Question.defaultBlankPaper,
-                      width: 300,
-                      height: 400,
+                      width: 150,
+                      height: 500,
                       key: materials.imageKey,
                       scalable: true,
                       initialStrokeWidth: 2,
@@ -193,8 +194,8 @@ class _CreatePageState extends State<CreatePage> {
                       initialPaintMode: PaintMode.freeStyle,
                     ) : ImagePainter.file(
                       materials.image!,
-                      width: 300,
-                      height: 400,
+                      width: 150,
+                      height: 500,
                       key: materials.imageKey,
                       scalable: true,
                       initialStrokeWidth: 2,
@@ -203,21 +204,40 @@ class _CreatePageState extends State<CreatePage> {
                       initialPaintMode: PaintMode.freeStyle,
                     ),
                   ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      if (textScanning) const CircularProgressIndicator(),
+                      if (scannedText.isNotEmpty)
+                      SizedBox(
+                        width: screenSize.width * .4,
+                        height: screenSize.height * .6,
+                        child: Column(
+                          children: [
+                            Container(
+                              color: Palette.hyperColor.withOpacity(0.3),
+                              width: screenSize.width * .4,
+                              height: 55,
+                              child: const Center(
+                                  child: SthepText("인식된 Text"),
+                              ),
+                            ),
+                            const SizedBox(height: 50),
+                            Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Text(
+                                scannedText,
+                                style: scannedText.length>300 ? const TextStyle(fontSize: 14) : const TextStyle(fontSize: 20),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
                 ],
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  if (textScanning) const CircularProgressIndicator(),
-                  SizedBox(
-                    height: 50,
-                    child: Text(
-                      scannedText,
-                      style: const TextStyle(fontSize: 10),
-                    ),
-                  )
-                ],
-              ),
+
             ],
           ),
         ),
