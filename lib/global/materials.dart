@@ -9,6 +9,7 @@ import 'package:sthep/global/extensions/widgets/snackbar.dart';
 import 'package:sthep/model/question/answer.dart';
 import 'package:sthep/model/question/question.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:sthep/model/user/exp.dart';
 import 'package:sthep/model/user/user.dart';
 import 'package:sthep/page/main/main.dart';
 
@@ -80,11 +81,19 @@ class Materials with ChangeNotifier {
           user.setNickname(nicknameInput!);
           user.updateDB();
           showMySnackBar(context, '\'${user.nickname}\'님 환영합니다.', type: 'success');
+
+          user.gainExp(Exp.register);
+          showMySnackBar(context, Exp.visualizeForm(Exp.register), type: 'exp', ignoreBefore: false);
+
           return;
         }
 
         user.toggleLogState();
         showMySnackBar(context, '\'${user.nickname}\'님 로그인 되었습니다.', type: 'success');
+
+        user.gainExp(Exp.login);
+        showMySnackBar(context, Exp.visualizeForm(Exp.login), type: 'exp', ignoreBefore: false);
+
         setPageIndex(0);
 
       }, icon: const Icon(Icons.login),
@@ -217,6 +226,19 @@ class Materials with ChangeNotifier {
     destAnswer!.adopt();
     destQuestion!.adoptedAnswerId = destAnswer!.id;
     destQuestion!.updateState();
+    notifyListeners();
+  }
+
+  /// my
+  bool expAnimation = false;
+
+  void startAnimation() {
+    expAnimation = true;
+    notifyListeners();
+  }
+
+  void finishAnimation() {
+    expAnimation = false;
     notifyListeners();
   }
 }

@@ -7,6 +7,7 @@ import 'package:sthep/global/extensions/widgets/dialog.dart';
 import 'package:sthep/global/extensions/widgets/snackbar.dart';
 import 'package:sthep/global/extensions/widgets/text.dart';
 import 'package:sthep/global/materials.dart';
+import 'package:sthep/model/user/exp.dart';
 import 'package:sthep/model/user/user.dart';
 import 'package:sthep/global/extensions/widgets/profile.dart';
 
@@ -44,9 +45,15 @@ class SideBar extends StatelessWidget {
         user.setNickname(materials.nicknameInput!);
         user.updateDB();
         showMySnackBar(context, '\'${user.nickname}\'님 환영합니다.');
+
+        user.gainExp(Exp.register);
+        showMySnackBar(context, Exp.visualizeForm(Exp.register), type: 'exp', ignoreBefore: false);
       }
       else {
         showMySnackBar(context, '\'${user.nickname}\'님 로그인 되었습니다.');
+        user.gainExp(Exp.login);
+        showMySnackBar(context, Exp.visualizeForm(Exp.login), type: 'exp', ignoreBefore: false);
+
         materials.gotoPage('home');
       }
       user.toggleLogState();

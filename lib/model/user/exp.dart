@@ -1,4 +1,17 @@
 class Exp {
+  /// static variables
+  static const register = 100.0;
+  static const login = 10.0;
+  static const createQuestion = 50.0;
+  static const deleteQuestion = -50.0;
+  static const createAnswer = 100.0;
+  static const deleteAnswer = -100.0;
+  static const adoptAnswer = 200.0;
+  static const answerAdopted = 500.0;
+
+  /// static methods
+  static visualizeForm(double exp) => (exp < 0 ? '' : '+') + ' $exp EXP';
+
   /// variables
   double totalValue = 0.0;
   double value = 0.0;
@@ -23,6 +36,7 @@ class Exp {
 
   void gainExp(double add) {
     totalValue += add;
+    if (totalValue < 0) totalValue = 0;
     _operate();
   }
 

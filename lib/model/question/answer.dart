@@ -22,13 +22,17 @@ class Answer {
 
   void adopt() => adopted = true;
 
-  Answer.fromJson(Map<String, dynamic> data) {
-    id = data['id'];
-    answererUid = data['answererUid'];
-    adopted = data['adopted'];
-    regDate = (data['regDate'] ?? Timestamp.now()).toDate();
-    modDate = (data['modDate'] ?? Timestamp.now()).toDate();
-    imageUrl = data['imageUrl'];
+  Answer.fromJson(Map<String, dynamic> json) {
+    fromJson(json);
+  }
+
+  void fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    answererUid = json['answererUid'];
+    adopted = json['adopted'];
+    regDate = (json['regDate'] ?? Timestamp.now()).toDate();
+    modDate = (json['modDate'] ?? Timestamp.now()).toDate();
+    imageUrl = json['imageUrl'];
   }
 
   Map<String, dynamic> toJson() => {
@@ -62,5 +66,5 @@ class Answer {
     if (updateModDate) json['modDate'] = FieldValue.serverTimestamp();
     MyFirebase.write('answers', aidToString(), json);
   }
-  void removeDB() => MyFirebase.remove('answers', aidToString());
+  void deleteDB() => MyFirebase.remove('answers', aidToString());
 }

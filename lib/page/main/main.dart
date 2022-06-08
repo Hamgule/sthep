@@ -127,12 +127,19 @@ class _MainPageState extends State<MainPage> {
 
   Widget _buildBottomBar(BuildContext context) {
     return Consumer<Materials>(
-      builder: (context, main, _) {
+      builder: (context, materials, _) {
         SthepUser user = Provider.of<SthepUser>(context);
 
-        void setIndex(int index) {
+        void setIndex(int index) async {
           if (user.logged || index == 0) {
-            main.setPageIndex(index);
+            if (index == 4) materials.finishAnimation();
+            user.reloadDB();
+            materials.setPageIndex(index);
+            await Future.delayed(
+              const Duration(milliseconds: 10), () {
+                materials.startAnimation();
+              },
+            );
             return;
           }
           showMySnackBar(context, '로그인이 필요합니다.');
@@ -152,14 +159,14 @@ class _MainPageState extends State<MainPage> {
             BottomNavigationBarItem(
               icon: iconQnA(
                 'Q', iconSize,
-                Palette.iconColor.withOpacity(main.pageIndex == 1 ? 1 : .3),
+                Palette.iconColor.withOpacity(materials.pageIndex == 1 ? 1 : .3),
               ),
               label: 'Question',
             ),
             BottomNavigationBarItem(
               icon: iconQnA(
                 'A', iconSize,
-                Palette.iconColor.withOpacity(main.pageIndex == 2 ? 1 : .3),
+                Palette.iconColor.withOpacity(materials.pageIndex == 2 ? 1 : .3),
               ),
               label: 'Answer',
             ),
@@ -194,7 +201,7 @@ class _MainPageState extends State<MainPage> {
               label: 'My',
             ),
           ],
-          currentIndex: main.newPageIndex < 5 ? main.newPageIndex : main.pageIndex,
+          currentIndex: materials.newPageIndex < 5 ? materials.newPageIndex : materials.pageIndex,
           onTap: setIndex,
         );
       }

@@ -34,7 +34,6 @@ class _ViewPageState extends State<ViewPage> {
 
     List<Widget> sliderPages = [
       Container(
-        // color: Palette.bgColor.withOpacity(.2),
         padding: const EdgeInsets.all(30.0),
         child: Column(
           children: [
@@ -112,8 +111,8 @@ class _ViewPageState extends State<ViewPage> {
                 child: materials.destQuestion!.imageUrl == null
                     ? Container() : Image.network(
                   materials.destQuestion!.imageUrl!,
-                  width: 500.0,
-                  height: 300.0,
+                  width: 800.0,
+                  height: 400.0,
                 ),
               ),
             ),

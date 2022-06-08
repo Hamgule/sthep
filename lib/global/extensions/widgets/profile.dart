@@ -5,8 +5,8 @@ import 'package:sthep/global/extensions/widgets/text.dart';
 import 'package:sthep/model/user/user.dart';
 
 Widget profilePhoto(SthepUser user) => Container(
-  width: 40.0,
-  height: 40.0,
+  width: 30.0,
+  height: 30.0,
   decoration: BoxDecoration(
     shape: BoxShape.circle,
     image: DecorationImage(

@@ -7,6 +7,7 @@ import 'package:sthep/global/extensions/widgets/dialog.dart';
 import 'package:sthep/global/extensions/widgets/snackbar.dart';
 import 'package:sthep/global/materials.dart';
 import 'package:sthep/model/question/answer.dart';
+import 'package:sthep/model/user/exp.dart';
 import 'package:sthep/model/user/user.dart';
 
 class ViewFAB extends StatefulWidget {
@@ -40,7 +41,7 @@ class _ViewFABState extends State<ViewFAB> {
         return;
       }
 
-      MyFirebase.remove('questions', materials.destQuestion!.qidToString());
+      materials.destQuestion!.deleteDB();
 
       materials.toggleLoading();
 
@@ -53,6 +54,9 @@ class _ViewFABState extends State<ViewFAB> {
       materials.toggleIsChanged();
 
       showMySnackBar(context, '질문을 삭제했습니다.', type: 'success');
+
+      materials.destQuestion!.questioner.gainExp(Exp.deleteQuestion);
+      showMySnackBar(context, Exp.visualizeForm(Exp.deleteQuestion), type: 'exp', ignoreBefore: false);
 
       materials.gotoPage('home');
     }
@@ -77,7 +81,7 @@ class _ViewFABState extends State<ViewFAB> {
       materials.toggleLoading();
 
       materials.destQuestion!.removeAnswer(materials.destAnswer!);
-      materials.destAnswer!.removeDB();
+      materials.destAnswer!.deleteDB();
 
       materials.toggleLoading();
       materials.toggleIsChanged();
@@ -85,7 +89,11 @@ class _ViewFABState extends State<ViewFAB> {
       materials.setViewFABState(FABState.comment);
       materials.destQuestion!.questioner.notify('answerDeleted', materials.destQuestion!);
 
-      showMySnackBar(context, '질문을 삭제했습니다.', type: 'success');
+      showMySnackBar(context, '답변을 삭제했습니다.', type: 'success');
+
+      user.gainExp(Exp.deleteAnswer);
+      showMySnackBar(context, Exp.visualizeForm(Exp.deleteAnswer), type: 'exp', ignoreBefore: false);
+
       materials.gotoPage('view');
     }
 
@@ -111,6 +119,12 @@ class _ViewFABState extends State<ViewFAB> {
         (adopted ? '채택' : '취소') + '되었습니다.',
         type: adopted ? 'success' : 'info',
       );
+
+      if (adopted) {
+        materials.destQuestion!.questioner.gainExp(Exp.adoptAnswer);
+        materials.newAnswer.answerer.gainExp(Exp.answerAdopted);
+        showMySnackBar(context, Exp.visualizeForm(Exp.adoptAnswer), type: 'exp', ignoreBefore: false);
+      }
 
       materials.destQuestion!.updateDB();
       materials.destAnswer!.updateDB();

@@ -8,7 +8,6 @@ import 'package:sthep/firebase/firebase.dart';
 import 'package:sthep/global/extensions/widgets/text.dart';
 import 'package:sthep/global/materials.dart';
 import 'package:sthep/model/question/answer.dart';
-import 'package:sthep/model/question/notification.dart';
 import 'package:sthep/model/question/question.dart';
 import 'package:sthep/model/user/activity.dart';
 import 'package:sthep/model/user/user.dart';
@@ -304,9 +303,9 @@ class _HomePageState extends State<HomePage> {
       question.answers = [];
 
       question.answerIds.forEach((answerId) async {
-        var data = await MyFirebase.readData('answers', Question.idToString(answerId));
-        if (data == null) return;
-        Answer tempAnswer = Answer.fromJson(data);
+        var json = await MyFirebase.readData('answers', Question.idToString(answerId));
+        if (json == null) return;
+        Answer tempAnswer = Answer.fromJson(json);
         tempAnswer.answerer = await getUser(tempAnswer.answererUid);
         question.answers.add(tempAnswer);
       });

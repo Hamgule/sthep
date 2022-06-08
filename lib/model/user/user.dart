@@ -73,8 +73,9 @@ class SthepUser with ChangeNotifier {
     name = user.displayName;
     email = user.email;
 
-    var loadUser = await MyFirebase.readData('users', uid!);
-    nickname = loadUser?['nickname'];
+    var json = await MyFirebase.readData('users', uid!);
+    nickname = json?['nickname'];
+    exp.totalValue = json?['exp'];
 
     await getNotifications();
 
@@ -87,14 +88,18 @@ class SthepUser with ChangeNotifier {
     notifyListeners();
   }
 
-  SthepUser.fromJson(Map<String, dynamic> data) {
-    uid = data['uid'];
-    name = data['name'];
-    nickname = data['nickname'];
-    email = data['email'];
-    questionIds = (data['questionIds'] ?? []).cast<int>();
-    notificationCount = data['notificationCount'];
-    exp.setExp(data['exp'].toDouble());
+  SthepUser.fromJson(Map<String, dynamic> json) {
+    fromJson(json);
+  }
+
+  void fromJson(Map<String, dynamic> json) {
+    uid = json['uid'];
+    name = json['name'];
+    nickname = json['nickname'];
+    email = json['email'];
+    questionIds = (json['questionIds'] ?? []).cast<int>();
+    notificationCount = json['notificationCount'];
+    exp.setExp(json['exp'].toDouble());
   }
 
   Map<String, dynamic> toJson() => {
@@ -105,13 +110,25 @@ class SthepUser with ChangeNotifier {
     'imageUrl': imageUrl,
     'questionIds': questionIds,
     'notificationCount': notificationCount,
-    'exp': exp.exp,
+    'exp': exp.totalValue,
   };
+  
+  void reloadDB() async {
+    var json = await MyFirebase.readData('users', uid!);
+    fromJson(json!);
+  }
 
   void updateDB() => MyFirebase.write('users', uid!, toJson());
 
   void notify(String type, Question question) {
     notificationCount++;
+
+    Map<String, String> typeToNotice = {
+      'answered': '새로운 답변이 달렸습니다.',
+      'answerUpdated': '답변이 수정되었습니다.',
+      'answerDeleted': '답변이 삭제되었습니다.',
+      'adopted': '답변이 채택되었습니다.',
+    };
 
     Map<String, dynamic> notificationData = {
       'id': notificationCount,
@@ -119,7 +136,7 @@ class SthepUser with ChangeNotifier {
       'type': type,
       'questionId': question.id,
       'questionTitle': question.title,
-      'notice': '답변이 삭제되었습니다.',
+      'notice': typeToNotice[type],
     };
 
     notificationData['loggedDate'] = FieldValue.serverTimestamp();
@@ -129,13 +146,18 @@ class SthepUser with ChangeNotifier {
         .collection('notifications')
         .doc(Question.idToString(notificationCount))
         .set(notificationData);
-
     updateDB();
   }
 
   void updateNotChecked() {
     notChecked = notifications.where((notification)
     => !notification.checked).toList().length;
+    notifyListeners();
+  }
+
+  void gainExp(double gained) {
+    exp.gainExp(gained);
+    updateDB();
     notifyListeners();
   }
 

@@ -2,12 +2,9 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sthep/firebase/firebase.dart';
 import 'package:sthep/config/palette.dart';
 import 'package:sthep/global/materials.dart';
-import 'package:sthep/model/user/chart.dart';
 import 'package:sthep/page/main/my/my_materials.dart';
-import 'package:sthep/global/materials.dart';
 import 'package:sthep/global/extensions/widgets/text.dart';
 import 'package:sthep/model/user/user.dart';
 import 'package:sthep/model/user/activity.dart';
@@ -19,9 +16,6 @@ import 'package:fl_chart/fl_chart.dart';
 class MyPage extends StatefulWidget {
   const MyPage({Key? key}) : super(key: key);
 
-  static late bool animFin;
-  static const duration = Duration(seconds: 2);
-
   @override
   State<MyPage> createState() => _MainPageState();
 }
@@ -29,8 +23,7 @@ class MyPage extends StatefulWidget {
 class _MainPageState extends State<MyPage> {
   late final ValueNotifier<List<MyActivity>> _selectedEvents;
   CalendarFormat _calendarFormat = CalendarFormat.month;
-  RangeSelectionMode _rangeSelectionMode = RangeSelectionMode
-      .toggledOff;
+  RangeSelectionMode _rangeSelectionMode = RangeSelectionMode.toggledOff;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
   DateTime? _rangeStart;
@@ -38,7 +31,6 @@ class _MainPageState extends State<MyPage> {
 
   @override
   void initState() {
-    MyPage.animFin = false;
     super.initState();
 
     _selectedDay = _focusedDay;
@@ -46,28 +38,20 @@ class _MainPageState extends State<MyPage> {
     _selectedEvents = ValueNotifier(temp);
   }
 
-  Future animate() async => await Future.delayed(
-      Duration.zero, () => setState(() => MyPage.animFin = true));
-
   @override
   void dispose() {
     _selectedEvents.dispose();
     super.dispose();
   }
 
-
   int getHashCode(DateTime key) {
     return key.day * 1000000 + key.month * 10000 + key.year;
   }
+
   @override
   Widget build(BuildContext context) {
-
     Materials materials = Provider.of<Materials>(context);
     SthepUser user = Provider.of<SthepUser>(context);
-
-    user.exp.setExp(102.0);
-
-    animate();
 
     LinkedHashMap<DateTime, List<MyActivity>> myActivities = LinkedHashMap<DateTime, List<MyActivity>>(
       equals: isSameDay,
@@ -130,7 +114,7 @@ class _MainPageState extends State<MyPage> {
         switch (i) {
           case 0:
             return PieChartSectionData(
-              color: const Color.fromRGBO(219, 138, 138, 1),
+              color: Palette.pieAdopt,
               value: user.notAdoptQCount,
               title: '${user.notAdoptQCount.toInt()}\n(${100 * user.notAdoptQCount ~/ user.sumCount()}%)',
               radius: radius,
@@ -142,7 +126,7 @@ class _MainPageState extends State<MyPage> {
             );
           case 1:
             return PieChartSectionData(
-              color: const Color.fromRGBO(234, 178, 112, 1),
+              color: Palette.pieNotAdopt,
               value: user.adoptQCount,
               title: '${user.adoptQCount.toInt()}\n(${100 * user.adoptQCount ~/ user.sumCount()}%)',
               radius: radius,
@@ -154,7 +138,7 @@ class _MainPageState extends State<MyPage> {
             );
           case 2:
             return PieChartSectionData(
-              color: const Color.fromRGBO(181, 191, 133, 1),
+              color: Palette.pieAdopted,
               value: user.adoptedACount,
               title: '${user.adoptedACount.toInt()}\n(${100 * user.adoptedACount ~/ user.sumCount()}%)',
 
@@ -167,7 +151,7 @@ class _MainPageState extends State<MyPage> {
             );
           case 3:
             return PieChartSectionData(
-              color: const Color.fromRGBO(122, 184, 191, 1),
+              color: Palette.pieNotAdopted,
               value: user.notAdoptedACount,
               title: '${user.notAdoptedACount.toInt()}\n(${100 * user.notAdoptedACount ~/ user.sumCount()}%)',
               radius: radius,
@@ -187,20 +171,12 @@ class _MainPageState extends State<MyPage> {
         padding: EdgeInsets.symmetric(horizontal: screenSize.width * .1),
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 50),
-              child: MyFirebase.readOnce(
-                path: 'users',
-                id: user.uid,
-                builder: (context, snapshot) {
-                  if (snapshot.data == null) return Container();
-                  var loadData = snapshot.data.data();
-                  return myInfoArea(SthepUser.fromJson(loadData));
-                },
-              ),
+            const Padding(
+              padding: EdgeInsets.only(top: 50.0),
+              child: MyInfoArea(),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 50),
+              padding: const EdgeInsets.only(top: 40.0),
               child: SizedBox(
                 width: screenSize.width * .8,
                 child: Column(
@@ -310,46 +286,46 @@ class _MainPageState extends State<MyPage> {
                                   materials.myAnsweredQuestion.isEmpty && materials.myQuestions.isEmpty
                                       ? const SthepText(" ")
                                       : SizedBox(
-                                        width: screenSize.width * .2,
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.end,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: const [
-                                            Indicator(
-                                              color: Color.fromRGBO(234, 178, 112, 1),
-                                              text: '답변을 채택한 질문',
-                                              isSquare: true,
-                                            ),
-                                            SizedBox(
-                                              height: 4,
-                                            ),
-                                            Indicator(
-                                              color: Color.fromRGBO(219, 138, 138, 1),
-                                              text: '답변을 채택하지 않은 질문',
-                                              isSquare: true,
-                                            ),
-                                            SizedBox(
-                                              height: 4,
-                                            ),
-                                            Indicator(
-                                              color: Color.fromRGBO(181, 191, 133, 1),
-                                              text: '채택된 답변',
-                                              isSquare: true,
-                                            ),
-                                            SizedBox(
-                                              height: 4,
-                                            ),
-                                            Indicator(
-                                              color: Color.fromRGBO(122, 184, 191, 1),
-                                              text: '채택되지 않은 답변',
-                                              isSquare: true,
-                                            ),
-                                            SizedBox(
-                                              height: 18,
-                                            ),
-                                          ],
+                                    width: screenSize.width * .2,
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: const [
+                                        Indicator(
+                                          color: Palette.pieAdopt,
+                                          text: '답변을 채택한 질문',
+                                          isSquare: true,
                                         ),
-                                      ),
+                                        SizedBox(
+                                          height: 4,
+                                        ),
+                                        Indicator(
+                                          color: Palette.pieNotAdopt,
+                                          text: '답변을 채택하지 않은 질문',
+                                          isSquare: true,
+                                        ),
+                                        SizedBox(
+                                          height: 4,
+                                        ),
+                                        Indicator(
+                                          color: Palette.pieAdopted,
+                                          text: '채택된 답변',
+                                          isSquare: true,
+                                        ),
+                                        SizedBox(
+                                          height: 4,
+                                        ),
+                                        Indicator(
+                                          color: Palette.pieNotAdopted,
+                                          text: '채택되지 않은 답변',
+                                          isSquare: true,
+                                        ),
+                                        SizedBox(
+                                          height: 18,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ],
                               ),
                               const SizedBox(

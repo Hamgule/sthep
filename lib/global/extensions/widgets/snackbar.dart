@@ -12,6 +12,7 @@ void showMySnackBar(
     'info': Palette.bgColor,
     'error': Palette.notAdopted,
     'success': Palette.adopted,
+    'exp': Palette.hyperColor,
   };
   if (ignoreBefore) ScaffoldMessenger.of(context).hideCurrentSnackBar();
   ScaffoldMessenger.of(context).showSnackBar(

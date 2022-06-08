@@ -4,6 +4,7 @@ import 'package:sthep/firebase/firebase.dart';
 import 'package:sthep/global/extensions/buttons/fab/fab.dart';
 import 'package:sthep/global/extensions/widgets/snackbar.dart';
 import 'package:sthep/global/materials.dart';
+import 'package:sthep/model/user/exp.dart';
 
 class AnswerCreateFAB extends StatelessWidget {
   const AnswerCreateFAB({Key? key}) : super(key: key);
@@ -29,6 +30,9 @@ class AnswerCreateFAB extends StatelessWidget {
       materials.newAnswer.createDB();
 
       showMySnackBar(context, '답변을 추가했습니다.', type: 'success');
+
+      materials.newAnswer.answerer.gainExp(Exp.createAnswer);
+      showMySnackBar(context, Exp.visualizeForm(Exp.createAnswer), type: 'exp', ignoreBefore: false);
 
       materials.toggleIsChanged();
       materials.gotoPage('view');

@@ -35,17 +35,21 @@ class Question {
   /// methods
   void adopt(int id) => adoptedAnswerId ??= id;
 
-  Question.fromJson(Map<String, dynamic> data) {
-    id = data['id'];
-    title = data['title'];
-    tags = data['tags'].cast<String>();
-    regDate = (data['regDate'] ?? Timestamp.now()).toDate();
-    modDate = (data['modDate'] ?? Timestamp.now()).toDate();
-    questionerUid = data['questionerUid'];
-    adoptedAnswerId = data['adoptedAnswerId'];
-    imageUrl = data['imageUrl'];
-    answerIds = (data['answerIds'] ?? []).cast<int>();
-    answererUids = (data['answererUids'] ?? []).cast<String>();
+  Question.fromJson(Map<String, dynamic> json) {
+    fromJson(json);
+  }
+
+  void fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    title = json['title'];
+    tags = json['tags'].cast<String>();
+    regDate = (json['regDate'] ?? Timestamp.now()).toDate();
+    modDate = (json['modDate'] ?? Timestamp.now()).toDate();
+    questionerUid = json['questionerUid'];
+    adoptedAnswerId = json['adoptedAnswerId'];
+    imageUrl = json['imageUrl'];
+    answerIds = (json['answerIds'] ?? []).cast<int>();
+    answererUids = (json['answererUids'] ?? []).cast<String>();
     updateState();
   }
 
@@ -112,4 +116,6 @@ class Question {
     if (updateModDate) json['modDate'] = FieldValue.serverTimestamp();
     MyFirebase.write('questions', qidToString(), toJson());
   }
+
+  void deleteDB() => MyFirebase.remove('questions', qidToString());
 }

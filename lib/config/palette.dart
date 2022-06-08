@@ -10,4 +10,9 @@ class Palette {
   static const Color adopted = Color(0xFF6EAE80);
   static const Color notAdopted = Color(0xFFCA4D4D);
   static const Color notAnswered = Color(0xFFF5F958);
+
+  static const Color pieAdopt = Color(0xFFF1BABA);
+  static const Color pieNotAdopt = Color(0xFFF5D5B3);
+  static const Color pieAdopted = Color(0xFFD7E0AA);
+  static const Color pieNotAdopted = Color(0xFF97D4DB);
 }
