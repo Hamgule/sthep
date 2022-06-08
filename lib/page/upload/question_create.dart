@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:image_painter/image_painter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:material_tag_editor/tag_editor.dart';
@@ -34,6 +35,28 @@ class _CreatePageState extends State<CreatePage> {
     return null;
   }
 
+  bool textScanning = false;
+
+  XFile? imageFile;
+
+  String scannedText = "";
+
+  void getRecognisedText(XFile image) async {
+    final inputImage = InputImage.fromFilePath(image.path);
+    final textDetector = GoogleMlKit.vision.textRecognizer();
+
+    RecognizedText recognisedText = await textDetector.processImage(inputImage);
+    await textDetector.close();
+    scannedText = "";
+    for (TextBlock block in recognisedText.blocks) {
+      for (TextLine line in block.lines) {
+        scannedText = scannedText + line.text + "\n";
+      }
+    }
+    textScanning = false;
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     Materials materials = Provider.of<Materials>(context);
@@ -41,9 +64,10 @@ class _CreatePageState extends State<CreatePage> {
 
     return Scaffold(
       body: SingleChildScrollView(
-        physics: const NeverScrollableScrollPhysics(),
+        // physics: const NeverScrollableScrollPhysics(),
         child: Container(
           height: screenSize.height *.8,
+         // height: 1000,
           padding: const EdgeInsets.all(30.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -148,6 +172,7 @@ class _CreatePageState extends State<CreatePage> {
                           if (xFile == null) return;
                           setState(() => materials.imageKey = GlobalKey<ImagePainterState>());
                           setState(() => materials.image = File(xFile.path));
+                          getRecognisedText(xFile);
                         },
                       ),
                     ],
@@ -159,7 +184,7 @@ class _CreatePageState extends State<CreatePage> {
                         ? ImagePainter.network(
                       Question.defaultBlankPaper,
                       width: 300,
-                      height: 500,
+                      height: 400,
                       key: materials.imageKey,
                       scalable: true,
                       initialStrokeWidth: 2,
@@ -169,7 +194,7 @@ class _CreatePageState extends State<CreatePage> {
                     ) : ImagePainter.file(
                       materials.image!,
                       width: 300,
-                      height: 500,
+                      height: 400,
                       key: materials.imageKey,
                       scalable: true,
                       initialStrokeWidth: 2,
@@ -178,6 +203,19 @@ class _CreatePageState extends State<CreatePage> {
                       initialPaintMode: PaintMode.freeStyle,
                     ),
                   ),
+                ],
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  if (textScanning) const CircularProgressIndicator(),
+                  SizedBox(
+                    height: 50,
+                    child: Text(
+                      scannedText,
+                      style: const TextStyle(fontSize: 10),
+                    ),
+                  )
                 ],
               ),
             ],
