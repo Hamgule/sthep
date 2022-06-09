@@ -247,7 +247,7 @@ class _HomePageState extends State<HomePage> {
 
     Widget showWidget = Container();
 
-    void getQuestions() async {
+    Future getQuestions() async {
       materials.questions = [];
       var jsonList = await MyFirebase.readCollection('questions');
       if (jsonList.isEmpty) return;
@@ -262,73 +262,27 @@ class _HomePageState extends State<HomePage> {
       return SthepUser.fromJson(json);
     }
 
-    if (materials.questions.isEmpty || materials.isChanged) getQuestions();
-    materials.myQuestions = [];
-    materials.myAnsweredQuestion = [];
+    void refresh() async {
+      if (materials.questions.isEmpty || materials.isChanged) await getQuestions();
+      user.setMy(materials.questions);
+    }
 
-
-    materials.questions.forEach((question) {
-      if (user.uid == question.questionerUid) {
-        materials.myQuestions.add(question);
-      }
-
-      if (question.answererUids.contains(user.uid)) {
-        materials.myAnsweredQuestion.add(question);
-      }
-
-      user.adoptQCount = 0;
-      user.adoptedACount = 0;
-
-      materials.myQuestions.forEach((question) {
-        List<MyActivity> myActivities = [];
-        myActivities.add(MyActivity(type: ActivityType.question, id: question.id!));
-        user.activities[question.regDate as DateTime] = myActivities;
-        if (question.state == AdoptState.adopted) user.adoptQCount++;
-      });
-      user.notAdoptQCount = materials.myQuestions.length - user.adoptQCount;
-
-      materials.myAnsweredQuestion.forEach((question) {
-        List<MyActivity> myActivities = [];
-        myActivities.add(MyActivity(type: ActivityType.answer, id: question.id!));
-        user.activities[question.regDate as DateTime] =  myActivities;
-        var adoptedQuestion = question.answers.where((answer) => answer.adopted);
-        if (adoptedQuestion.isEmpty) return;
-        if (adoptedQuestion.first.answererUid == user.uid) {
-          user.adoptedACount++;
-        }
-      });
-      user.notAdoptedACount = materials.myAnsweredQuestion.length - user.adoptedACount;
-    });
-
-    materials.questions.forEach((question) async {
-      question.questioner = await getUser(question.questionerUid);
-      question.answers = [];
-
-      question.answerIds.forEach((answerId) async {
-        var json = await MyFirebase.readData('answers', Question.idToString(answerId));
-        if (json == null) return;
-        Answer tempAnswer = Answer.fromJson(json);
-        tempAnswer.answerer = await getUser(tempAnswer.answererUid);
-        question.answers.add(tempAnswer);
-      });
-    });
+    refresh();
 
     visQuestions = [];
     if (materials.newPageIndex == 0) {
       visQuestions.addAll(materials.questions);
     }
     else if (materials.newPageIndex == 1) {
-      visQuestions.addAll(materials.myQuestions);
+      visQuestions.addAll(user.myQuestions);
     }
     else if (materials.newPageIndex == 2) {
-      visQuestions.addAll(materials.myAnsweredQuestion);
+      visQuestions.addAll(user.myAnsweredQuestions);
     }
 
     void onRefresh() async {
-
-      var loadData = await MyFirebase.readCollection('questions');
-      materials.questions = [];
-      materials.questions.addAll(loadData.map((data) => Question.fromJson(data)).toList().reversed);
+      refresh();
+      await user.getNotifications();
 
       setState(() {});
 

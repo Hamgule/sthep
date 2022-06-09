@@ -27,16 +27,51 @@ class SthepUser with ChangeNotifier {
   int notificationCount = 0;
   int notChecked = 0;
 
-  double adoptQCount = 0;
-  double notAdoptQCount = 0;
-  double adoptedACount = 0;
-  double notAdoptedACount = 0;
+  List<Question> myQuestions = [];
+  List<Question> myAnsweredQuestions = [];
+
+  int qCount = 0;
+  int aCount = 0;
+  int adoptQCount = 0;
+  int notAdoptQCount = 0;
+  int adoptedACount = 0;
+  int notAdoptedACount = 0;
 
   Exp exp = Exp();
 
   SthepUser({this.uid, this.name, this.email, this.nickname});
 
-  double sumCount() => adoptQCount + notAdoptQCount + adoptedACount + notAdoptedACount;
+  void setMy(List<Question> questions) {
+    if (!logged) return;
+
+    myQuestions = [];
+    myAnsweredQuestions = [];
+
+    qCount = 0;
+    aCount = 0;
+    adoptQCount = 0;
+    notAdoptQCount = 0;
+    adoptedACount = 0;
+    notAdoptedACount = 0;
+
+    myQuestions.addAll(questions.where((question) => question.questionerUid == uid!));
+    myAnsweredQuestions.addAll(questions.where((question) => question.answererUids.contains(uid!)));
+
+    qCount = myQuestions.length;
+    aCount = myAnsweredQuestions.length;
+
+    adoptQCount = myQuestions.where((question) => question.adoptedAnswerId != null).length;
+    adoptedACount = myAnsweredQuestions.where(
+      (question) => question.answers.map(
+        (answer) => answer.id == question.adoptedAnswerId && answer.answererUid == uid!
+      ).contains(true)
+    ).length;
+
+    notAdoptQCount = qCount - adoptQCount;
+    notAdoptedACount = aCount - adoptedACount;
+  }
+
+  int sumCount() => adoptQCount + notAdoptQCount + adoptedACount + notAdoptedACount;
 
   void toggleLogState() {
     logged = !logged;
@@ -49,12 +84,13 @@ class SthepUser with ChangeNotifier {
   }
 
   Future getNotifications() async {
+    if (!logged) return;
     var loadMyNotifications = await MyFirebase.readSubCollection('users', uid!, 'notifications');
 
     notifications = [];
     notifications.addAll(
       loadMyNotifications.map((data)
-      => MyNotification.fromJson(data)).toList().cast<MyNotification>(),
+      => MyNotification.fromJson(data)).toList().cast<MyNotification>().reversed,
     );
 
     updateNotChecked();
@@ -76,6 +112,7 @@ class SthepUser with ChangeNotifier {
 
     var json = await MyFirebase.readData('users', uid!);
     nickname = json?['nickname'];
+    notificationCount = json?['notificationCount'];
     exp.totalValue = json?['exp'];
 
     await getNotifications();
@@ -86,6 +123,12 @@ class SthepUser with ChangeNotifier {
   void sthepLogout() {
     signOutWithGoogle();
     logged = false;
+    uid = null;
+    name = null;
+    email = null;
+    imageUrl = SthepUser.defaultProfile;
+    nickname = null;
+    exp.totalValue = 0.0;
     notifyListeners();
   }
 

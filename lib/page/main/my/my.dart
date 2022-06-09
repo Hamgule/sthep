@@ -115,7 +115,7 @@ class _MainPageState extends State<MyPage> {
           case 0:
             return PieChartSectionData(
               color: Palette.pieAdopt,
-              value: user.adoptQCount,
+              value: user.adoptQCount.toDouble(),
               title: '${user.adoptQCount.toInt()}\n(${100 * user.adoptQCount ~/ user.sumCount()}%)',
               radius: radius,
               titleStyle: TextStyle(
@@ -127,7 +127,7 @@ class _MainPageState extends State<MyPage> {
           case 1:
             return PieChartSectionData(
               color: Palette.pieNotAdopt,
-              value: user.notAdoptQCount,
+              value: user.notAdoptQCount.toDouble(),
               title: '${user.notAdoptQCount.toInt()}\n(${100 * user.notAdoptQCount ~/ user.sumCount()}%)',
               radius: radius,
               titleStyle: const TextStyle(
@@ -139,7 +139,7 @@ class _MainPageState extends State<MyPage> {
           case 2:
             return PieChartSectionData(
               color: Palette.pieAdopted,
-              value: user.adoptedACount,
+              value: user.adoptedACount.toDouble(),
               title: '${user.adoptedACount.toInt()}\n(${100 * user.adoptedACount ~/ user.sumCount()}%)',
 
               radius: radius,
@@ -152,7 +152,7 @@ class _MainPageState extends State<MyPage> {
           case 3:
             return PieChartSectionData(
               color: Palette.pieNotAdopted,
-              value: user.notAdoptedACount,
+              value: user.notAdoptedACount.toDouble(),
               title: '${user.notAdoptedACount.toInt()}\n(${100 * user.notAdoptedACount ~/ user.sumCount()}%)',
               radius: radius,
               titleStyle: const TextStyle(
@@ -258,7 +258,7 @@ class _MainPageState extends State<MyPage> {
                                   SizedBox(
                                     width: screenSize.width * .2,
                                     height: 300,
-                                    child: materials.myAnsweredQuestion.isEmpty && materials.myQuestions.isEmpty
+                                    child: user.myAnsweredQuestions.isEmpty && user.myQuestions.isEmpty
                                         ? const SthepText("활동 내역이 없습니다", color: Palette.fontColor2)
                                         : PieChart(
                                               PieChartData(
@@ -283,7 +283,7 @@ class _MainPageState extends State<MyPage> {
                                                   sections: showingSections()),
                                             )
                                   ),
-                                  materials.myAnsweredQuestion.isEmpty && materials.myQuestions.isEmpty
+                                  user.myAnsweredQuestions.isEmpty && user.myQuestions.isEmpty
                                       ? const SthepText(" ")
                                       : SizedBox(
                                     width: screenSize.width * .2,

@@ -14,6 +14,9 @@ import 'package:sthep/global/extensions/widgets/profile.dart';
 class ViewPage extends StatefulWidget {
   const ViewPage({Key? key}) : super(key: key);
 
+  static const double imageWidth = 800.0;
+  static const double imageHeight = 400.0;
+
   @override
   State<ViewPage> createState() => _ViewPageState();
 }
@@ -111,8 +114,8 @@ class _ViewPageState extends State<ViewPage> {
                 child: materials.destQuestion!.imageUrl == null
                     ? Container() : Image.network(
                   materials.destQuestion!.imageUrl!,
-                  width: 800.0,
-                  height: 400.0,
+                  width: ViewPage.imageWidth,
+                  height: ViewPage.imageHeight,
                 ),
               ),
             ),
@@ -201,17 +204,17 @@ class _ViewPageState extends State<ViewPage> {
                   ],
                 ),
               ),
-              // Container(
-              //   alignment: Alignment.centerLeft,
-              //   child: SizedBox(
-              //     child: answer.imageUrl == null
-              //         ? Container() : Image.network(
-              //       answer.imageUrl!,
-              //       width: 500.0,
-              //       height: 300.0,
-              //     ),
-              //   ),
-              // ),
+              Container(
+                alignment: Alignment.centerLeft,
+                child: SizedBox(
+                  child: answer.imageUrl == null
+                      ? Container() : Image.network(
+                    answer.imageUrl!,
+                    width: ViewPage.imageWidth,
+                    height: ViewPage.imageHeight,
+                  ),
+                ),
+              ),
             ],
           ),
         ),

@@ -33,11 +33,10 @@ class QuestionCard extends StatelessWidget {
             onTap: () {
               materials.gotoPage('view');
               materials.destQuestion = question;
-
               materials.setViewFABState(
-                  user.uid == materials.destQuestion!.questionerUid
-                      ? FABState.myQuestion
-                      : FABState.comment
+                user.uid == materials.destQuestion!.questionerUid
+                    ? FABState.myQuestion
+                    : FABState.comment
               );
             },
             child: Padding(

@@ -117,15 +117,7 @@ class Materials with ChangeNotifier {
   /// global
   List<Question> questions = [];
   List<Question> myQuestions = [];
-  List<Question> myAnsweredQuestion = [];
-
-  void addQuestion(Question q) async {
-    int index = questions.indexWhere((e) => e.id == q.id);
-    if (index >= 0) questions.removeAt(index);
-    index = index < 0 ? 0 : index;
-    questions.insert(index, q);
-    // questions.add(q);
-  }
+  List<Question> myAnsweredQuestions = [];
 
   Question getQuestionById(int id) {
     return questions.where((e) => e.id == id).toList().first;
