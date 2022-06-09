@@ -39,6 +39,7 @@ class _CreatePageState extends State<CreatePage> {
       print("Failed to pick image: $e");
     }
     scannedText = "";
+    setState(() {});
     return null;
   }
 
@@ -47,6 +48,7 @@ class _CreatePageState extends State<CreatePage> {
   XFile? imageFile;
 
   void getRecognisedText(XFile image, Materials materials) async {
+    scannedText = "";
     materials.toggleLoading();
     final inputImage = InputImage.fromFilePath(image.path);
     final textRecognizer = TextRecognizer(script: TextRecognitionScript.korean);
@@ -76,7 +78,7 @@ class _CreatePageState extends State<CreatePage> {
 
     return Scaffold(
       body: SingleChildScrollView(
-        // physics: const NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
         child: Container(
           height: screenSize.height *.8,
           padding: const EdgeInsets.all(30.0),
