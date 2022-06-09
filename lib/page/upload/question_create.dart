@@ -13,6 +13,8 @@ import 'package:sthep/global/extensions/widgets/snackbar.dart';
 import 'package:sthep/global/extensions/widgets/text.dart';
 import 'package:sthep/global/materials.dart';
 import 'package:sthep/model/question/question.dart';
+import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
+
 
 class CreatePage extends StatefulWidget {
   const CreatePage({Key? key}) : super(key: key);
@@ -27,12 +29,15 @@ class _CreatePageState extends State<CreatePage> {
   final TextEditingController tagCont = TextEditingController();
   late Question targetQuestion;
 
+  String scannedText = "";
+
   Future<XFile?> pickImage() async {
     try {
       return await ImagePicker().pickImage(source: ImageSource.gallery);
     } on PlatformException catch (e) {
       print("Failed to pick image: $e");
     }
+    scannedText = "";
     return null;
   }
 
@@ -40,22 +45,38 @@ class _CreatePageState extends State<CreatePage> {
 
   XFile? imageFile;
 
-  String scannedText = "";
-
   void getRecognisedText(XFile image) async {
     final inputImage = InputImage.fromFilePath(image.path);
-    final textDetector = GoogleMlKit.vision.textRecognizer();
+    final textRecognizer = TextRecognizer(script: TextRecognitionScript.korean);
+    final RecognizedText recognizedText = await textRecognizer.processImage(inputImage);
+    scannedText="";
+   //setState(() => scannedText = recognizedText.text);
+    for (TextBlock block in recognizedText.blocks) {
+      final Rect rect = block.boundingBox;
+      final List<Offset> cornerPoints = block.cornerPoints.cast<Offset>();
+      final String text = block.text;
+      final List<String> languages = block.recognizedLanguages;
 
-    RecognizedText recognisedText = await textDetector.processImage(inputImage);
-    await textDetector.close();
-    scannedText = "";
-    for (TextBlock block in recognisedText.blocks) {
       for (TextLine line in block.lines) {
-        scannedText = scannedText + line.text + " , ";
+        for (TextElement element in line.elements) {
+          //print(element.text);
+          scannedText = scannedText + element.text + " ";
+        }
       }
     }
-    textScanning = false;
     setState(() {});
+    textRecognizer.close();
+
+    // RecognizedText recognisedText = await textDetector.processImage(inputImage);
+    // await textDetector.close();
+    // scannedText = "";
+    // for (TextBlock block in recognisedText.blocks) {
+    //   for (TextLine line in block.lines) {
+    //     scannedText = scannedText + line.text + " , ";
+    //   }
+    // }
+    // textScanning = false;
+    // setState(() {});
   }
 
   @override

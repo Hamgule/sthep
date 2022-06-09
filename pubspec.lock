@@ -304,7 +304,7 @@ packages:
     source: hosted
     version: "0.3.0"
   google_mlkit_text_recognition:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: google_mlkit_text_recognition
       url: "https://pub.dartlang.org"
