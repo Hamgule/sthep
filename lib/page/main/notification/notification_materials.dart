@@ -119,7 +119,6 @@ class NotificationTile extends StatelessWidget {
                           child: SthepText(
                             notification.questionTitle!,
                             color: Palette.iconColor,
-                            overflow: true,
                           ),
                         ),
                       ],

@@ -72,6 +72,7 @@ class SthepUser with ChangeNotifier {
     uid = user.uid;
     name = user.displayName;
     email = user.email;
+    imageUrl = user.photoURL ?? SthepUser.defaultProfile;
 
     var json = await MyFirebase.readData('users', uid!);
     nickname = json?['nickname'];

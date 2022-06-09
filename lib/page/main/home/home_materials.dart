@@ -66,7 +66,6 @@ class QuestionCard extends StatelessWidget {
                           question.tags.map((e) => '#$e').join('  '),
                           size: 10.0,
                           color: Palette.hyperColor,
-                          overflow: true,
                         ),
                       ),
                       SthepText(
@@ -86,7 +85,7 @@ class QuestionCard extends StatelessWidget {
                           color: Palette.fontColor2,
                         ),
                         const SizedBox(width: 10.0),
-                        SthepText(question.title),
+                        Flexible(child: SthepText(question.title)),
                       ],
                     ),
                   ),
@@ -178,7 +177,7 @@ class QuestionTile extends StatelessWidget {
                         Expanded(
                           child: Container(
                             alignment: Alignment.centerLeft,
-                            child: SthepText(question.title, overflow: true),
+                            child: SthepText(question.title),
                           ),
                         ),
                       ],

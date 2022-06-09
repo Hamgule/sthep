@@ -30,6 +30,7 @@ class _CreatePageState extends State<CreatePage> {
   late Question targetQuestion;
 
   String scannedText = "";
+  bool copied = false;
 
   Future<XFile?> pickImage() async {
     try {
@@ -45,12 +46,13 @@ class _CreatePageState extends State<CreatePage> {
 
   XFile? imageFile;
 
-  void getRecognisedText(XFile image) async {
+  void getRecognisedText(XFile image, Materials materials) async {
+    materials.toggleLoading();
     final inputImage = InputImage.fromFilePath(image.path);
     final textRecognizer = TextRecognizer(script: TextRecognitionScript.korean);
     final RecognizedText recognizedText = await textRecognizer.processImage(inputImage);
     scannedText="";
-   //setState(() => scannedText = recognizedText.text);
+    //setState(() => scannedText = recognizedText.text);
     for (TextBlock block in recognizedText.blocks) {
       final Rect rect = block.boundingBox;
       final List<Offset> cornerPoints = block.cornerPoints.cast<Offset>();
@@ -60,12 +62,14 @@ class _CreatePageState extends State<CreatePage> {
       for (TextLine line in block.lines) {
         for (TextElement element in line.elements) {
           //print(element.text);
-          scannedText = scannedText + element.text + " ";
+          scannedText += element.text + " ";
         }
       }
     }
+    materials.toggleLoading();
     setState(() {});
     textRecognizer.close();
+
 
     // RecognizedText recognisedText = await textDetector.processImage(inputImage);
     // await textDetector.close();
@@ -86,7 +90,7 @@ class _CreatePageState extends State<CreatePage> {
 
     return Scaffold(
       body: SingleChildScrollView(
-        physics: const NeverScrollableScrollPhysics(),
+        // physics: const NeverScrollableScrollPhysics(),
         child: Container(
           height: screenSize.height *.8,
          // height: 1000,
@@ -194,7 +198,7 @@ class _CreatePageState extends State<CreatePage> {
                           if (xFile == null) return;
                           setState(() => materials.imageKey = GlobalKey<ImagePainterState>());
                           setState(() => materials.image = File(xFile.path));
-                          getRecognisedText(xFile);
+                          getRecognisedText(xFile, materials);
                         },
                       ),
                     ],
@@ -239,16 +243,43 @@ class _CreatePageState extends State<CreatePage> {
                               color: Palette.hyperColor.withOpacity(0.3),
                               width: screenSize.width * .4,
                               height: 55,
-                              child: const Center(
-                                  child: SthepText("인식된 Text"),
+                              child: Row(
+                                children: [
+                                  const SizedBox(width: 50.0),
+                                  const Expanded(child: Center(child: SthepText('인식된 Text'))),
+                                  IconButton(
+                                    icon: const Icon(Icons.copy),
+                                    onPressed: () async {
+                                      setState(() => copied = true);
+                                      await Future.delayed(const Duration(milliseconds: 500), () {
+                                        setState(() => copied = false);
+                                      });
+                                      Clipboard.setData(
+                                        ClipboardData(text: scannedText),
+                                      );
+                                      showMySnackBar(
+                                        context,
+                                        '클립보드에 복사되었습니다.',
+                                        type: 'success',
+                                      );
+                                    },
+                                  ),
+                                ],
                               ),
                             ),
-                            const SizedBox(height: 50),
-                            Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Text(
-                                scannedText,
-                                style: scannedText.length>300 ? const TextStyle(fontSize: 14) : const TextStyle(fontSize: 20),
+                            Expanded(
+                              child: SingleChildScrollView(
+                                child: AnimatedContainer(
+                                  padding: const EdgeInsets.all(20.0),
+                                  duration: const Duration(milliseconds: 100),
+                                  child: Text(
+                                    scannedText,
+                                    style: TextStyle(
+                                      color: copied ? Palette.hyperColor : Palette.fontColor1,
+                                      fontSize: scannedText.length > 300 ? 14 : 20,
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
                           ],
