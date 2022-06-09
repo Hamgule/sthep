@@ -97,6 +97,7 @@ class SthepUser with ChangeNotifier {
     uid = json['uid'];
     name = json['name'];
     nickname = json['nickname'];
+    imageUrl = json['imageUrl'];
     email = json['email'];
     questionIds = (json['questionIds'] ?? []).cast<int>();
     notificationCount = json['notificationCount'];

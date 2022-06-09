@@ -21,6 +21,7 @@ class Question {
   late SthepUser questioner;
   List<Answer> answers = [];
 
+  String? content;
   String? imageUrl;
   int? adoptedAnswerId;
 
@@ -47,6 +48,7 @@ class Question {
     modDate = (json['modDate'] ?? Timestamp.now()).toDate();
     questionerUid = json['questionerUid'];
     adoptedAnswerId = json['adoptedAnswerId'];
+    content = json['content'];
     imageUrl = json['imageUrl'];
     answerIds = (json['answerIds'] ?? []).cast<int>();
     answererUids = (json['answererUids'] ?? []).cast<String>();
@@ -61,6 +63,7 @@ class Question {
     'modDate': modDate,
     'questionerUid': questionerUid,
     'adoptedAnswerId': adoptedAnswerId,
+    'content': content,
     'imageUrl': imageUrl,
     'answerIds': answerIds,
     'answererUids': answererUids,
@@ -94,7 +97,16 @@ class Question {
 
   String qidToString() => idToString(id!);
   String tagsToString() => tags.join(' ');
-  String toSearchString() => ['$id', title].join(' ');
+
+  String toSearchString(List<bool> allows) {
+    List<String?> searchStrings = ['$id', title, questioner.nickname, content];
+    List<String?> allowStrings = [];
+
+    for (int i = 0; i < searchStrings.length; i++) {
+      if (allows[i]) allowStrings.add(searchStrings[i]);
+    }
+    return allowStrings.join(' ');
+  }
 
   Future<int> getNextId() async {
     Map<String, dynamic>? data = await MyFirebase.readData('autoIncrement', 'question');

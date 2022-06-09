@@ -202,7 +202,7 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
                 }
                 materials.addSearchedQuestion(question);
               }
-              else if (question.toSearchString().contains(materials.searchKeyword)) {
+              else if (question.toSearchString(materials.allows).contains(materials.searchKeyword)) {
                 for (var tag in materials.searchTags) {
                   if (!question.tags.contains(tag)) {
                     return;

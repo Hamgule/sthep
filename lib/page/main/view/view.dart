@@ -179,39 +179,39 @@ class _ViewPageState extends State<ViewPage> {
                 child: Row(
                   children: [
                     for (var tag in materials.destQuestion!.tags)
-                      TagButton(
-                        '#$tag',
-                        size: 18.0,
-                        onPressed: () {
-                          materials.searchTags = [];
-                          materials.addTag(tag);
-                          materials.filteredQuestions = [];
+                    TagButton(
+                      '#$tag',
+                      size: 18.0,
+                      onPressed: () {
+                        materials.searchTags = [];
+                        materials.addTag(tag);
+                        materials.filteredQuestions = [];
 
-                          materials.questions.forEach((question) {
-                            for (var tag in materials.searchTags) {
-                              if (!question.tags.contains(tag)) {
-                                return;
-                              }
+                        materials.questions.forEach((question) {
+                          for (var tag in materials.searchTags) {
+                            if (!question.tags.contains(tag)) {
+                              return;
                             }
-                            materials.addSearchedQuestion(question);
-                          });
-                          Navigator.pushNamed(context, '/Search');
-                        },
-                      )
+                          }
+                          materials.addSearchedQuestion(question);
+                        });
+                        Navigator.pushNamed(context, '/Search');
+                      },
+                    )
                   ],
                 ),
               ),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: SizedBox(
-                  child: answer.imageUrl == null
-                      ? Container() : Image.network(
-                    answer.imageUrl!,
-                    width: 500.0,
-                    height: 300.0,
-                  ),
-                ),
-              ),
+              // Container(
+              //   alignment: Alignment.centerLeft,
+              //   child: SizedBox(
+              //     child: answer.imageUrl == null
+              //         ? Container() : Image.network(
+              //       answer.imageUrl!,
+              //       width: 500.0,
+              //       height: 300.0,
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ),

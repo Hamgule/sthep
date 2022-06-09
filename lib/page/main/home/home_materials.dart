@@ -189,18 +189,10 @@ class QuestionTile extends StatelessWidget {
                 width: 150.0,
                 alignment: Alignment.centerRight,
                 margin: const EdgeInsets.all(20.0),
-                child: MyFirebase.readOnce(
-                  path: 'users',
-                  id: question.questionerUid,
-                  builder: (context, snapshot) {
-                    if (snapshot.data == null) return Container();
-                    var loadData = snapshot.data.data();
-                    return simpleProfile(SthepUser.fromJson(loadData));
-                  },
-                ),
+                child: simpleProfile(question.questioner),
               ),
               Container(
-                width: 70.0,
+                width: 100.0,
                 margin: const EdgeInsets.all(20.0),
                 child: SthepText(
                   Time(t: question.regDate!).toString(),

@@ -187,7 +187,7 @@ class _HomePageState extends State<HomePage> {
                             ),
                             const SizedBox(width: 10.0),
                             Container(
-                              width: 450.0,
+                              width: 400.0,
                               height: 40.0,
                               decoration: BoxDecoration(
                                 color: Palette.bgColor.withOpacity(.2),
@@ -226,12 +226,14 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
                     const SizedBox(width: 50.0),
-                    Container(
-                      width: 180.0,
-                      height: 20.0,
-                      decoration: BoxDecoration(
-                        color: Palette.bgColor.withOpacity(.2),
-                        borderRadius: BorderRadius.circular(10),
+                    Expanded(
+                      child: Container(
+                        width: 180.0,
+                        height: 20.0,
+                        decoration: BoxDecoration(
+                          color: Palette.bgColor.withOpacity(.2),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
                     ),
                   ],

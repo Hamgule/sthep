@@ -28,6 +28,8 @@ class _SearchPageState extends State<SearchPage> {
   final TextEditingController tagCont = TextEditingController();
   late FocusNode _focusNode;
 
+  List<String> checkboxTexts = ['질문 번호', '제목', '작성자', '내용'];
+
   @override
   void initState() {
     if (mounted)  _focusNode = FocusNode();
@@ -78,6 +80,31 @@ class _SearchPageState extends State<SearchPage> {
                                   color: Palette.hyperColor,
                                 ),
                               )
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 30.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    for (int i = 0; i < 4; i++)
+                    GestureDetector(
+                      onTap: () => materials.toggleAllow(i),
+                      child: Row(
+                        children: [
+                          Checkbox(
+                            activeColor: Palette.hyperColor,
+                            value: materials.allows[i],
+                            onChanged: (_) => materials.toggleAllow(i),
+                          ),
+                          SthepText(
+                            checkboxTexts[i],
+                            color: materials.allows[i]
+                                ? Palette.fontColor1
+                                : Palette.fontColor2
                           ),
                         ],
                       ),

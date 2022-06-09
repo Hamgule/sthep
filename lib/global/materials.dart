@@ -182,6 +182,7 @@ class Materials with ChangeNotifier {
   String searchKeyword = '';
   List<String> searchTags = [];
   List<Question> filteredQuestions = [];
+  List<bool> allows = [false, false, false, false, false];
 
   void clearFilteredQuestions() {
     filteredQuestions = [];
@@ -200,6 +201,11 @@ class Materials with ChangeNotifier {
 
   void removeTag(int index) {
     searchTags.removeAt(index);
+    notifyListeners();
+  }
+
+  void toggleAllow(int index) {
+    allows[index] = !allows[index];
     notifyListeners();
   }
 

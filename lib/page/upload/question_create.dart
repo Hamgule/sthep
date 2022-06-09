@@ -51,8 +51,6 @@ class _CreatePageState extends State<CreatePage> {
     final inputImage = InputImage.fromFilePath(image.path);
     final textRecognizer = TextRecognizer(script: TextRecognitionScript.korean);
     final RecognizedText recognizedText = await textRecognizer.processImage(inputImage);
-    scannedText="";
-    //setState(() => scannedText = recognizedText.text);
     for (TextBlock block in recognizedText.blocks) {
       final Rect rect = block.boundingBox;
       final List<Offset> cornerPoints = block.cornerPoints.cast<Offset>();
@@ -61,26 +59,14 @@ class _CreatePageState extends State<CreatePage> {
 
       for (TextLine line in block.lines) {
         for (TextElement element in line.elements) {
-          //print(element.text);
-          scannedText += element.text + " ";
+          scannedText += element.text + ' ';
         }
       }
+      materials.newQuestion.content = scannedText;
     }
     materials.toggleLoading();
     setState(() {});
     textRecognizer.close();
-
-
-    // RecognizedText recognisedText = await textDetector.processImage(inputImage);
-    // await textDetector.close();
-    // scannedText = "";
-    // for (TextBlock block in recognisedText.blocks) {
-    //   for (TextLine line in block.lines) {
-    //     scannedText = scannedText + line.text + " , ";
-    //   }
-    // }
-    // textScanning = false;
-    // setState(() {});
   }
 
   @override
@@ -93,7 +79,6 @@ class _CreatePageState extends State<CreatePage> {
         // physics: const NeverScrollableScrollPhysics(),
         child: Container(
           height: screenSize.height *.8,
-         // height: 1000,
           padding: const EdgeInsets.all(30.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

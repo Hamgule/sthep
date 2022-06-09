@@ -115,8 +115,8 @@ class _MainPageState extends State<MyPage> {
           case 0:
             return PieChartSectionData(
               color: Palette.pieAdopt,
-              value: user.notAdoptQCount,
-              title: '${user.notAdoptQCount.toInt()}\n(${100 * user.notAdoptQCount ~/ user.sumCount()}%)',
+              value: user.adoptQCount,
+              title: '${user.adoptQCount.toInt()}\n(${100 * user.adoptQCount ~/ user.sumCount()}%)',
               radius: radius,
               titleStyle: TextStyle(
                 fontSize: fontSize,
@@ -127,8 +127,8 @@ class _MainPageState extends State<MyPage> {
           case 1:
             return PieChartSectionData(
               color: Palette.pieNotAdopt,
-              value: user.adoptQCount,
-              title: '${user.adoptQCount.toInt()}\n(${100 * user.adoptQCount ~/ user.sumCount()}%)',
+              value: user.notAdoptQCount,
+              title: '${user.notAdoptQCount.toInt()}\n(${100 * user.notAdoptQCount ~/ user.sumCount()}%)',
               radius: radius,
               titleStyle: const TextStyle(
                 fontSize: 15.0,
