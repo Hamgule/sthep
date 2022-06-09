@@ -64,7 +64,7 @@ class _HomePageState extends State<HomePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    height: 200.0,
+                    height: 180.0,
                     decoration: BoxDecoration(
                       color: Palette.bgColor.withOpacity(.2),
                       borderRadius: BorderRadius.circular(10),

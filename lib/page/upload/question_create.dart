@@ -27,6 +27,9 @@ class _CreatePageState extends State<CreatePage> {
   final TextEditingController tagCont = TextEditingController();
   late Question targetQuestion;
 
+  String scannedText = "";
+  bool copied = false;
+
   Future<XFile?> pickImage() async {
     try {
       return await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -36,13 +39,9 @@ class _CreatePageState extends State<CreatePage> {
     return null;
   }
 
-  bool textScanning = false;
+  void getRecognisedText(XFile image, Materials materials) async {
+    materials.toggleLoading();
 
-  XFile? imageFile;
-
-  String scannedText = "";
-
-  void getRecognisedText(XFile image) async {
     final inputImage = InputImage.fromFilePath(image.path);
     final textDetector = GoogleMlKit.vision.textRecognizer();
 
@@ -51,21 +50,24 @@ class _CreatePageState extends State<CreatePage> {
     scannedText = "";
     for (TextBlock block in recognisedText.blocks) {
       for (TextLine line in block.lines) {
-        scannedText = scannedText + line.text + " , ";
+        scannedText += line.text + " ";
       }
     }
-    textScanning = false;
+    materials.toggleLoading();
     setState(() {});
   }
+
 
   @override
   Widget build(BuildContext context) {
     Materials materials = Provider.of<Materials>(context);
     targetQuestion = materials.newQuestion;
 
+    XFile? imageFile;
+
     return Scaffold(
       body: SingleChildScrollView(
-        physics: const NeverScrollableScrollPhysics(),
+        // physics: const NeverScrollableScrollPhysics(),
         child: Container(
           height: screenSize.height *.8,
          // height: 1000,
@@ -173,7 +175,7 @@ class _CreatePageState extends State<CreatePage> {
                           if (xFile == null) return;
                           setState(() => materials.imageKey = GlobalKey<ImagePainterState>());
                           setState(() => materials.image = File(xFile.path));
-                          getRecognisedText(xFile);
+                          getRecognisedText(xFile, materials);
                         },
                       ),
                     ],
@@ -207,7 +209,6 @@ class _CreatePageState extends State<CreatePage> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      if (textScanning) const CircularProgressIndicator(),
                       if (scannedText.isNotEmpty)
                       SizedBox(
                         width: screenSize.width * .4,
@@ -218,16 +219,43 @@ class _CreatePageState extends State<CreatePage> {
                               color: Palette.hyperColor.withOpacity(0.3),
                               width: screenSize.width * .4,
                               height: 55,
-                              child: const Center(
-                                  child: SthepText("인식된 Text"),
+                              child: Row(
+                                children: [
+                                  const SizedBox(width: 50.0),
+                                  const Expanded(child: Center(child: SthepText('인식된 Text'))),
+                                  IconButton(
+                                    icon: const Icon(Icons.copy),
+                                    onPressed: () async {
+                                      setState(() => copied = true);
+                                      await Future.delayed(const Duration(milliseconds: 500), () {
+                                        setState(() => copied = false);
+                                      });
+                                      Clipboard.setData(
+                                        ClipboardData(text: scannedText),
+                                      );
+                                      showMySnackBar(
+                                        context,
+                                        '클립보드에 복사되었습니다.',
+                                        type: 'success',
+                                      );
+                                    },
+                                  ),
+                                ],
                               ),
                             ),
-                            const SizedBox(height: 50),
-                            Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Text(
-                                scannedText,
-                                style: scannedText.length>300 ? const TextStyle(fontSize: 14) : const TextStyle(fontSize: 20),
+                            Expanded(
+                              child: SingleChildScrollView(
+                                child: AnimatedContainer(
+                                  padding: const EdgeInsets.all(20.0),
+                                  duration: const Duration(milliseconds: 100),
+                                  child: Text(
+                                    scannedText,
+                                    style: TextStyle(
+                                      color: copied ? Palette.hyperColor : Palette.fontColor1,
+                                      fontSize: scannedText.length > 300 ? 14 : 20,
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
                           ],
@@ -237,7 +265,6 @@ class _CreatePageState extends State<CreatePage> {
                   ),
                 ],
               ),
-
             ],
           ),
         ),

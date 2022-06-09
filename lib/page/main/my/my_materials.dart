@@ -78,12 +78,12 @@ class _ExpPointState extends State<ExpPoint> {
                 children: [
                   SthepText(
                     '${(100 * user.exp.exp).toStringAsFixed(1)}%',
-                    size: 15.0,
+                    size: 12.0,
                     color: Palette.hyperColor,
                   ),
                   const Icon(
                       Icons.location_on,
-                      size: 15.0,
+                      size: 12.0,
                       color: Palette.hyperColor
                   ),
                 ],

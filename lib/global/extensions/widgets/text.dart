@@ -10,7 +10,6 @@ class SthepText extends StatelessWidget {
         this.bold = false,
         this.italic = false,
         this.underline = false,
-        this.overflow = false,
       }) : super(key: key);
 
   final String text;
@@ -19,7 +18,6 @@ class SthepText extends StatelessWidget {
   final bool bold;
   final bool italic;
   final bool underline;
-  final bool overflow;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +33,6 @@ class SthepText extends StatelessWidget {
         decorationThickness: 5,
 
       ),
-      // overflow: overflow ? TextOverflow.ellipsis : TextOverflow.visible,
       overflow: TextOverflow.ellipsis,
     );
   }
