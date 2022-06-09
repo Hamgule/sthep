@@ -163,11 +163,6 @@ class Materials with ChangeNotifier {
     return users.where((e) => e.uid == uid).toList().first;
   }
 
-  void visQuestionsAddAll(List<Question> questions) {
-    visQuestions.addAll(questions);
-    notifyListeners();
-  }
-
   /// home
   bool isGrid = true;
 
@@ -270,7 +265,10 @@ class Materials with ChangeNotifier {
     });
 
     user.setMy(questions);
+    updateVisQuestions(user);
+  }
 
+  void updateVisQuestions(SthepUser user) {
     visQuestions = [];
     if (newPageIndex == 0) {
       visQuestions.addAll(questions);
@@ -279,10 +277,10 @@ class Materials with ChangeNotifier {
       visQuestions.addAll(user.myQuestions);
     }
     else if (newPageIndex == 2) {
-      visQuestions.addAll(user.myQuestions);
+      visQuestions.addAll(user.myAnsweredQuestions);
     }
+    notifyListeners();
   }
-
 
   void toggleLoadControl() {
     loadControl = !loadControl;

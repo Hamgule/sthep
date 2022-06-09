@@ -134,6 +134,7 @@ class _MainPageState extends State<MainPage> {
           if (user.logged || index == 0) {
             if (index == 4) materials.finishAnimation();
             materials.setPageIndex(index);
+            materials.updateVisQuestions(user);
             await Future.delayed(
               const Duration(milliseconds: 10), () {
                 materials.startAnimation();
