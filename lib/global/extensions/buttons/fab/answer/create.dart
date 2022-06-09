@@ -20,7 +20,7 @@ class AnswerCreateFAB extends StatelessWidget {
 
       materials.newAnswer.id = await materials.newAnswer.getNextId();
       materials.newAnswer.imageUrl = await MyFirebase.uploadImage(
-        'answer',
+        'answers',
         materials.newAnswer.aidToString(),
         materials.image,
       );
@@ -34,7 +34,6 @@ class AnswerCreateFAB extends StatelessWidget {
       materials.newAnswer.answerer.gainExp(Exp.createAnswer);
       showMySnackBar(context, Exp.visualizeForm(Exp.createAnswer), type: 'exp', ignoreBefore: false);
 
-      materials.toggleIsChanged();
       materials.gotoPage('view');
 
       materials.destQuestion!.addAnswer(materials.newAnswer);

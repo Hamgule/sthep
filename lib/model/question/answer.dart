@@ -66,5 +66,8 @@ class Answer {
     if (updateModDate) json['modDate'] = FieldValue.serverTimestamp();
     MyFirebase.write('answers', aidToString(), json);
   }
-  void deleteDB() => MyFirebase.remove('answers', aidToString());
+  void deleteDB() {
+    MyFirebase.remove('answers', aidToString());
+    MyFirebase.removeImage('answers', aidToString());
+  }
 }

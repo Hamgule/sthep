@@ -31,7 +31,6 @@ class _ViewFABState extends State<ViewFAB> {
         return;
       }
 
-      materials.toggleIsChanged();
       materials.gotoPage('questionUpdate');
     }
 
@@ -40,18 +39,11 @@ class _ViewFABState extends State<ViewFAB> {
         showMySnackBar(context, '답변된 질문은 삭제할 수 없습니다.', type: 'error');
         return;
       }
+      materials.toggleLoading();
 
       materials.destQuestion!.deleteDB();
 
       materials.toggleLoading();
-
-      if (materials.destQuestion!.imageUrl != null) {
-        await MyFirebase.removeImage(
-            'questions', materials.destQuestion!.qidToString());
-      }
-
-      materials.toggleLoading();
-      materials.toggleIsChanged();
 
       showMySnackBar(context, '질문을 삭제했습니다.', type: 'success');
 
@@ -67,7 +59,6 @@ class _ViewFABState extends State<ViewFAB> {
         return;
       }
 
-      materials.toggleIsChanged();
       materials.gotoPage('answerUpdate');
     }
 
@@ -84,7 +75,6 @@ class _ViewFABState extends State<ViewFAB> {
       materials.destAnswer!.deleteDB();
 
       materials.toggleLoading();
-      materials.toggleIsChanged();
 
       materials.setViewFABState(FABState.comment);
       materials.destQuestion!.questioner.notify('answerDeleted', materials.destQuestion!);

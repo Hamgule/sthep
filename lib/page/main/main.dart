@@ -133,7 +133,6 @@ class _MainPageState extends State<MainPage> {
         void setIndex(int index) async {
           if (user.logged || index == 0) {
             if (index == 4) materials.finishAnimation();
-            user.reloadDB();
             materials.setPageIndex(index);
             await Future.delayed(
               const Duration(milliseconds: 10), () {

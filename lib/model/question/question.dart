@@ -129,5 +129,8 @@ class Question {
     MyFirebase.write('questions', qidToString(), toJson());
   }
 
-  void deleteDB() => MyFirebase.remove('questions', qidToString());
+  void deleteDB() {
+    MyFirebase.remove('questions', qidToString());
+    MyFirebase.removeImage('questions', qidToString());
+  }
 }

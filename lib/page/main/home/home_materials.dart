@@ -32,7 +32,7 @@ class QuestionCard extends StatelessWidget {
           child: InkWell(
             onTap: () {
               materials.gotoPage('view');
-              materials.destQuestion = question;
+              materials.setDestQuestion(question);
               materials.setViewFABState(
                 user.uid == materials.destQuestion!.questionerUid
                     ? FABState.myQuestion

@@ -69,14 +69,11 @@ class SthepUser with ChangeNotifier {
 
     notAdoptQCount = qCount - adoptQCount;
     notAdoptedACount = aCount - adoptedACount;
+
+    notifyListeners();
   }
 
   int sumCount() => adoptQCount + notAdoptQCount + adoptedACount + notAdoptedACount;
-
-  void toggleLogState() {
-    logged = !logged;
-    notifyListeners();
-  }
 
   void setNickname(String nickname) async {
     this.nickname = nickname;
@@ -85,12 +82,12 @@ class SthepUser with ChangeNotifier {
 
   Future getNotifications() async {
     if (!logged) return;
-    var loadMyNotifications = await MyFirebase.readSubCollection('users', uid!, 'notifications');
+    var jsonMyNotifications = await MyFirebase.readSubCollection('users', uid!, 'notifications');
 
     notifications = [];
     notifications.addAll(
-      loadMyNotifications.map((data)
-      => MyNotification.fromJson(data)).toList().cast<MyNotification>().reversed,
+      jsonMyNotifications.map((json)
+      => MyNotification.fromJson(json)).toList().cast<MyNotification>().reversed,
     );
 
     updateNotChecked();
@@ -98,6 +95,7 @@ class SthepUser with ChangeNotifier {
   }
 
   Future sthepLogin() async {
+    logged = true;
     UserCredential userCredential;
     User? user;
     userCredential = await signInWithGoogle();
@@ -129,6 +127,7 @@ class SthepUser with ChangeNotifier {
     imageUrl = SthepUser.defaultProfile;
     nickname = null;
     exp.totalValue = 0.0;
+    notChecked = 0;
     notifyListeners();
   }
 

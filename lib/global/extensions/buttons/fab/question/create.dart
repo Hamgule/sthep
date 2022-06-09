@@ -34,8 +34,6 @@ class QuestionCreateFAB extends StatelessWidget {
 
       materials.newQuestion.createDB();
 
-      materials.toggleIsChanged();
-
       showMySnackBar(
         context,
         '${materials.newQuestion.id}번 질문을 등록했습니다.',

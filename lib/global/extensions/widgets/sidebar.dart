@@ -56,7 +56,7 @@ class SideBar extends StatelessWidget {
 
         materials.gotoPage('home');
       }
-      user.toggleLogState();
+      user.setMy(materials.questions);
     }
 
     void logoutPressed() {

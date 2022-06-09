@@ -4,15 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:sthep/config/palette.dart';
-import 'package:sthep/firebase/firebase.dart';
 import 'package:sthep/global/extensions/widgets/text.dart';
 import 'package:sthep/global/materials.dart';
-import 'package:sthep/model/question/answer.dart';
-import 'package:sthep/model/question/question.dart';
-import 'package:sthep/model/user/activity.dart';
 import 'package:sthep/model/user/user.dart';
 import 'package:sthep/page/main/home/home_materials.dart';
-import 'package:sthep/global/extensions/icons/icons.dart';
 
 
 class HomePage extends StatefulWidget {
@@ -28,8 +23,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<Question> visQuestions = [];
-
+  bool loaded = false;
   RefreshController refreshController = RefreshController(initialRefresh: false);
 
   @override
@@ -42,9 +36,14 @@ class _HomePageState extends State<HomePage> {
     List<double> randomWidthsInCard = [];
     List<double> randomWidthsInList = [];
 
-    for (int i = 0; i < 3; i++){
+    for (int i = 0; i < 3; i++) {
       randomWidthsInCard.add(math.Random().nextInt(180) + 100);
       randomWidthsInList.add(math.Random().nextInt(8) * 20 + 60);
+    }
+
+    if (!loaded) {
+      materials.refresh(context);
+      setState(() => loaded = true);
     }
 
     Widget emptyCard = GridView.count(
@@ -247,41 +246,8 @@ class _HomePageState extends State<HomePage> {
 
     Widget showWidget = Container();
 
-    Future getQuestions() async {
-      materials.questions = [];
-      var jsonList = await MyFirebase.readCollection('questions');
-      if (jsonList.isEmpty) return;
-      materials.questions.addAll(jsonList.map((json) => Question.fromJson(json)).toList().reversed);
-      materials.toggleIsChanged();
-    }
-
-    Future<SthepUser> getUser(String uid) async {
-      var json = await MyFirebase.readData('users', uid);
-      if (json == null) return SthepUser();
-
-      return SthepUser.fromJson(json);
-    }
-
-    void refresh() async {
-      if (materials.questions.isEmpty || materials.isChanged) await getQuestions();
-      user.setMy(materials.questions);
-    }
-
-    refresh();
-
-    visQuestions = [];
-    if (materials.newPageIndex == 0) {
-      visQuestions.addAll(materials.questions);
-    }
-    else if (materials.newPageIndex == 1) {
-      visQuestions.addAll(user.myQuestions);
-    }
-    else if (materials.newPageIndex == 2) {
-      visQuestions.addAll(user.myAnsweredQuestions);
-    }
-
     void onRefresh() async {
-      refresh();
+      materials.refresh(context);
       await user.getNotifications();
 
       setState(() {});
@@ -296,23 +262,23 @@ class _HomePageState extends State<HomePage> {
 
     showWidget = materials.isGrid ? emptyCard : emptyTile;
 
-    if (visQuestions.isNotEmpty) {
+    if (materials.visQuestions.isNotEmpty) {
       showWidget = materials.isGrid ? GridView.count(
         padding: const EdgeInsets.all(30.0),
         crossAxisCount: MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 3,
-        children: visQuestions.map(
-              (question) => QuestionCard(question: question),
+        children: materials.visQuestions.map(
+          (question) => QuestionCard(question: question),
         ).toList(),
       ) : ListView.builder(
         padding: const EdgeInsets.symmetric(horizontal: 50.0),
-        itemCount: visQuestions.length,
+        itemCount: materials.visQuestions.length,
         itemExtent: 120.0,
         itemBuilder: (context, index) {
           return QuestionTile(
-            question: visQuestions[index],
+            question: materials.visQuestions[index],
             onPressed: () {
               materials.gotoPage('view');
-              materials.setDestQuestion(visQuestions[index]);
+              materials.setDestQuestion(materials.visQuestions[index]);
             },
           );
         },

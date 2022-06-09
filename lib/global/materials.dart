@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_painter/image_painter.dart';
 import 'package:provider/provider.dart';
+import 'package:sthep/firebase/firebase.dart';
 import 'package:sthep/global/extensions/buttons/fab/fab.dart';
 import 'package:sthep/global/extensions/widgets/dialog.dart';
 import 'package:sthep/global/extensions/widgets/snackbar.dart';
@@ -59,6 +60,7 @@ class Materials with ChangeNotifier {
   }
 
   Widget loginButton(BuildContext context) {
+    Materials materials = Provider.of<Materials>(context);
     SthepUser user = Provider.of<SthepUser>(context);
 
     return IconButton(
@@ -77,7 +79,7 @@ class Materials with ChangeNotifier {
             showMySnackBar(context, '올바른 닉네임을 입력하세요.', type: 'error');
           }
 
-          user.toggleLogState();
+          user.setMy(materials.questions);
           user.setNickname(nicknameInput!);
           user.updateDB();
           showMySnackBar(context, '\'${user.nickname}\'님 환영합니다.', type: 'success');
@@ -88,7 +90,7 @@ class Materials with ChangeNotifier {
           return;
         }
 
-        user.toggleLogState();
+        user.setMy(materials.questions);
         showMySnackBar(context, '\'${user.nickname}\'님 로그인 되었습니다.', type: 'success');
 
         user.gainExp(Exp.login);
@@ -116,8 +118,30 @@ class Materials with ChangeNotifier {
 
   /// global
   List<Question> questions = [];
-  List<Question> myQuestions = [];
-  List<Question> myAnsweredQuestions = [];
+  List<Answer> answers = [];
+  List<SthepUser> users = [];
+  List<Question> visQuestions = [];
+
+  Future loadQuestions() async {
+    questions = [];
+    var jsonQuestions = await MyFirebase.readCollection('questions');
+    questions.addAll(jsonQuestions.map((json) => Question.fromJson(json)).toList().reversed);
+    notifyListeners();
+  }
+
+  Future loadAnswers() async {
+    answers = [];
+    var jsonAnswers = await MyFirebase.readCollection('answers');
+    answers.addAll(jsonAnswers.map((json) => Answer.fromJson(json)).toList());
+    notifyListeners();
+  }
+
+  Future loadUsers() async {
+    users = [];
+    var jsonAnswers = await MyFirebase.readCollection('users');
+    users.addAll(jsonAnswers.map((json) => SthepUser.fromJson(json)).toList());
+    notifyListeners();
+  }
 
   Question getQuestionById(int id) {
     return questions.where((e) => e.id == id).toList().first;
@@ -125,6 +149,23 @@ class Materials with ChangeNotifier {
 
   List<Question> getQuestionsByUserID(String uid) {
     return questions.where((e) => e.questionerUid == uid).toList();
+  }
+
+  Answer getAnswerById(int id) {
+    return answers.where((e) => e.id == id).toList().first;
+  }
+
+  List<Answer> getAnswersByUserID(String uid) {
+    return answers.where((e) => e.answererUid == uid).toList();
+  }
+
+  SthepUser getUserByUid(String uid) {
+    return users.where((e) => e.uid == uid).toList().first;
+  }
+
+  void visQuestionsAddAll(List<Question> questions) {
+    visQuestions.addAll(questions);
+    notifyListeners();
   }
 
   /// home
@@ -207,12 +248,45 @@ class Materials with ChangeNotifier {
   }
 
   /// view
-  bool isChanged = false;
+  bool loadControl = false;
   FABState viewFABState = FABState.myQuestion;
 
-  void toggleIsChanged() {
-    isChanged = !isChanged;
-    notifyListeners();
+  void refresh(BuildContext context) async {
+    SthepUser user = Provider.of<SthepUser>(context, listen: false);
+
+    await loadQuestions();
+    await loadAnswers();
+    await loadUsers();
+
+    questions.forEach((question) {
+      question.questioner = getUserByUid(question.questionerUid);
+      question.answers = [];
+      question.answerIds.forEach((answerId) {
+        question.answers.add(getAnswerById(answerId));
+        question.answers.forEach((answer) {
+          answer.answerer = getUserByUid(answer.answererUid);
+        });
+      });
+    });
+
+    user.setMy(questions);
+
+    visQuestions = [];
+    if (newPageIndex == 0) {
+      visQuestions.addAll(questions);
+    }
+    else if (newPageIndex == 1) {
+      visQuestions.addAll(user.myQuestions);
+    }
+    else if (newPageIndex == 2) {
+      visQuestions.addAll(user.myQuestions);
+    }
+  }
+
+
+  void toggleLoadControl() {
+    loadControl = !loadControl;
+    // notifyListeners();
   }
 
   void setViewFABState(FABState state) {

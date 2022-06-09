@@ -35,7 +35,6 @@ class AnswerUpdateFAB extends StatelessWidget {
         type: 'success',
       );
 
-      materials.toggleIsChanged();
       materials.gotoPage('view');
 
       materials.destQuestion!.questioner.notify('answerUpdated', materials.destQuestion!);
