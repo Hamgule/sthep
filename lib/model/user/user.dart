@@ -125,9 +125,10 @@ class SthepUser with ChangeNotifier {
     imageUrl = user.photoURL ?? SthepUser.defaultProfile;
 
     var json = await MyFirebase.readData('users', uid!);
-    nickname = json?['nickname'];
-    notificationCount = json?['notificationCount'];
-    exp.totalValue = json?['exp'];
+    if (json == null) return;
+    nickname = json['nickname'];
+    notificationCount = json['notificationCount'];
+    exp.totalValue = json['exp'];
 
     await getNotifications();
 

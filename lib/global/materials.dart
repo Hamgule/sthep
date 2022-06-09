@@ -95,7 +95,10 @@ class Materials with ChangeNotifier {
         user.setMy(materials.questions);
         showMySnackBar(context, '\'${user.nickname}\'님 로그인 되었습니다.', type: 'success');
 
+        print(2);
+        print(user.logged);
         user.toggleLoginState();
+        print(user.logged);
 
         user.gainExp(Exp.login);
         showMySnackBar(context, Exp.visualizeForm(Exp.login), type: 'exp', ignoreBefore: false);
