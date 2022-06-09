@@ -106,8 +106,12 @@ class SthepUser with ChangeNotifier {
     notifyListeners();
   }
 
+  void toggleLoginState() {
+    logged = !logged;
+    notifyListeners();
+  }
+
   Future sthepLogin() async {
-    logged = true;
     UserCredential userCredential;
     User? user;
     userCredential = await signInWithGoogle();
@@ -132,7 +136,6 @@ class SthepUser with ChangeNotifier {
 
   void sthepLogout() {
     signOutWithGoogle();
-    logged = false;
     uid = null;
     name = null;
     email = null;
