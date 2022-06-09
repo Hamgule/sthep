@@ -46,11 +46,16 @@ class SideBar extends StatelessWidget {
         user.updateDB();
         showMySnackBar(context, '\'${user.nickname}\'님 환영합니다.');
 
+        user.toggleLoginState();
+
         user.gainExp(Exp.register);
         showMySnackBar(context, Exp.visualizeForm(Exp.register), type: 'exp', ignoreBefore: false);
       }
       else {
         showMySnackBar(context, '\'${user.nickname}\'님 로그인 되었습니다.');
+
+        user.toggleLoginState();
+
         user.gainExp(Exp.login);
         showMySnackBar(context, Exp.visualizeForm(Exp.login), type: 'exp', ignoreBefore: false);
 
@@ -61,9 +66,11 @@ class SideBar extends StatelessWidget {
 
     void logoutPressed() {
       user.sthepLogout();
+      user.toggleLoginState();
       Navigator.pop(context);
       materials.gotoPage('home');
       showMySnackBar(context, '로그아웃 되었습니다.', type: 'success');
+
     }
 
     void withdrawPressed() async {
@@ -80,6 +87,7 @@ class SideBar extends StatelessWidget {
       materials.gotoPage('home');
       showMySnackBar(context, '\'${user.nickname}\'님이 탈퇴되었습니다.', type: 'success');
       user.sthepLogout();
+      user.toggleLoginState();
     }
 
     void notificationPressed() {

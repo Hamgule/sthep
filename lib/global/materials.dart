@@ -84,6 +84,8 @@ class Materials with ChangeNotifier {
           user.updateDB();
           showMySnackBar(context, '\'${user.nickname}\'님 환영합니다.', type: 'success');
 
+          user.toggleLoginState();
+
           user.gainExp(Exp.register);
           showMySnackBar(context, Exp.visualizeForm(Exp.register), type: 'exp', ignoreBefore: false);
 
@@ -92,6 +94,8 @@ class Materials with ChangeNotifier {
 
         user.setMy(materials.questions);
         showMySnackBar(context, '\'${user.nickname}\'님 로그인 되었습니다.', type: 'success');
+
+        user.toggleLoginState();
 
         user.gainExp(Exp.login);
         showMySnackBar(context, Exp.visualizeForm(Exp.login), type: 'exp', ignoreBefore: false);
