@@ -57,6 +57,18 @@ class SthepUser with ChangeNotifier {
     myQuestions.addAll(questions.where((question) => question.questionerUid == uid!));
     myAnsweredQuestions.addAll(questions.where((question) => question.answererUids.contains(uid!)));
 
+    myQuestions.forEach((question) {
+      List<MyActivity> myActivities = [];
+      myActivities.add(MyActivity(type: ActivityType.question, id: question.id!));
+      activities[question.regDate as DateTime] = myActivities;
+    });
+
+    myAnsweredQuestions.forEach((question) {
+      List<MyActivity> myActivities = [];
+      myActivities.add(MyActivity(type: ActivityType.answer, id: question.id!));
+      activities[question.regDate as DateTime] = myActivities;
+    });
+
     qCount = myQuestions.length;
     aCount = myAnsweredQuestions.length;
 

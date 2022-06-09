@@ -226,7 +226,6 @@ class _MainPageState extends State<MyPage> {
                                 markerDecoration: BoxDecoration(
                                   color: Palette.hyperColor.withOpacity(0.5),
                                   shape: BoxShape.circle,
-
                                 ),
                                 markerSizeScale: 0.9,
                                 markerMargin: EdgeInsets.zero,
